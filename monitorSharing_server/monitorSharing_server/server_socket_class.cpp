@@ -2,6 +2,10 @@
 #include <time.h>
 
 server_socket_class::server_socket_class() {
+
+	packet_timeToLive = TTL;
+
+
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
 	/// 버전이 지원하는 Word 크기로, 0000001000000010 =  514
@@ -15,21 +19,29 @@ server_socket_class::server_socket_class() {
 	// IPPROTO_UDP - UDP 전송 지원
 
 
-	setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char*)&broadcast_enable, sizeof(broadcast_enable));
+	//setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char*)&broadcast_enable, sizeof(broadcast_enable));
 
-	// 옵션이 지정될 레벨, SOL_SOCKET, 소켓 레벨이다. 소켓 레벨에서 소켓의 옵션을 설정하겠다.
-
-	// broadcast 옵션 TRUE 설정
+	
 
 	memset(&sock_addr, 0, sizeof(sock_addr));
 	// 소켓 정보가 담길 구조체 초기화
 
 	sock_addr.sin_family = AF_INET;
-	sock_addr.sin_addr.s_addr =  htonl(INADDR_BROADCAST); // inet_addr("192.168.31.200");
+	//sock_addr.sin_addr.s_addr =  htonl(INADDR_ANY); 
 	/// 목적지 주소는 브로드 캐스트 주소
 
+	//sock_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
+	sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	sock_addr.sin_port = htons(PORT);
+
+	// 서버의 IP와 주소 설정
+
+	setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, (char*)packet_timeToLive, sizeof(packet_timeToLive));
+	// 옵션이 지정될 레벨, SOL_SOCKET, 소켓 레벨이다. 소켓 레벨에서 소켓의 옵션을 설정하겠다.
+	// 멀티캐스트 설정
+
+
 }
 
 server_socket_class::~server_socket_class() {

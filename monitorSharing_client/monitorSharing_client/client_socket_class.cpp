@@ -20,12 +20,21 @@ client_socket_class::client_socket_class() {
 
 	}
 
+	//UDP 전송으로 설정
+
+
+	
 	memset(&sock_addr, 0, sizeof(sock_addr));
 	// 해당 소켓 주소 객체를 0으로 초기화
 
 	sock_addr.sin_family = AF_INET; //IPv4
 
 	sock_addr.sin_addr.s_addr = htonl(INADDR_ANY); //Host to network long
+
+
+	/// sock_addr : 소켓 설정하는 구조체
+
+	
 	
 	/// 연결 주소 : 0.0.0.0
 	/// 로컬 시스템의 모든 IPv4 주소
@@ -40,12 +49,25 @@ client_socket_class::client_socket_class() {
 	/// 네트워크에서는 빅엔디언 방식의 데이터 저장 방식을 사용
 	/// 현재 코딩 환경(CPU) 에서는 리틀 엔디언 방식, 즉 네트워크 방식의 바이트 순서를 맞춰줘야됨
 
-
 	bind(sock, (sockaddr*)&sock_addr, sizeof(sock_addr));
 	/// sock 변수에다 해당 정보로 소켓 생성
 
 
-	/// 0.0.0.0 주소로 특정 서버에 지정 포트로 접속하기를 대기하고 있음
+	join_addr.imr_multiaddr.s_addr = inet_addr("Server IP 입력");
+	// 멀티캐스트를 사용하기 위한 서버의 IP 주소 입력
+	// 위에꺼 성공
+	// 위에 한글 란은 멀티캐스트를 사용하기 위한 서버 IP 란이 들어가는 곳
+
+	//join_addr.imr_multiaddr.s_addr = htonl(INADDR_ANY);
+
+	// join_addr : 멀티캐스트 그룹에 가입하기 위한 구조체
+
+	join_addr.imr_interface.s_addr = htonl(INADDR_ANY);
+	// 해당 그룹에 가입할 IP 주소, 즉 자기 자신을 의미
+	// 자신의 컴퓨터에서 사용 가능한 IP를 통해서 해당 서버에 접속하겠다는 의미
+
+
+	setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char*)&join_addr, sizeof(join_addr));
 
 
 	cout << "Wait for a response.";
@@ -66,11 +88,12 @@ void client_socket_class::connect_server() {
 
 	recvfrom(sock, var_connect, sizeof(var_connect), 0, (SOCKADDR*)&sender_addr, &sender_addr_size);
 
-	/// recvfrom : 데이터 그램 수신, 소스 주소 저장
+
+	/// recvfrom : 데이터 그램 수신, 소스 주소 저장f
 	/// sock 소켓으로 들어오는 데이터를 var_connect 버퍼에 저장하고 해당 클라이언트 주소 (받고 있는 자의 정보) 정보를 sender_addr 에다 저장
 		
 
-	sendto(sock, var_connect, sizeof(var_connect), 0, (const SOCKADDR*)&sender_addr, sizeof(sender_addr));
+	sendto(sock, var_connect, sizeof(var_connect), 0, (SOCKADDR*)&sender_addr, sock_addr_size);
 
 	/// 소켓을 통해 받은 데이터를 (var_connect 버퍼에 있는 데이터를) sender_addr 클라이언트로 보냄
 

@@ -20,14 +20,19 @@ private:
 	WSADATA wsaData;
 	SOCKET sock;
 	SOCKADDR_IN sock_addr;
-	// 
+	// 자기 자신에 대한 소켓 정보를 저장하고 있음
+	
+	IP_MREQ join_addr;
+	// 멀티캐스트 그룹 관련한 정보를 포함하고 있는 구조체
 
-	BOOL broadcast_enable = TRUE;
+	 
+
+	//BOOL broadcast_enable = TRUE;
 
 	// 일대일 연결을 위한 변수
 	SOCKADDR_IN sender_addr;
 	int sender_addr_size = sizeof(sender_addr);
-
+	int sock_addr_size = sizeof(sock_addr);
 	char var_connect[2];
 	
 	// 파일 데이터 전송에 사용할 변수

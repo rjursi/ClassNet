@@ -12,6 +12,7 @@
 
 #define BUFSIZE 65000
 #define PORT 9000
+#define TTL 30
 
 using namespace std;
 
@@ -26,6 +27,9 @@ private:
 
 	// 일대일 연결을 위한 변수
 	SOCKADDR_IN recver_addr;
+
+	int packet_timeToLive;
+
 	int recver_addr_size = sizeof(recver_addr);
 
 	char var_request[2] = "1";

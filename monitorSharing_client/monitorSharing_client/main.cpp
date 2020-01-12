@@ -1,5 +1,6 @@
 #include "client_socket_class.h"
 
+
 #include<opencv\cv.h>
 #include<opencv\highgui.h>
 
@@ -23,6 +24,8 @@ void image_viewer() {
 	waitKey(1);
 	// 1ms 동안 프레임 표시
 }
+
+
 
 int main() {
 	client_socket_class client_socket_object;
