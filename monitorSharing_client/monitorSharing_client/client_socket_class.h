@@ -4,6 +4,8 @@
 #include <iostream>
 #include <WinSock2.h>
 #include <ws2tcpip.h>
+#include <stdio.h>
+#include <string>
 
 #pragma	comment(lib, "ws2_32")
 
@@ -26,6 +28,7 @@ private:
 	// 멀티캐스트 그룹 관련한 정보를 포함하고 있는 구조체
 
 	 
+	
 
 	//BOOL broadcast_enable = TRUE;
 
@@ -39,6 +42,10 @@ private:
 	char *totalbuf;
 	char *buf;
 
+	string serverIPAddress;
+	// 서버 IP 주소
+
+
 	FILE *filepointer;
 
 	int file_size;
@@ -47,6 +54,8 @@ private:
 
 	// 응답 변수
 	char msgbuf[2] = ".";
+
+	
 
 public:
 	//생성자
@@ -59,6 +68,8 @@ public:
 
 	//파일 수신
 	void recvfile();
+
+	void getServerIP();
 };
 
 #endif // !CLIENTSOCKETCLASS_H

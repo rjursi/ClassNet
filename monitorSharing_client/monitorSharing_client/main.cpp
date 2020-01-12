@@ -1,6 +1,5 @@
 #include "client_socket_class.h"
 
-
 #include<opencv\cv.h>
 #include<opencv\highgui.h>
 

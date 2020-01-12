@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <time.h>
 #include <Windows.h>
+#
 
 client_socket_class::client_socket_class() {
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -21,7 +22,7 @@ client_socket_class::client_socket_class() {
 	}
 
 	//UDP 전송으로 설정
-
+		
 
 	
 	memset(&sock_addr, 0, sizeof(sock_addr));
@@ -52,8 +53,9 @@ client_socket_class::client_socket_class() {
 	bind(sock, (sockaddr*)&sock_addr, sizeof(sock_addr));
 	/// sock 변수에다 해당 정보로 소켓 생성
 
+	getServerIP();
 
-	join_addr.imr_multiaddr.s_addr = inet_addr("Server IP 입력");
+	join_addr.imr_multiaddr.s_addr = inet_addr(serverIPAddress.c_str());
 	// 멀티캐스트를 사용하기 위한 서버의 IP 주소 입력
 	// 위에꺼 성공
 	// 위에 한글 란은 멀티캐스트를 사용하기 위한 서버 IP 란이 들어가는 곳
@@ -78,6 +80,16 @@ client_socket_class::client_socket_class() {
 client_socket_class::~client_socket_class() {
 	closesocket(sock);
 	WSACleanup();
+}
+
+void client_socket_class::getServerIP() {
+	cout << "접속할 서버 IP를 입력하세요.\n";
+
+	getline(cin,serverIPAddress);
+
+	//cout << serverIPAddress;
+
+	
 }
 
 void client_socket_class::connect_server() {

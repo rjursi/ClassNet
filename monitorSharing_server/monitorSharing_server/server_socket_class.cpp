@@ -30,9 +30,9 @@ server_socket_class::server_socket_class() {
 	//sock_addr.sin_addr.s_addr =  htonl(INADDR_ANY); 
 	/// 목적지 주소는 브로드 캐스트 주소
 
-	//sock_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	sock_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-	sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	//sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	sock_addr.sin_port = htons(PORT);
 
 	// 서버의 IP와 주소 설정
@@ -137,4 +137,6 @@ void server_socket_class::sendfile() {
 
 	// 전송 결과
 	cout << "\n\n파일전송 성공 (Time : " << (double)(end - start) << ")\n" << endl;
+
+
 }
