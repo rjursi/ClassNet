@@ -12,7 +12,7 @@
 
 #define BUFSIZE 65000
 #define PORT 9000
-#define TTL 30
+#define TTL 60
 
 using namespace std;
 
@@ -22,8 +22,13 @@ private:
 	WSADATA wsaData;
 	SOCKET sock;
 	SOCKADDR_IN sock_addr;
+	SOCKADDR_IN groupSock;
 
-	BOOL broadcast_enable = TRUE;
+
+	IN_ADDR localInterface;
+
+
+	//BOOL broadcast_enable = TRUE;
 
 	// 일대일 연결을 위한 변수
 	SOCKADDR_IN recver_addr;
@@ -40,6 +45,7 @@ private:
 
 	FILE *filepointer;
 	int file_size;
+
 	int send_size;
 
 	// 응답 변수
@@ -55,7 +61,7 @@ public:
 	void connect_client();
 
 	// 스레드 생성
-	void make_thread();
+	//void make_thread();
 
 	// 파일전송
 	void sendfile();

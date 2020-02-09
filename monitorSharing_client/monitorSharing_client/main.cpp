@@ -17,7 +17,7 @@ void image_viewer() {
 	Mat resizing_img;
 	// 크기가 수정된 이미지
 
-	resize(origin_img, resizing_img, Size(GetSystemMetrics(SM_CXSCREEN) / 2, GetSystemMetrics(SM_CYSCREEN) / 2), 0, 0, CV_INTER_LINEAR);
+	resize(origin_img, resizing_img, Size(GetSystemMetrics(SM_CXSCREEN) / 2 , GetSystemMetrics(SM_CYSCREEN) / 2 ), 0, 0, CV_INTER_LINEAR);
 	imshow("viewer", resizing_img);
 
 	waitKey(1);
@@ -30,6 +30,8 @@ int main() {
 	client_socket_class client_socket_object;
 
 	client_socket_object.connect_server();
+
+
 	while (1) {
 		client_socket_object.recvfile();
 		image_viewer();

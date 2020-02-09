@@ -18,28 +18,24 @@ server_socket_class::server_socket_class() {
 	// SOCK_DGRAM - 데이터 그램 전송 지원
 	// IPPROTO_UDP - UDP 전송 지원
 
+	memset((char*)&groupSock, 0, sizeof(groupSock));
 
-	//setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char*)&broadcast_enable, sizeof(broadcast_enable));
+	groupSock.sin_family = AF_INET;
+	groupSock.sin_addr.s_addr = inet_addr("239.1.1.2");
+	groupSock.sin_port = htons(PORT);
 
 	
+	localInterface.s_addr = inet_addr("192.168.0.187");
+	//localInterface.s_addr = inet_addr("172.18.68.161");
+	//localInterface.s_addr = htonl(INADDR_ANY);
+	if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_IF, (char*)&localInterface, sizeof(localInterface)) < 0) {
+		perror("Setting local interface Error");
+		exit(1);	
+	}
+	else {
+		printf("Setting the local interface... OK\n");
+	} 
 
-	memset(&sock_addr, 0, sizeof(sock_addr));
-	// 소켓 정보가 담길 구조체 초기화
-
-	sock_addr.sin_family = AF_INET;
-	//sock_addr.sin_addr.s_addr =  htonl(INADDR_ANY); 
-	/// 목적지 주소는 브로드 캐스트 주소
-
-	sock_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-	//sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	sock_addr.sin_port = htons(PORT);
-
-	// 서버의 IP와 주소 설정
-
-	setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, (char*)packet_timeToLive, sizeof(packet_timeToLive));
-	// 옵션이 지정될 레벨, SOL_SOCKET, 소켓 레벨이다. 소켓 레벨에서 소켓의 옵션을 설정하겠다.
-	// 멀티캐스트 설정
 
 
 }
@@ -50,8 +46,10 @@ server_socket_class::~server_socket_class() {
 }
 
 void server_socket_class::connect_client() {
-	sendto(sock, (char*)&var_request, sizeof(var_request), 0, (const SOCKADDR*)&sock_addr, sizeof(sock_addr));
+	//sendto(sock, (char*)&var_request, sizeof(var_request), 0, (const SOCKADDR*)&sock_addr, sizeof(sock_addr));
 
+
+	sendto(sock, (char*)&var_request, sizeof(var_request), 0, (const SOCKADDR*)&groupSock, sizeof(groupSock));
 	// 버퍼에 있는 데이터 만큼 소켓, 즉 목적지로 보냄 (Broadcast)
 
 
@@ -99,9 +97,11 @@ void server_socket_class::sendfile() {
 
 		// _msize : 동적 할당한 변수에 대하여 크기를 알아오는 함수
 
-		send_size = fread(buf, 1, _msize(buf), filepointer);
+		send_size = fread(buf, 1, _msize(buf), filepointer);	
 		/// filepointer 에서 총 _msize(buf) 개를 1바이트씩 읽어온다.
 		/// buf 총 파일 저장 버퍼에다 씀
+		// return file size
+
 		sendto(sock, buf, _msize(buf), 0, (SOCKADDR*)&recver_addr, sizeof(recver_addr));
 
 		// 파일의 내용이 담긴 버퍼를 전송
@@ -111,7 +111,7 @@ void server_socket_class::sendfile() {
 
 		// 응답 수신
 		recvfrom(sock, msgbuf, sizeof(msgbuf), 0, NULL, 0);
-		cout << msgbuf << " ";
+		cout <<	 msgbuf << " ";
 
 		file_size -= send_size;
 		if (file_size == 0) break;

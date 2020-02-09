@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <time.h>
 #include <Windows.h>
-#
+
 
 client_socket_class::client_socket_class() {
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -30,54 +30,45 @@ client_socket_class::client_socket_class() {
 
 	sock_addr.sin_family = AF_INET; //IPv4
 
-	sock_addr.sin_addr.s_addr = htonl(INADDR_ANY); //Host to network long
-
-
-	/// sock_addr : 소켓 설정하는 구조체
-
-	
-	
-	/// 연결 주소 : 0.0.0.0
-	/// 로컬 시스템의 모든 IPv4 주소
-	/// 어떤 IP든 상관 없으니 포트가 일치하면 그 아이피로 접속을 하겠다.
-	
-	sock_addr.sin_port = htons(PORT); //short 형으로
-	
-	/// htonl (Host to network long)
-	/// htons (Host to Network short)
-
-	/// sock_addr 객체를 사용할시 필요한 사항, 다음과 같이 변환이 필요
-	/// 네트워크에서는 빅엔디언 방식의 데이터 저장 방식을 사용
-	/// 현재 코딩 환경(CPU) 에서는 리틀 엔디언 방식, 즉 네트워크 방식의 바이트 순서를 맞춰줘야됨
-
-	bind(sock, (sockaddr*)&sock_addr, sizeof(sock_addr));
-	/// sock 변수에다 해당 정보로 소켓 생성
 
 	getServerIP();
 
-	join_addr.imr_multiaddr.s_addr = inet_addr(serverIPAddress.c_str());
-	// 멀티캐스트를 사용하기 위한 서버의 IP 주소 입력
-	// 위에꺼 성공
-	// 위에 한글 란은 멀티캐스트를 사용하기 위한 서버 IP 란이 들어가는 곳
-
-	//join_addr.imr_multiaddr.s_addr = htonl(INADDR_ANY);
-
-	// join_addr : 멀티캐스트 그룹에 가입하기 위한 구조체
-
-	join_addr.imr_interface.s_addr = htonl(INADDR_ANY);
-	// 해당 그룹에 가입할 IP 주소, 즉 자기 자신을 의미
-	// 자신의 컴퓨터에서 사용 가능한 IP를 통해서 해당 서버에 접속하겠다는 의미
+	// not a newline problem
 
 
-	setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char*)&join_addr, sizeof(join_addr));
 
+	sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	sock_addr.sin_port = htons(PORT); //short 형으로
+	
+	// dst server IP and PORT NUMBER
+
+	// htonl (Host to network long)
+	// htons (Host to Network short)
+
+	// sock_addr 객체를 사용할시 필요한 사항, 다음과 같이 변환이 필요
+	// 네트워크에서는 빅엔디언 방식의 데이터 저장 방식을 사용
+	// 현재 코딩 환경(CPU) 에서는 리틀 엔디언 방식, 즉 네트워크 방식의 바이트 순서를 맞춰줘야됨
+
+	bind(sock, (sockaddr*)&sock_addr, sizeof(sock_addr));
+	// sock 변수에다 해당 정보로 소켓 생성
+
+	join_addr.imr_interface.s_addr = inet_addr(serverIPAddress.c_str());
+	join_addr.imr_multiaddr.s_addr = inet_addr("239.1.1.2");
+	
+
+	setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char*) &join_addr, sizeof(join_addr));
+
+	// set socket to multicast for join
 
 	cout << "Wait for a response.";
 }
 
-// 클라이언트 객체가 생성이 될 시 바로 
+// 클라이언트 객체가 생성이 될 시 바로		
 
 client_socket_class::~client_socket_class() {
+	//setsockopt(sock, IPPROTO_IP, IP_DROP_MEMBERSHIP, (char*)&join_addr, sizeof(join_addr));
+	// Multicast Group Clean
+
 	closesocket(sock);
 	WSACleanup();
 }
@@ -85,9 +76,8 @@ client_socket_class::~client_socket_class() {
 void client_socket_class::getServerIP() {
 	cout << "접속할 서버 IP를 입력하세요.\n";
 
-	getline(cin,serverIPAddress);
+	getline(cin, serverIPAddress);
 
-	//cout << serverIPAddress;
 
 	
 }
@@ -101,7 +91,7 @@ void client_socket_class::connect_server() {
 	recvfrom(sock, var_connect, sizeof(var_connect), 0, (SOCKADDR*)&sender_addr, &sender_addr_size);
 
 
-	/// recvfrom : 데이터 그램 수신, 소스 주소 저장f
+	/// recvfrom : 데이터 그램 수신, 소스 주소 저장
 	/// sock 소켓으로 들어오는 데이터를 var_connect 버퍼에 저장하고 해당 클라이언트 주소 (받고 있는 자의 정보) 정보를 sender_addr 에다 저장
 		
 
@@ -120,7 +110,9 @@ void client_socket_class::recvfile() {
 		temp = WSAGetLastError();
 		printf("Socket Error: %x(%d)\n", temp, temp);
 	}
-	system("cls");
+
+
+	//system("cls");
 	cout << "파일 크기 : " << file_size << " Byte" << endl;
 
 	// 파일 전체 크기의 버퍼 생성
@@ -170,9 +162,13 @@ void client_socket_class::recvfile() {
 			buf = new char[file_size];
 		}
 	}
+
+
+
 	end = clock(); // 해당 프로세스가 현재 시점까지 소비한 시간 반환
-
-
+	
+	
+	
 	// 파일 열기
 	filepointer = fopen("ScreenCapture.jpeg", "wb");
 	fwrite(totalbuf, 1, _msize(totalbuf), filepointer);
@@ -184,7 +180,7 @@ void client_socket_class::recvfile() {
 	totalbuf = NULL;
 
 	// 수신 결과
-	cout << "\n\n파일수신 완료 (Time : " << (double)(end - start) << ")" << endl;
+	cout << "\n\n파일수신 완료 (Time : " << (end - start) << ")" << endl;
 
 
 }
