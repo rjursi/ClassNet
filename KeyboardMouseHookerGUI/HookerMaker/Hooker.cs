@@ -1,15 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.IO;
-using System.Windows.Forms;
-using System.Collections.Generic;
 
-namespace KeyboardMouseHookerGUI
+
+namespace HookerMaker
 {
     class Hooker
     {
-
-        public bool CtrlFlag = false;
 
         /*
         private struct KeyboardLowLevelHookStruct
@@ -24,7 +21,9 @@ namespace KeyboardMouseHookerGUI
 
         // Keyboard stroke info save structure
 
-        public static List<Keys> PermittedKeys = new List<Keys>(
+
+            /*
+        public static List<Keys> PermittedKeys = new List<Keys>(    
         new Keys[]
         { // Alphanumeric keys.
             Keys.A, Keys.B, Keys.C, Keys.D, Keys.E, Keys.F, Keys.G, Keys.H,
@@ -55,6 +54,8 @@ namespace KeyboardMouseHookerGUI
         
 
         // When Want Only Filtering Shortcuts (ex. Alt+F4)
+        */
+
 
 
 
@@ -68,9 +69,12 @@ namespace KeyboardMouseHookerGUI
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
 
-        //const int WM_KEYDOWN = 0x100;
+        const int WM_KEYDOWN = 0x100;
         const int WH_KEYBOARD_LL = 13;
         const int WH_MOUSE_LL = 14;
+
+        // const int WH_MOUSE = 7;
+        // const int WH_KEYBOARD = 2;
 
         const int WM_LBUTTONDOWN = 0x0201;
         const int WM_LBUTTONDBLCLICK = 0x0203;
@@ -94,6 +98,10 @@ namespace KeyboardMouseHookerGUI
 
         private LowLevelKeyboardProc _keyboardProc = keyboardHookProc;
         private LowLevelMouseProc _mouseProc = mouseHookProc;
+
+
+        // private LowLevelKeyboardProc _keyboardProc = keyboardHookProc;
+        // private LowLevelMouseProc _mouseProc= mouseHookProc;
         // Dll Load for hooking
 
         [DllImport("user32.dll")]
@@ -108,16 +116,11 @@ namespace KeyboardMouseHookerGUI
         [DllImport("user32.dll")]
         static extern IntPtr CallNextHookEx(IntPtr idHook, int nCode, int wParam, IntPtr lParam);
 
-        
         [DllImport("kernel32.dll")]
         static extern IntPtr LoadLibrary(string lpFileName);
 
-        
+       
 
-        public Hooker()
-        {
-            this.CtrlFlag = false;
-        }
         public static IntPtr mouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             switch ((int)wParam)
@@ -143,8 +146,8 @@ namespace KeyboardMouseHookerGUI
 
         public static IntPtr keyboardHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-               
-            if( nCode >= 0)
+
+            if (nCode >= 0)
             {
                 
                 
@@ -173,11 +176,73 @@ namespace KeyboardMouseHookerGUI
            
         }
 
+
+        /*
+        public static IntPtr mouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            switch ((int)wParam)
+            {
+                case WM_LBUTTONDOWN:
+                case WM_LBUTTONDBLCLICK:
+                case WM_LBUTTONUP:
+
+                case WM_MBUTTONDBLCLICK:
+                case WM_MBUTTONDOWN:
+                case WM_MBUTTONUP:
+
+                case WM_RBUTTONDBLCLICK:
+                case WM_RBUTTONDOWN:
+                case WM_RBUTTONUP:
+                case WM_MOUSEWHEEL:
+                    return (IntPtr)1;
+            }
+
+            return CallNextHookEx(mouseHook, nCode, (int)wParam, lParam);
+        }
+
+        */
+
+        /*
+        public static IntPtr keyboardHookProc(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+            {
+
+
+                // KeyboardLowLevelHookStruct KeyInfo = (KeyboardLowLevelHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardLowLevelHookStruct));
+
+
+                
+                if (!PermittedKeys.Contains(KeyInfo.key))
+                {
+                    return (IntPtr)1;
+                    // When Keyboard pressed, dont send anything to OS
+                }
+                
+                
+
+
+                return (IntPtr)1;
+                // When Keyboard pressed, dont send anything to OS
+
+
+            }
+
+            return CallNextHookEx(keyboardHook, nCode, (int)wParam, lParam);
+
+
+
+        }
+
+        */
+
         public void SetHook()
         {
             IntPtr hInstance = LoadLibrary("user32");
             // hooking on user32.dll, so all program on gui can't processing all keyboard, mouse event
 
+            
             keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, _keyboardProc, hInstance, 0);
             mouseHook = SetWindowsHookEx(WH_MOUSE_LL, _mouseProc, hInstance, 0);
 
@@ -188,6 +253,7 @@ namespace KeyboardMouseHookerGUI
         {
             UnhookWindowsHookEx(keyboardHook);
             UnhookWindowsHookEx(mouseHook);
+
         }
 
 

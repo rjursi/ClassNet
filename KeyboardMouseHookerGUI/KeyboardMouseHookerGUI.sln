@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyboardMouseHookerGUI", "KeyboardMouseHookerGUI\KeyboardMouseHookerGUI.csproj", "{60056C20-9357-48C6-9DD3-0BCA3FD98AAE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandCenterServer", "CommandCenterServer\CommandCenterServer.csproj", "{5F156813-9155-4A9D-A6C6-1E6B691C19F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HookerProcess", "HookerProcess\HookerProcess.csproj", "{C0816FD5-B0C3-4596-9963-C07F43D5C04A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{60056C20-9357-48C6-9DD3-0BCA3FD98AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60056C20-9357-48C6-9DD3-0BCA3FD98AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60056C20-9357-48C6-9DD3-0BCA3FD98AAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F156813-9155-4A9D-A6C6-1E6B691C19F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F156813-9155-4A9D-A6C6-1E6B691C19F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F156813-9155-4A9D-A6C6-1E6B691C19F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F156813-9155-4A9D-A6C6-1E6B691C19F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0816FD5-B0C3-4596-9963-C07F43D5C04A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0816FD5-B0C3-4596-9963-C07F43D5C04A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0816FD5-B0C3-4596-9963-C07F43D5C04A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0816FD5-B0C3-4596-9963-C07F43D5C04A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
