@@ -8,7 +8,7 @@
 #pragma	comment(lib, "ws2_32")
 
 #define BUFSIZE 65000
-#define PORT 7777
+#define PORT 9000
 
 using namespace std;
 
@@ -22,6 +22,12 @@ private:
 	SOCKADDR_IN sock_addr;
 
 	BOOL broadcast_enable = TRUE;
+
+	// 일대일 연결을 위한 변수
+	SOCKADDR_IN sender_addr;
+	int sender_addr_size = sizeof(sender_addr);
+
+	char var_connect[2];
 	
 	// 파일 데이터 전송에 사용할 변수
 	char *totalbuf;
@@ -34,8 +40,6 @@ private:
 	int total_size;
 
 	// 응답 변수
-	SOCKADDR_IN sender_addr;
-	int sender_addr_size = sizeof(sender_addr);
 	char msgbuf[2] = ".";
 
 public:
@@ -43,6 +47,9 @@ public:
 	client_socket_class();
 	//소멸자
 	~client_socket_class();
+
+	// 서버 연결
+	void connect_server();
 
 	//파일 수신
 	void recvfile();

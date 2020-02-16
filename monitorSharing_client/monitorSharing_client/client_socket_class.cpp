@@ -6,13 +6,11 @@
 client_socket_class::client_socket_class() {
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-	if ((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) == INVALID_SOCKET) {
+	if ((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
 		temp = WSAGetLastError(); 
 		printf("Socket Error: %x(%d)\n", temp, temp); 
 		assert(sock != INVALID_SOCKET);
 	}
-
-	setsockopt(sock, SOL_SOCKET, SO_BROADCAST, (char*)&broadcast_enable, sizeof(broadcast_enable));
 
 	memset(&sock_addr, 0, sizeof(sock_addr));
 	sock_addr.sin_family = AF_INET;
@@ -29,13 +27,20 @@ client_socket_class::~client_socket_class() {
 	WSACleanup();
 }
 
+void client_socket_class::connect_server() {
+	ZeroMemory(var_connect, sizeof(var_connect));
+	recvfrom(sock, var_connect, sizeof(var_connect), 0, (SOCKADDR*)&sender_addr, &sender_addr_size);
+
+	sendto(sock, var_connect, sizeof(var_connect), 0, (const SOCKADDR*)&sender_addr, sizeof(sender_addr));
+}
+
 void client_socket_class::recvfile() {
 	clock_t start, end;
 
-	if (recvfrom(sock, (char*)&file_size, sizeof(file_size), 0, NULL, 0) == SOCKET_ERROR) {
+	if (recvfrom(sock, (char*)&file_size, sizeof(file_size), 0, NULL, 0) == -1) {
 		temp = WSAGetLastError();
 		printf("Socket Error: %x(%d)\n", temp, temp);
-	} 
+	}
 	system("cls");
 	cout << "파일 크기 : " << file_size << " Byte" << endl;
 
@@ -45,27 +50,27 @@ void client_socket_class::recvfile() {
 	ZeroMemory(totalbuf, _msize(totalbuf));
 
 	cout << "\nDownloading ";
+
 	start = clock();
-	
 	// 수신 루프
 	buf = new char[BUFSIZE];
 	while (1) {
 		ZeroMemory(buf, _msize(buf));
-		recv_size = recvfrom(sock, buf, _msize(buf), 0, (SOCKADDR*)&sender_addr, &sender_addr_size);
+		recv_size = recvfrom(sock, buf, _msize(buf), 0, NULL, 0);
 		if (recv_size == SOCKET_ERROR) {
 			temp = WSAGetLastError();
 			printf("Socket Error: %x(%d)\n", temp, temp);
 		}
 		
+		memcpy(&totalbuf[total_size], buf, recv_size);
+		total_size += recv_size;
+		cout << ". ";
+
 		// 응답 전송
 		if (sendto(sock, msgbuf, sizeof(msgbuf), 0, (SOCKADDR*)&sender_addr, sizeof(sender_addr)) == SOCKET_ERROR) {
 			temp = WSAGetLastError();
 			printf("Socket Error: %x(%d)\n", temp, temp);
 		}
-
-		memcpy(&totalbuf[total_size], buf, recv_size);
-		total_size += recv_size;
-		cout << ". ";
 		
 		file_size -= recv_size;
 		if (file_size == 0) break;
@@ -73,17 +78,21 @@ void client_socket_class::recvfile() {
 		// 나머지 수신
 		if (file_size < BUFSIZE) {
 			delete[] buf;
+			buf = NULL;
 			buf = new char[file_size];
 		}
 	}
 	end = clock();
+
 	// 파일 열기
 	filepointer = fopen("ScreenCapture.jpeg", "wb");
 	fwrite(totalbuf, 1, _msize(totalbuf), filepointer);
 	fclose(filepointer);
 
 	delete[] buf;
+	buf = NULL;
 	delete[] totalbuf;
+	totalbuf = NULL;
 
 	// 수신 결과
 	cout << "\n\n파일수신 완료 (Time : " << (double)(end - start) << ")" << endl;

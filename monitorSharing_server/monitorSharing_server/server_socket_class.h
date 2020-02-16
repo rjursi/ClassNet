@@ -1,6 +1,7 @@
 #ifndef SERVERSOCKETCLASS_H
 #define SERVERSOCKETCLASS_H
 
+#include <stdio.h>
 #include <iostream>
 #include <WinSock2.h>
 #include <ws2tcpip.h>
@@ -10,7 +11,7 @@
 #pragma	comment(lib, "ws2_32")
 
 #define BUFSIZE 65000
-#define PORT 7777
+#define PORT 9000
 
 using namespace std;
 
@@ -23,6 +24,13 @@ private:
 
 	BOOL broadcast_enable = TRUE;
 
+	// 일대일 연결을 위한 변수
+	SOCKADDR_IN recver_addr;
+	int recver_addr_size = sizeof(recver_addr);
+
+	char var_request[2] = "1";
+	char var_response[2];
+
 	// 파일 데이터 전송에 사용할 변수
 	char *buf;
 
@@ -31,8 +39,6 @@ private:
 	int send_size;
 
 	// 응답 변수
-	SOCKADDR_IN recver_addr;
-	int recver_addr_size = sizeof(recver_addr);
 	char msgbuf[2];
 
 public:
@@ -40,6 +46,12 @@ public:
 	server_socket_class();
 	// 소멸자
 	~server_socket_class();
+
+	// 클라이언트 연결
+	void connect_client();
+
+	// 스레드 생성
+	void make_thread();
 
 	// 파일전송
 	void sendfile();

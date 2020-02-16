@@ -15,14 +15,17 @@ void image_viewer() {
 	resize(origin_img, resizing_img, Size(GetSystemMetrics(SM_CXSCREEN) / 2, GetSystemMetrics(SM_CYSCREEN) / 2), 0, 0, CV_INTER_LINEAR);
 	imshow("viewer", resizing_img);
 
-	waitKey(10);
+	waitKey(1);
 }*/
 
 int main() {
 	client_socket_class client_socket_object;
+
+	client_socket_object.connect_server();
 	while (1) {
 		client_socket_object.recvfile();
 		//image_viewer();
 	}
+
 	return 0;
 }
