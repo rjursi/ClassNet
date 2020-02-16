@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.28307.489
+VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monitorSharing_client", "monitorSharing_client\monitorSharing_client.vcxproj", "{913138FB-9A99-4375-9FED-115ABB96E144}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monitorSharing_client", "monitorSharing_client\monitorSharing_client.vcxproj", "{34505E7B-5689-4976-81ED-1842F3A34804}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,19 +13,19 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{913138FB-9A99-4375-9FED-115ABB96E144}.Debug|x64.ActiveCfg = Debug|x64
-		{913138FB-9A99-4375-9FED-115ABB96E144}.Debug|x64.Build.0 = Debug|x64
-		{913138FB-9A99-4375-9FED-115ABB96E144}.Debug|x86.ActiveCfg = Debug|Win32
-		{913138FB-9A99-4375-9FED-115ABB96E144}.Debug|x86.Build.0 = Debug|Win32
-		{913138FB-9A99-4375-9FED-115ABB96E144}.Release|x64.ActiveCfg = Release|x64
-		{913138FB-9A99-4375-9FED-115ABB96E144}.Release|x64.Build.0 = Release|x64
-		{913138FB-9A99-4375-9FED-115ABB96E144}.Release|x86.ActiveCfg = Release|Win32
-		{913138FB-9A99-4375-9FED-115ABB96E144}.Release|x86.Build.0 = Release|Win32
+		{34505E7B-5689-4976-81ED-1842F3A34804}.Debug|x64.ActiveCfg = Debug|x64
+		{34505E7B-5689-4976-81ED-1842F3A34804}.Debug|x64.Build.0 = Debug|x64
+		{34505E7B-5689-4976-81ED-1842F3A34804}.Debug|x86.ActiveCfg = Debug|Win32
+		{34505E7B-5689-4976-81ED-1842F3A34804}.Debug|x86.Build.0 = Debug|Win32
+		{34505E7B-5689-4976-81ED-1842F3A34804}.Release|x64.ActiveCfg = Release|x64
+		{34505E7B-5689-4976-81ED-1842F3A34804}.Release|x64.Build.0 = Release|x64
+		{34505E7B-5689-4976-81ED-1842F3A34804}.Release|x86.ActiveCfg = Release|Win32
+		{34505E7B-5689-4976-81ED-1842F3A34804}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {5567B700-CE52-4922-AFB3-94BFD94DDE53}
+		SolutionGuid = {F57A4660-B2C6-4965-80F2-08D91C9583A2}
 	EndGlobalSection
 EndGlobal

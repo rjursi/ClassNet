@@ -15,15 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="server_socket_class.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="server_socket_class.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
