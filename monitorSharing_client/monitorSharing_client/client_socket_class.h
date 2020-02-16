@@ -4,13 +4,11 @@
 #include <iostream>
 #include <WinSock2.h>
 #include <ws2tcpip.h>
-#include <stdio.h>
-#include <string>
 
 #pragma	comment(lib, "ws2_32")
 
 #define BUFSIZE 65000
-#define PORT 9000
+#define PORT 7777
 
 using namespace std;
 
@@ -22,29 +20,12 @@ private:
 	WSADATA wsaData;
 	SOCKET sock;
 	SOCKADDR_IN sock_addr;
-	// 자기 자신에 대한 소켓 정보를 저장하고 있음
-	
-	IP_MREQ join_addr;
-	// 멀티캐스트 그룹 관련한 정보를 포함하고 있는 구조체
 
-	 
-	
-
-	//BOOL broadcast_enable = TRUE;
-
-	// 일대일 연결을 위한 변수
-	SOCKADDR_IN sender_addr;
-	int sender_addr_size = sizeof(sender_addr);
-	int sock_addr_size = sizeof(sock_addr);
-	char var_connect[2];
+	BOOL broadcast_enable = TRUE;
 	
 	// 파일 데이터 전송에 사용할 변수
 	char *totalbuf;
 	char *buf;
-
-	string serverIPAddress;
-	// 서버 IP 주소
-
 
 	FILE *filepointer;
 
@@ -53,9 +34,9 @@ private:
 	int total_size;
 
 	// 응답 변수
+	SOCKADDR_IN sender_addr;
+	int sender_addr_size = sizeof(sender_addr);
 	char msgbuf[2] = ".";
-
-	
 
 public:
 	//생성자
@@ -63,13 +44,8 @@ public:
 	//소멸자
 	~client_socket_class();
 
-	// 서버 연결
-	void connect_server();
-
 	//파일 수신
 	void recvfile();
-
-	void getServerIP();
 };
 
 #endif // !CLIENTSOCKETCLASS_H

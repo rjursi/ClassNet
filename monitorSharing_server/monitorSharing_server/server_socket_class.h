@@ -1,7 +1,6 @@
 #ifndef SERVERSOCKETCLASS_H
 #define SERVERSOCKETCLASS_H
 
-#include <stdio.h>
 #include <iostream>
 #include <WinSock2.h>
 #include <ws2tcpip.h>
@@ -11,8 +10,7 @@
 #pragma	comment(lib, "ws2_32")
 
 #define BUFSIZE 65000
-#define PORT 9000
-#define TTL 60
+#define PORT 7777
 
 using namespace std;
 
@@ -22,33 +20,19 @@ private:
 	WSADATA wsaData;
 	SOCKET sock;
 	SOCKADDR_IN sock_addr;
-	SOCKADDR_IN groupSock;
 
-
-	IN_ADDR localInterface;
-
-
-	//BOOL broadcast_enable = TRUE;
-
-	// 일대일 연결을 위한 변수
-	SOCKADDR_IN recver_addr;
-
-	int packet_timeToLive;
-
-	int recver_addr_size = sizeof(recver_addr);
-
-	char var_request[2] = "1";
-	char var_response[2];
+	BOOL broadcast_enable = TRUE;
 
 	// 파일 데이터 전송에 사용할 변수
 	char *buf;
 
 	FILE *filepointer;
 	int file_size;
-
 	int send_size;
 
 	// 응답 변수
+	SOCKADDR_IN recver_addr;
+	int recver_addr_size = sizeof(recver_addr);
 	char msgbuf[2];
 
 public:
@@ -56,12 +40,6 @@ public:
 	server_socket_class();
 	// 소멸자
 	~server_socket_class();
-
-	// 클라이언트 연결
-	void connect_client();
-
-	// 스레드 생성
-	//void make_thread();
 
 	// 파일전송
 	void sendfile();
