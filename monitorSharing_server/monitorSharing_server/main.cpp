@@ -3,14 +3,15 @@
 #include <gdiplusbitmap.h>
 
 #include <Windows.h>
+#include <time.h>
 
 using namespace std;
 
-void ScreenCapture() {
+void ScreenCapture(int fileNum){
 	HDC HandleDC = GetWindowDC(NULL);
 	CImage imageObject;
 
-	::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+	//::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
 
 	int cx = GetSystemMetrics(SM_CXSCREEN);
 	int cy = GetSystemMetrics(SM_CYSCREEN);
@@ -19,23 +20,34 @@ void ScreenCapture() {
 	imageObject.Create(cx, cy, colorDepth);
 	StretchBlt(imageObject.GetDC(), 0, 0, cx, cy, HandleDC, 0, 0, cx, cy, SRCCOPY);
 
-	imageObject.Save(L"C://monitorSharingFTP/ScreenCapture.jpeg", Gdiplus::ImageFormatJPEG);
+	CString fileName = "C://monitorSharingFTP/ScreenCapture";
+	CString fileType = ".jpeg";
+
+	CString fileResult;
+	fileResult.Format(_T("%s%d%s"), fileName, fileNum, fileType);
+
+	imageObject.Save((LPCTSTR)fileResult, Gdiplus::ImageFormatJPEG);
 
 	ReleaseDC(NULL, HandleDC);
 	imageObject.ReleaseDC();
 }
 
 int main() {
-	char c_input = NULL;
+	clock_t start, end;
+
+	char input = NULL;
 	cout << "> ";
-	cin >> c_input;
-	if (c_input == 's') {
+	cin >> input;
+	if (input == 's') {
 		system("cls");
+
 		while (1) {
-			ScreenCapture();
-			system("cls");
-			cout << "uploading...";
-			Sleep(50);
+			start = clock();
+			for (int i = 0; i < 10; i++)	ScreenCapture(i);
+			end = clock();
+
+			cout << "Time : " << (double)(end - start) << endl;
+			//Sleep(1000);
 		}
 	}
 
