@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace HookerProcess
 {
@@ -246,12 +247,16 @@ namespace HookerProcess
             IntPtr hInstance = LoadLibrary("user32");
             // hooking on user32.dll, so all program on gui can't processing all keyboard, mouse event
 
-
+            Thread.Sleep(1000);
 
             
             keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, _keyboardProc, hInstance, 0);
             mouseHook = SetWindowsHookEx(WH_MOUSE_LL, _mouseProc, hInstance, 0);
             
+
+            
+
+
             /*
             using (Process currentProcess = Process.GetCurrentProcess())
             using (ProcessModule currentModule = currentProcess.MainModule)
@@ -268,9 +273,11 @@ namespace HookerProcess
         public void UnHook()
         {
             
+            
             UnhookWindowsHookEx(keyboardHook);
             UnhookWindowsHookEx(mouseHook);
 
+            
             //UnhookWindowsHookEx(keyboardHook);
             //UnhookWindowsHookEx(mouseHook);
         }

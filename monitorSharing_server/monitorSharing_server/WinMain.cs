@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace monitorSharing_server
 {
-    static class Program
+    static class WinMain
     {
         /// <summary>
         /// 해당 애플리케이션의 주 진입점입니다.
@@ -16,7 +16,7 @@ namespace monitorSharing_server
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new Server());
         }
     }
 }

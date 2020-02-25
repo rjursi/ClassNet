@@ -49,7 +49,8 @@
             this.Controls.Add(this.lbl_status);
             this.Name = "form_keyMouseControlling";
             this.Text = "키보드 마우스 제어";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.form_keyMouseControlling_FormClosed);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.form_keyMouseControlling_FormClosing);
+           
             this.Load += new System.EventHandler(this.form_keyMouseControlling_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

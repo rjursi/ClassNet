@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -34,6 +35,9 @@ namespace KeyboardMouseHookerGUI
 
             Receive();
         }
+
+
+
 
         private void Receive()
         {
@@ -74,6 +78,7 @@ namespace KeyboardMouseHookerGUI
                             hookerProcess = new Process();
                             hookerProcess.StartInfo = hookerProcessStartInfo;
                             hookerProcess.Start();
+                            
 
                             Console.WriteLine("Hooking Status : Hooking....");
                             returnMsg = "controlling";
@@ -84,7 +89,8 @@ namespace KeyboardMouseHookerGUI
                         else if (message.Equals("control stop"))
                         {
 
-                            hookerProcess.Kill();
+                            //hookerProcess.Kill();
+                            hookerProcess.Close();
                             
                             Console.WriteLine("Hooking Status : No Hooking");
                             returnMsg = "control stopped";
@@ -106,19 +112,23 @@ namespace KeyboardMouseHookerGUI
                 }
                 catch (SocketException se)
                 {
-                    Trace.WriteLine(string.Format("SocketException : {0}", se.Message));
+                    MessageBox.Show(string.Format("SocketException : {0}", se.Message));
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine(string.Format("Exception : {0}", e.Message));
+                    MessageBox.Show(string.Format("Exception : {0}", e.Message));
 
                 }
 
 
             }
         }
- 
 
+        
+
+
+
+   
         
 
         public void Stop()
