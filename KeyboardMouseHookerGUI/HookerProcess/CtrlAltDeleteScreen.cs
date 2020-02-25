@@ -44,11 +44,11 @@ namespace HookerProcess
             if(desktopSwitchCnt == 2)
             {
                 Thread.Sleep(1000);
-                //hookerDelegater.UnHook();
+                hookerDelegater.UnHook();
                 
-                SendKeys.Send("{Enter}");
-                //Thread.Sleep(1000);
-                //hookerDelegater.SetHook();
+                SendKeys.Send("{ESC}");
+                
+                hookerDelegater.SetHook();
                 desktopSwitchCnt = 0;
             }
             

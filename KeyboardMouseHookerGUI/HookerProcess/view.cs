@@ -1,4 +1,7 @@
-﻿using System.Windows.Forms;
+﻿using System.IO;
+using System.IO.Pipes;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace HookerProcess
 {
@@ -8,8 +11,11 @@ namespace HookerProcess
         TaskMgrController taskMgrController;
         CtrlAltDeleteScreen ctrlAltDeleteScreenMgr;
         bool isHookerDoing;
+        string[] parentQuitMsg;
 
-        public form_keyMouseControlling()
+        Thread childProcessQuitThread;
+
+        public form_keyMouseControlling(string[] parentQuitMsg)
         {
             InitializeComponent();
 
@@ -18,14 +24,20 @@ namespace HookerProcess
             ctrlAltDeleteScreenMgr = new CtrlAltDeleteScreen();
             isHookerDoing = false;
 
+            this.parentQuitMsg = parentQuitMsg;
 
+            
             
         }
         
         private void form_keyMouseControlling_Load(object sender, System.EventArgs e)
         {
+            childProcessQuitThread = new Thread(childProcessQuit);
+            childProcessQuitThread.Start(this.parentQuitMsg);
+            
+            
             taskMgrController.KillTaskMgr();
-            //hooker.SetHook();
+            hooker.SetHook();
             ctrlAltDeleteScreenMgr.StartListeningForDesktopSwitch(hooker);
             isHookerDoing = true;
 
@@ -35,9 +47,34 @@ namespace HookerProcess
         private void form_keyMouseControlling_FormClosing(object sender, FormClosingEventArgs e)
         {
             taskMgrController.EnableTaskMgr();
-            //hooker.UnHook();
+            hooker.UnHook();
 
             isHookerDoing = false;
+        }
+
+        private void childProcessQuit(object parentQuitMsg)
+        {
+            string[] quitMsg = (string[])parentQuitMsg;
+
+            if(quitMsg.Length > 0)
+            {
+                using(PipeStream pipeClient = new AnonymousPipeClientStream(PipeDirection.In, quitMsg[0]))
+                {
+                    using(StreamReader streamReader = new StreamReader(pipeClient))
+                    {
+                        string msg;
+
+                        do
+                        {
+                            msg = streamReader.ReadLine();
+
+                        } while (!msg.StartsWith("quit"));
+                    }
+                }
+
+                Application.Exit();
+            }
+
         }
     }
 }

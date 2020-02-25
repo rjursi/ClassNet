@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -18,12 +20,13 @@ namespace KeyboardMouseHookerGUI
         const int PORT = 9990;
 
 
-        //private Hooker hooker;
+        
         private UdpClient udp = null;
         private Process hookerProcess;
         private ProcessStartInfo hookerProcessStartInfo;
         //private form_keyMouseControlling ctrlForm;
-        
+        private AnonymousPipeServerStream pipeServer;
+        private StreamWriter streamWriter;
 
         public void Start()
         {
@@ -77,8 +80,11 @@ namespace KeyboardMouseHookerGUI
                             
                             hookerProcess = new Process();
                             hookerProcess.StartInfo = hookerProcessStartInfo;
-                            hookerProcess.Start();
+
+                            pipeServer = new AnonymousPipeServerStream(PipeDirection.Out, HandleInheritability.Inheritable);
                             
+                            hookerProcess.StartInfo.Arguments = pipeServer.GetClientHandleAsString();
+                            hookerProcess.Start();
 
                             Console.WriteLine("Hooking Status : Hooking....");
                             returnMsg = "controlling";
@@ -89,8 +95,23 @@ namespace KeyboardMouseHookerGUI
                         else if (message.Equals("control stop"))
                         {
 
+                            pipeServer.DisposeLocalCopyOfClientHandle();
+
+                            try
+                            {
+                                using (StreamWriter streamWriter = new StreamWriter(pipeServer))
+                                {
+                                    streamWriter.AutoFlush = true;
+                                    streamWriter.WriteLine("quit");
+                                }
+                            }catch(IOException e)
+                            {
+                                MessageBox.Show(e.Message);
+                            }
+
+
                             //hookerProcess.Kill();
-                            hookerProcess.Close();
+                            hookerProcess.WaitForExit();
                             
                             Console.WriteLine("Hooking Status : No Hooking");
                             returnMsg = "control stopped";
@@ -124,12 +145,6 @@ namespace KeyboardMouseHookerGUI
             }
         }
 
-        
-
-
-
-   
-        
 
         public void Stop()
         {
