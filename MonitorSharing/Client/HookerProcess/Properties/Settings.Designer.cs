@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace monitorSharing_client.Properties
+namespace HookerProcess.Properties
 {
 
 

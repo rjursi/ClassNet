@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace monitorSharing_server.Properties
+namespace Client.Properties
 {
 
 

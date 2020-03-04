@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "monitorSharing_server", "monitorSharing_server\monitorSharing_server.csproj", "{F6F229BB-42E9-40E3-B3AB-58E5ED402745}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{7E13E15C-FC98-4002-8393-DB8DDFE1EF0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F6F229BB-42E9-40E3-B3AB-58E5ED402745}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6F229BB-42E9-40E3-B3AB-58E5ED402745}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6F229BB-42E9-40E3-B3AB-58E5ED402745}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6F229BB-42E9-40E3-B3AB-58E5ED402745}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E13E15C-FC98-4002-8393-DB8DDFE1EF0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E13E15C-FC98-4002-8393-DB8DDFE1EF0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E13E15C-FC98-4002-8393-DB8DDFE1EF0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E13E15C-FC98-4002-8393-DB8DDFE1EF0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {ACF74C73-7801-4957-A778-7FEE0566B82C}
+		SolutionGuid = {5CEA05D0-DE64-456A-B37D-FD905140FA2A}
 	EndGlobalSection
 EndGlobal

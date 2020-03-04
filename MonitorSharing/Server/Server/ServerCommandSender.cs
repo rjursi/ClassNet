@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace CommandCenterServer
+
+namespace Server
 {
     class ServerCommandSender
     {
@@ -35,7 +33,7 @@ namespace CommandCenterServer
         public ServerCommandSender()
         {
             this.client = new UdpClient();
-            this.ip = new IPEndPoint(IPAddress.Any, CMDSERVICE_PORT);
+            this.ip = new IPEndPoint(IPAddress.Parse("255.255.255.255"), CMDSERVICE_PORT);
             client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         }
 
