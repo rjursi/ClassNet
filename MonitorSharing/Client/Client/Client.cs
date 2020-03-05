@@ -1,16 +1,12 @@
 ﻿using System;
-
 using System.Drawing;
-
 using System.Text;
-
-using System.Windows.Forms;
-
-using System.Net;
-using System.Net.Sockets;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Client
 {
@@ -20,9 +16,8 @@ namespace Client
         Thread clientReceiveThread;
         bool clientShutdownFlag;
         ClientListener clientCommandListener;
-
-
         Thread clientControlThread;
+
         delegate void ThreadDelegate(int imgSize, Image img);
         delegate void clientShutdownDelegate();
 
@@ -32,9 +27,7 @@ namespace Client
             clientShutdownFlag = false;
 
             clientCommandListener = new ClientListener();
-            
         }
-
 
         private void runClientListenerThread()
         {
@@ -141,7 +134,7 @@ namespace Client
             try
             {
                 socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("192.168.35.231"), 7979); // 192.168.31.218 // 192.168.31.200
+                IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7979); // 192.168.31.218 // 192.168.31.200
                 socketServer.Connect(serverEndPoint);
 
                 clientReceiveThread = new Thread(() => receiveThread());
@@ -149,12 +142,10 @@ namespace Client
 
                 clientControlThread = new Thread(() => runClientListenerThread());
                 clientControlThread.Start();
-                
             }
             catch (SocketException)
             {
                 MessageBox.Show("서버가 아직 동작중이지 않습니다.", "서버 확인", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-               
             }
         }
     }

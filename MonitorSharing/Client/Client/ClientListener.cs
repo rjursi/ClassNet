@@ -1,46 +1,32 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Client
 {
     class ClientListener
     {
-
         const int PORT = 9990;
 
-
-        
         private UdpClient udp = null;
         private Process hookerProcess;
         private ProcessStartInfo hookerProcessStartInfo;
         //private form_keyMouseControlling ctrlForm;
         private AnonymousPipeServerStream pipeServer;
         
-
         public void Start()
         {
             if(udp != null)
             {
                 throw new Exception("Already started, stop first plz...");
-                
             }
-
             Receive();
         }
-
-
-
 
         private void Receive()
         {
@@ -56,19 +42,15 @@ namespace Client
 
             var from = new IPEndPoint(0, 0);
 
-
             while (true)
             {
-
                 Console.WriteLine("Waiting...");
                 byte[] recvBuffer = udp.Receive(ref from);
 
-                
                 try
                 {
                     if (udp != null)
                     {
-
                         string message = Encoding.UTF8.GetString(recvBuffer);
 
                         byte[] returnMsgBytes;
@@ -76,8 +58,6 @@ namespace Client
 
                         if (message.Equals("control start"))
                         {
-
-                            
                             hookerProcess = new Process();
                             hookerProcess.StartInfo = hookerProcessStartInfo;
 
@@ -94,7 +74,6 @@ namespace Client
                         }
                         else if (message.Equals("control stop"))
                         {
-
                             pipeServer.DisposeLocalCopyOfClientHandle();
 
                             try
@@ -104,11 +83,11 @@ namespace Client
                                     streamWriter.AutoFlush = true;
                                     streamWriter.WriteLine("quit");
                                 }
+
                             }catch(IOException e)
                             {
                                 MessageBox.Show(e.Message);
                             }
-
 
                             //hookerProcess.Kill();
                             hookerProcess.WaitForExit();
@@ -118,17 +97,12 @@ namespace Client
                             returnMsgBytes = Encoding.Unicode.GetBytes(returnMsg);
 
                             udp.Send(returnMsgBytes, returnMsgBytes.Length, from);
-
-
                         }
                         else if (message.Equals("server shutdown"))
                         {
-                            
                             this.Stop();
                             break;
                         }
-
-
                     }
                 }
                 catch (SocketException se)
@@ -138,13 +112,10 @@ namespace Client
                 catch (Exception e)
                 {
                     MessageBox.Show(string.Format("Exception : {0}", e.Message));
-
                 }
-
 
             }
         }
-
 
         public void Stop()
         {
@@ -156,10 +127,7 @@ namespace Client
                     udp = null;
                 }
             }
-            catch
-            {
-
-            }
+            catch { }
         }
 
         public ClientListener()

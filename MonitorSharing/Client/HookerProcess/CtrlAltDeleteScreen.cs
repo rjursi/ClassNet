@@ -7,7 +7,6 @@ namespace HookerProcess
 {
     class CtrlAltDeleteScreen
     {
-
         private static readonly WinEventDelegate callback = EventCallback;
         const uint WINEVENT_OUTOFCONTEXT = 0x0000;
         const uint WINEVENT_SKIPOWNTHREAD = 0x0001;
@@ -20,20 +19,15 @@ namespace HookerProcess
             IntPtr hwnd, int idObject, int idChild, uint dwEventThread,
             uint dwmsEventTime);
 
-
-
         [DllImport("user32.dll")]
         static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
-
         public void StartListeningForDesktopSwitch(Hooker hooker)
         {
-
             hookerDelegater = hooker;
             
             SetWinEventHook(EVENT_SYSTEM_DESKTOPSWITCH, EVENT_SYSTEM_DESKTOPSWITCH,
                 IntPtr.Zero, callback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNTHREAD);
-
         }
 
         public static void EventCallback(IntPtr hWinEventHook, uint eventType,
@@ -51,10 +45,6 @@ namespace HookerProcess
                 hookerDelegater.SetHook();
                 desktopSwitchCnt = 0;
             }
-            
-
-            
-
         }
     }
 }

@@ -9,8 +9,6 @@ namespace HookerProcess
 {
     class Hooker
     {
-
-
         public bool ctrlFlag;
         /*
         private struct KeyboardLowLevelHookStruct
@@ -54,11 +52,7 @@ namespace HookerProcess
             Keys.Home, Keys.End,
         });
         
-
         // When Want Only Filtering Shortcuts (ex. Alt+F4)
-
-
-
 
 
 
@@ -67,7 +61,6 @@ namespace HookerProcess
         // lParam -  get pointer value (ex. keyboard value)
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
-
 
         // const int WM_KEYDOWN = 0x100;
         const int WH_KEYBOARD_LL = 13;
@@ -88,19 +81,15 @@ namespace HookerProcess
         const int WM_RBUTTONDOWN = 0x0204;
         const int WM_RBUTTONUP = 0x0205;
 
-
         const int WM_MOUSEWHEEL = 0x020A;
         
 
 
-       
-        
         private static IntPtr keyboardHook = IntPtr.Zero;
         private static IntPtr mouseHook = IntPtr.Zero;
 
         private LowLevelKeyboardProc _keyboardProc = keyboardHookProc;
         private LowLevelMouseProc _mouseProc = mouseHookProc;
-
 
         // private LowLevelKeyboardProc _keyboardProc = keyboardHookProc;
         // private LowLevelMouseProc _mouseProc= mouseHookProc;
@@ -124,8 +113,6 @@ namespace HookerProcess
         [DllImport("kernel32.dll")]
         static extern IntPtr LoadLibrary(string lpFileName);
 
-       
-
         public static IntPtr mouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             switch ((int)wParam)
@@ -148,16 +135,12 @@ namespace HookerProcess
             return CallNextHookEx(mouseHook, nCode, (int)wParam, lParam);
         }
 
-
         public static IntPtr keyboardHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
                
             if( nCode >= 0)
             {
-                
-                
                 // KeyboardLowLevelHookStruct KeyInfo = (KeyboardLowLevelHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardLowLevelHookStruct));
-
 
                 /*
                 if (!PermittedKeys.Contains(KeyInfo.key))
@@ -165,22 +148,14 @@ namespace HookerProcess
                     return (IntPtr)1;
                     // When Keyboard pressed, dont send anything to OS
                 }
-                
                 */
-                
                 
                 return (IntPtr)1;
                 // When Keyboard pressed, dont send anything to OS
-                
-
             }
             
             return CallNextHookEx(keyboardHook, nCode, (int)wParam, lParam);
-            
-            
-           
         }
-
 
         /*
         public static IntPtr mouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
@@ -204,42 +179,27 @@ namespace HookerProcess
 
             return CallNextHookEx(mouseHook, nCode, (int)wParam, lParam);
         }
-
         */
 
         /*
         public static IntPtr keyboardHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
             {
-
-
                 // KeyboardLowLevelHookStruct KeyInfo = (KeyboardLowLevelHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardLowLevelHookStruct));
 
-
-                
                 if (!PermittedKeys.Contains(KeyInfo.key))
                 {
                     return (IntPtr)1;
                     // When Keyboard pressed, dont send anything to OS
                 }
                 
-                
-
-
                 return (IntPtr)1;
                 // When Keyboard pressed, dont send anything to OS
-
-
             }
 
             return CallNextHookEx(keyboardHook, nCode, (int)wParam, lParam);
-
-
-
         }
-
         */
 
         public void SetHook()
@@ -249,14 +209,9 @@ namespace HookerProcess
 
             Thread.Sleep(1000);
 
-            
             keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, _keyboardProc, hInstance, 0);
             mouseHook = SetWindowsHookEx(WH_MOUSE_LL, _mouseProc, hInstance, 0);
             
-
-            
-
-
             /*
             using (Process currentProcess = Process.GetCurrentProcess())
             using (ProcessModule currentModule = currentProcess.MainModule)
@@ -265,19 +220,13 @@ namespace HookerProcess
                 mouseHook = SetWindowsHookEx(WH_MOUSE_LL, _mouseProc, GetModuleHandle(currentModule.ModuleName),0);
             }
             */
-
-
         }
-
 
         public void UnHook()
         {
-            
-            
             UnhookWindowsHookEx(keyboardHook);
             UnhookWindowsHookEx(mouseHook);
 
-            
             //UnhookWindowsHookEx(keyboardHook);
             //UnhookWindowsHookEx(mouseHook);
         }

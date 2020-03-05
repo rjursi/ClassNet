@@ -35,19 +35,21 @@
             // 
             this.lbl_status.AutoSize = true;
             this.lbl_status.Font = new System.Drawing.Font("굴림", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lbl_status.Location = new System.Drawing.Point(12, 14);
+            this.lbl_status.Location = new System.Drawing.Point(12, 9);
             this.lbl_status.Name = "lbl_status";
-            this.lbl_status.Size = new System.Drawing.Size(273, 16);
+            this.lbl_status.Size = new System.Drawing.Size(344, 20);
             this.lbl_status.TabIndex = 0;
             this.lbl_status.Text = "키보드 마우스 제어가 동작 중입니다.";
             // 
             // form_keyMouseControlling
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(293, 39);
+            this.ClientSize = new System.Drawing.Size(367, 43);
             this.ControlBox = false;
             this.Controls.Add(this.lbl_status);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "form_keyMouseControlling";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "키보드 마우스 제어";

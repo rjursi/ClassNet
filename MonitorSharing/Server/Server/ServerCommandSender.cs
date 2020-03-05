@@ -1,8 +1,6 @@
-﻿
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
-
 
 namespace Server
 {
@@ -16,18 +14,14 @@ namespace Server
         byte[] bytes;
         byte[] returnedBytes;
         
-
         public void Send(string message)
         {
-           
             bytes = Encoding.UTF8.GetBytes(message);
             client.Send(bytes, bytes.Length, ip);
 
             returnedBytes = client.Receive(ref ip);
            
-
             returnedMsg = Encoding.Unicode.GetString(returnedBytes);
-            
         }
 
         public ServerCommandSender()
@@ -39,7 +33,6 @@ namespace Server
 
         ~ServerCommandSender()
         {
-
             string shutdownMsg;
             byte[] shutdownMsgBytes;
 
