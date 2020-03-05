@@ -39,7 +39,7 @@
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(1280, 720);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -60,7 +60,7 @@
             this.ClientSize = new System.Drawing.Size(1280, 720);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Client";
             this.Text = "Client";

@@ -107,6 +107,8 @@ namespace Client
                 Array.Clear(recvData, 0, recvData.Length);
                 Array.Clear(sendData_r, 0, sendData_r.Length);
                 Array.Clear(sendData_s, 0, sendData_s.Length);
+
+                Thread.Sleep(100);
             }
         }
 
@@ -134,7 +136,7 @@ namespace Client
             try
             {
                 socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 7979); // 192.168.31.218 // 192.168.31.200
+                IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9999); // 192.168.31.218 // 192.168.31.200
                 socketServer.Connect(serverEndPoint);
 
                 clientReceiveThread = new Thread(() => receiveThread());
@@ -149,4 +151,5 @@ namespace Client
             }
         }
     }
+
 }

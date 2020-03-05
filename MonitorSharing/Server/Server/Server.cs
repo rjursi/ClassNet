@@ -152,6 +152,7 @@ namespace Server
                         pre_ms.Close();
                     }
                 }
+                Thread.Sleep(100);
             }
         }
 
@@ -180,7 +181,7 @@ namespace Server
         {
             // 클라이언트 연결 대기
             socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverEndPoint = new IPEndPoint(IPAddress.Any, 7979);
+            serverEndPoint = new IPEndPoint(IPAddress.Any, 9999);
 
             socketListener.Bind(serverEndPoint);
             socketListener.Listen(10);
