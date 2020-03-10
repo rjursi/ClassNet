@@ -18,18 +18,24 @@ namespace Server
         Socket socketClient;
         IPEndPoint serverEndPoint;
         static bool serverShutdownFlag;
+        bool serverCtrlFlag;
 
         static ImageCodecInfo codec;
         static EncoderParameters param;
 
-        private ServerCommandSender commander;
+        private ServerProcMsgSender commander;
+
+
+        public Thread ctrlStartThread, ctrlStopThread;
 
         public Server()
         {
             InitializeComponent();
             serverShutdownFlag = false;
+            serverCtrlFlag = false;
 
-            commander = new ServerCommandSender();
+            commander = new ServerProcMsgSender();
+            commander.executeCommanderProcess();
         }
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
@@ -181,7 +187,7 @@ namespace Server
         {
             // 클라이언트 연결 대기
             socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverEndPoint = new IPEndPoint(IPAddress.Any, 9999);
+            serverEndPoint = new IPEndPoint(IPAddress.Any,9990);
 
             socketListener.Bind(serverEndPoint);
             socketListener.Listen(10);
@@ -189,9 +195,22 @@ namespace Server
             socketListener.BeginAccept(AcceptCallback, null);
         }
 
+        private void AllThreadKill()
+        {
+            if (ctrlStopThread != null && ctrlStopThread.IsAlive)
+                ctrlStopThread.Abort();
+            if (ctrlStartThread != null && ctrlStartThread.IsAlive)
+                ctrlStartThread.Abort();
+        }
+
         private void btnShutdown_Click(object sender, EventArgs e)
         {
             serverShutdownFlag = true;
+
+            AllThreadKill();
+
+            commander.serverShutdown();
+            
 
             if (socketListener != null) socketListener.Close();
 
@@ -200,21 +219,57 @@ namespace Server
 
         private void btnControl_Click(object sender, EventArgs e)
         {
-            switch (ServerCommandSender.returnedMsg)
+            switch (serverCtrlFlag)
             {
-                case "control stopped":
+                case false:
+                    {
+                        commander.ctrlStatus = true;
 
-                    commander.Send("control start");
-                    MessageBox.Show("키보드 마우스 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    btnControl.Text = "중지";
+                        if (this.ctrlStopThread != null)
+                        {
+                            if (this.ctrlStopThread.IsAlive)
+                            {
+                                
+                                this.ctrlStopThread.Join() ;
+                            }
+                        }
+
+                        commander.ctrlStatus = true;
+                        this.ctrlStartThread = new Thread(commander.ctrlStart);
+                        this.ctrlStartThread.Start();
+
+
+                        MessageBox.Show("키보드 마우스 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        btnControl.Text = "중지";
+                        this.serverCtrlFlag = true;
                     
-                    break;
+                        break;
+                    }
+                case true:
+                    {
 
-                case "controlling":
-                    commander.Send("control stop");
-                    MessageBox.Show("키보드 마우스 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    btnControl.Text = "제어";
-                    break;
+                        commander.ctrlStatus = false;
+                        if (this.ctrlStartThread != null)
+                        {
+                            if (this.ctrlStartThread.IsAlive)
+                            {
+                                
+                                this.ctrlStartThread.Join();
+                            }
+                        }
+                        
+                        this.ctrlStopThread = new Thread(commander.ctrlStop);
+                        this.ctrlStopThread.Start();
+                    
+
+
+                        MessageBox.Show("키보드 마우스 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        btnControl.Text = "제어";
+
+                        this.serverCtrlFlag = false;
+                    
+                        break;
+                    }
             }
         }
 

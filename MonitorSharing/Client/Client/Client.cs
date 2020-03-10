@@ -55,7 +55,7 @@ namespace Client
                     MessageBox.Show("서버 종료로 인해 클라이언트를 종료합니다.");
                     clientShutdown();
                 }
-                
+
                 try
                 {
                     socketServer.Receive(recvData);
@@ -82,6 +82,8 @@ namespace Client
                     }
                 }
                 catch (SocketException) { }
+                catch (ObjectDisposedException) { }
+               
 
                 try
                 {
@@ -121,9 +123,12 @@ namespace Client
         public void clientShutdown()
         {
             clientShutdownFlag = true;
-
+            
             socketServer.Close();
-            Dispose();
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new MethodInvoker(() => { Dispose(); }));
+            }
         }
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
@@ -136,7 +141,7 @@ namespace Client
             try
             {
                 socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9999); // 192.168.31.218 // 192.168.31.200
+                IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.114"), 9990); // 192.168.31.218 // 192.168.31.200
                 socketServer.Connect(serverEndPoint);
 
                 clientReceiveThread = new Thread(() => receiveThread());

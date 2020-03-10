@@ -11,13 +11,14 @@ namespace Client
 {
     class ClientListener
     {
-        const int PORT = 9990;
+        const int PORT = 9991;
 
         private UdpClient udp = null;
         private Process hookerProcess;
         private ProcessStartInfo hookerProcessStartInfo;
         //private form_keyMouseControlling ctrlForm;
         private AnonymousPipeServerStream pipeServer;
+        private bool ctrlStatus;
         
         public void Start()
         {
@@ -44,7 +45,7 @@ namespace Client
 
             while (true)
             {
-                Console.WriteLine("Waiting...");
+                //Console.WriteLine("Waiting...");
                 byte[] recvBuffer = udp.Receive(ref from);
 
                 try
@@ -53,50 +54,54 @@ namespace Client
                     {
                         string message = Encoding.UTF8.GetString(recvBuffer);
 
-                        byte[] returnMsgBytes;
-                        string returnMsg;
-
-                        if (message.Equals("control start"))
+                     
+                        if (message.Equals("ctrlstart"))
                         {
-                            hookerProcess = new Process();
-                            hookerProcess.StartInfo = hookerProcessStartInfo;
 
-                            pipeServer = new AnonymousPipeServerStream(PipeDirection.Out, HandleInheritability.Inheritable);
-                            
-                            hookerProcess.StartInfo.Arguments = pipeServer.GetClientHandleAsString();
-                            hookerProcess.Start();
+                            if (!ctrlStatus) // 만약 프로세스가 돌고있는 상태가 아닐 때에만 새로운 프로세스가 생성이 되도록 설정
 
-                            Console.WriteLine("Hooking Status : Hooking....");
-                            returnMsg = "controlling";
-                            returnMsgBytes = Encoding.Unicode.GetBytes(returnMsg);
 
-                            udp.Send(returnMsgBytes, returnMsgBytes.Length, from);
-                        }
-                        else if (message.Equals("control stop"))
-                        {
-                            pipeServer.DisposeLocalCopyOfClientHandle();
-
-                            try
                             {
-                                using (StreamWriter streamWriter = new StreamWriter(pipeServer))
+                                hookerProcess = new Process();
+                                hookerProcess.StartInfo = hookerProcessStartInfo;
+
+                                pipeServer = new AnonymousPipeServerStream(PipeDirection.Out, HandleInheritability.Inheritable);
+
+                                hookerProcess.StartInfo.Arguments = pipeServer.GetClientHandleAsString();
+                                hookerProcess.Start();
+
+                                this.ctrlStatus = true;
+                                // Console.WriteLine("Hooking Status : Hooking....");
+                                
+                            }
+                            
+                        }
+                        else if (message.Equals("ctrlstop"))
+                        {
+                            if (ctrlStatus) // 만약 프로세스가 돌고있는 상태에서만 아래 코드가 동작을 하도록 설정
+                            {
+                                pipeServer.DisposeLocalCopyOfClientHandle();
+
+                                try
                                 {
-                                    streamWriter.AutoFlush = true;
-                                    streamWriter.WriteLine("quit");
+                                    using (StreamWriter streamWriter = new StreamWriter(pipeServer))
+                                    {
+                                        streamWriter.AutoFlush = true;
+                                        streamWriter.WriteLine("quit");
+                                    }
+
+                                }
+                                catch (IOException e)
+                                {
+                                    MessageBox.Show(e.Message);
                                 }
 
-                            }catch(IOException e)
-                            {
-                                MessageBox.Show(e.Message);
+                                
+                                hookerProcess.WaitForExit();
+                                this.ctrlStatus = false;
+
+                                // Console.WriteLine("Hooking Status : No Hooking");
                             }
-
-                            //hookerProcess.Kill();
-                            hookerProcess.WaitForExit();
-                            
-                            Console.WriteLine("Hooking Status : No Hooking");
-                            returnMsg = "control stopped";
-                            returnMsgBytes = Encoding.Unicode.GetBytes(returnMsg);
-
-                            udp.Send(returnMsgBytes, returnMsgBytes.Length, from);
                         }
                         else if (message.Equals("server shutdown"))
                         {
@@ -132,7 +137,9 @@ namespace Client
 
         public ClientListener()
         {
-            //this.hooker = new Hooker();
+            this.ctrlStatus = false;
+
+
             this.hookerProcessStartInfo = new ProcessStartInfo();
             this.hookerProcessStartInfo.CreateNoWindow = false;
             this.hookerProcessStartInfo.UseShellExecute = false;

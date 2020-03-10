@@ -50,6 +50,9 @@
             this.Controls.Add(this.lbl_status);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(0, 85);
             this.Name = "form_keyMouseControlling";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "키보드 마우스 제어";
