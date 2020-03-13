@@ -12,6 +12,8 @@ namespace Client
 {
     public partial class Client : Form
     {
+        bool isConnected = true;
+
         Socket socketServer;
         Thread clientReceiveThread;
         bool clientShutdownFlag;
@@ -69,8 +71,8 @@ namespace Client
                     }
                     catch (SocketException)
                     {
-                        MessageBox.Show("서버 종료로 인해 클라이언트를 종료합니다.");
                         clientShutdown();
+                        MessageBox.Show("서버 종료로 인해 클라이언트를 종료합니다.");
                     }
 
                     socketServer.Receive(recvData);
@@ -84,7 +86,6 @@ namespace Client
                 catch (SocketException) { }
                 catch (ObjectDisposedException) { }
                
-
                 try
                 {
                     using (MemoryStream ms = new MemoryStream(recvData))
@@ -138,21 +139,35 @@ namespace Client
 
         private void Client_Load(object sender, EventArgs e)
         {
-            try
+            while(isConnected)
             {
-                socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("192.168.0.114"), 9990); // 192.168.31.218 // 192.168.31.200
-                socketServer.Connect(serverEndPoint);
+                try
+                {
+                    socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9999); // 192.168.31.218 // 192.168.31.200
+                    socketServer.Connect(serverEndPoint);
 
-                clientReceiveThread = new Thread(() => receiveThread());
-                clientReceiveThread.Start();
+                    isConnected = false;
 
-                clientControlThread = new Thread(() => runClientListenerThread());
-                clientControlThread.Start();
-            }
-            catch (SocketException)
-            {
-                MessageBox.Show("서버가 아직 동작중이지 않습니다.", "서버 확인", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    /*받은 이미지 풀스크린으로 띄우는 소스입니다. 수정 ㄴㄴ*/
+                    /*FormBorderStyle = FormBorderStyle.None;
+                    WindowState = FormWindowState.Maximized;
+                    TopMost = true;
+
+                    pictureBox1.Width = Screen.PrimaryScreen.Bounds.Width;
+                    pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;*/
+
+                    clientReceiveThread = new Thread(() => receiveThread());
+                    clientReceiveThread.Start();
+
+                    clientControlThread = new Thread(() => runClientListenerThread());
+                    clientControlThread.Start();
+                }
+                catch (SocketException)
+                {
+                    isConnected = true;
+                    //MessageBox.Show("서버가 아직 동작중이지 않습니다.", "서버 확인", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
         }
     }

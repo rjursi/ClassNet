@@ -47,16 +47,16 @@ namespace HookerProcess
             childProcessQuitThread = new Thread(childProcessQuit);
             childProcessQuitThread.Start(this.parentQuitMsg);
             
-            /*taskMgrController.KillTaskMgr();
+            taskMgrController.KillTaskMgr();
             hooker.SetHook();
-            ctrlAltDeleteScreenMgr.StartListeningForDesktopSwitch(hooker);*/
+            ctrlAltDeleteScreenMgr.StartListeningForDesktopSwitch(hooker);
             isHookerDoing = true;
         }
 
         private void form_keyMouseControlling_FormClosing(object sender, FormClosingEventArgs e)
         {
-            /*taskMgrController.EnableTaskMgr();
-            hooker.UnHook();*/
+            taskMgrController.EnableTaskMgr();
+            hooker.UnHook();
 
             isHookerDoing = false;
         }

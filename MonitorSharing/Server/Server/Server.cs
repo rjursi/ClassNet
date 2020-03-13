@@ -51,7 +51,7 @@ namespace Server
             // JPEG 압축 수준 설정
             codec = GetEncoder(ImageFormat.Jpeg);
             param = new EncoderParameters();
-            param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 20L);
+            param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
         }
 
         private ImageCodecInfo GetEncoder(ImageFormat format)
@@ -187,7 +187,7 @@ namespace Server
         {
             // 클라이언트 연결 대기
             socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverEndPoint = new IPEndPoint(IPAddress.Any,9990);
+            serverEndPoint = new IPEndPoint(IPAddress.Any, 9999);
 
             socketListener.Bind(serverEndPoint);
             socketListener.Listen(10);
