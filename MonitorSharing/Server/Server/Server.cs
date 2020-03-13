@@ -80,7 +80,7 @@ namespace Server
                 // 클라이언트의 연결 요청을 대기(다른 클라이언트가 또 연결할 수 있으므로)
                 socketListener.BeginAccept(AcceptCallback, null);
 
-                new Thread(() => clientThread(socketClient)).Start();
+                //new Thread(() => clientThread(socketClient)).Start();
                 // 이미지를 전달하는 스레드 생성
 
                 ThreadPool.QueueUserWorkItem(clientThread, socketClient);
@@ -113,7 +113,7 @@ namespace Server
 
                 if (compData.CompareTo("ready") == 0)
                 {
-                    Bitmap bmp = new Bitmap(1920, 1080);
+                    Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
                     Graphics g = Graphics.FromImage(bmp);
                     g.CopyFromScreen(0, 0, 0, 0, new Size(bmp.Width, bmp.Height));
 
@@ -166,8 +166,8 @@ namespace Server
                     }
                 }
                 //Thread.Sleep(100);
-                //Thread.Yield();
-                if (Thread.Yield()) Thread.Sleep(100);
+                Thread.Yield();
+                //if (Thread.Yield()) Thread.Sleep(100);
             }
         }
 
