@@ -52,6 +52,9 @@ namespace Server
             codec = GetEncoder(ImageFormat.Jpeg);
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
+
+            ThreadPool.SetMinThreads(40, 40);
+            ThreadPool.SetMaxThreads(60, 60);
         }
 
         private ImageCodecInfo GetEncoder(ImageFormat format)
@@ -80,14 +83,18 @@ namespace Server
                 new Thread(() => clientThread(socketClient)).Start();
                 // 이미지를 전달하는 스레드 생성
 
+                ThreadPool.QueueUserWorkItem(clientThread, socketClient);
+
                 threadMultiProcessing();
             }
         }
 
-        public static void clientThread(Socket socketClient)
+        public static void clientThread(Object ParamSocketClient)
         {
             Byte[] recvData = new Byte[5], preData, sendData;
             String compData = null;
+
+            Socket socketClient = (Socket)ParamSocketClient;
 
             while (!serverShutdownFlag)
             {
@@ -158,7 +165,9 @@ namespace Server
                         pre_ms.Close();
                     }
                 }
-                Thread.Sleep(100);
+                //Thread.Sleep(100);
+                //Thread.Yield();
+                if (Thread.Yield()) Thread.Sleep(100);
             }
         }
 
