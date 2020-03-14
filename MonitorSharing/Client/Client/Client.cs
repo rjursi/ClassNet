@@ -14,6 +14,12 @@ namespace Client
     {
         bool isConnected = true;
 
+        private const int MOSHPORT = 9990;
+        private const string SERVER_IP = "192.168.0.114"; 
+        // 서버 IP는 여기서 변수 하나로 공통으로 바꿔서 사용하세요.
+        // 포트 번호도 위 변수에서 공통으로 변경하면서 사용하세용
+
+
         Socket socketServer;
         Thread clientReceiveThread;
         bool clientShutdownFlag;
@@ -51,6 +57,10 @@ namespace Client
                 try
                 {
                     socketServer.Send(sendData_r);
+                }
+                catch (ObjectDisposedException)
+                {
+                    break;
                 }
                 catch (SocketException)
                 {
@@ -123,18 +133,31 @@ namespace Client
 
         public void clientShutdown()
         {
+
+
             clientShutdownFlag = true;
+            if (clientCommandListener.ctrlStatus)
+            {
+                clientCommandListener.QuitProcess();
+            }
+
             
             socketServer.Close();
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new MethodInvoker(() => { Dispose(); }));
-            }
+            
+
+
+
+
         }
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.Invoke(new clientShutdownDelegate(clientShutdown));
+            clientShutdown();
+            Dispose();
+            //this.Invoke(new clientShutdownDelegate(clientShutdown));
+
+
+
         }
 
         private void Client_Load(object sender, EventArgs e)
@@ -144,7 +167,7 @@ namespace Client
                 try
                 {
                     socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9999); // 192.168.31.218 // 192.168.31.200
+                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(SERVER_IP), MOSHPORT); // 192.168.31.218 // 192.168.31.200
                     socketServer.Connect(serverEndPoint);
 
                     isConnected = false;

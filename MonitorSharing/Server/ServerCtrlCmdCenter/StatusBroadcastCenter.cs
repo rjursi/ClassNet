@@ -15,7 +15,7 @@ namespace ServerCtrlCmdCenter
     {
         
 
-        private const int CMDSERVICE_PORT = 9991;
+        private const int MOSH_CMDSERVICE_PORT = 9991;
 
         
         UdpClient client;
@@ -35,13 +35,18 @@ namespace ServerCtrlCmdCenter
 
         }
 
+      
+     
+
+
         public StatusBroadcastCenter(string[] parentCtrlMsg)
         {
 
             this.parentCtrlMsg = parentCtrlMsg;
 
+            
             this.client = new UdpClient();
-            this.ip = new IPEndPoint(IPAddress.Parse("255.255.255.255"), CMDSERVICE_PORT);
+            this.ip = new IPEndPoint(IPAddress.Parse("255.255.255.255"), MOSH_CMDSERVICE_PORT);
             client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
            
@@ -74,8 +79,6 @@ namespace ServerCtrlCmdCenter
 
             string[] ctrlMsg = (string[])parentCtrlMsg;
 
-
-
             if (ctrlMsg.Length > 0)
             {
                 using (PipeStream pipeClient = new AnonymousPipeClientStream(PipeDirection.In, ctrlMsg[0]))
@@ -94,9 +97,6 @@ namespace ServerCtrlCmdCenter
                             }
 
                             Send(msg);
-
-                            Thread.Sleep(1000);
-                            // 3초 간격으로 클라이언트에게 서버가 제어중인지 상태를 보냄
                         }
 
                         childProcessShutdown();
