@@ -216,14 +216,14 @@ namespace Server
         {
             if (ctrlStopThread != null && ctrlStopThread.IsAlive)
             {
-                ctrlStopThread.Interrupt();
+               
                 ctrlStopThread.Abort();
             }
                 
                 
             if (ctrlStartThread != null && ctrlStartThread.IsAlive)
             {
-                ctrlStartThread.Interrupt();
+                
                 ctrlStartThread.Abort();
             }
                 

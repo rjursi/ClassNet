@@ -16,7 +16,7 @@ namespace Client
         bool isConnected = true;
 
         private const int MOSHPORT = 9990;
-        private const string SERVER_IP = "192.168.219.137"; 
+        private const string SERVER_IP = "192.168.0.114"; 
         // 서버 IP는 여기서 변수 하나로 공통으로 바꿔서 사용하세요.
         // 포트 번호도 위 변수에서 공통으로 변경하면서 사용하세용
 
@@ -85,8 +85,8 @@ namespace Client
                     }
                     catch (SocketException)
                     {
-                        clientShutdown();
-                        
+                        this.Invoke(new clientShutdownDelegate(clientShutdown));
+
                         MessageBox.Show("서버 종료로 인해 클라이언트를 종료합니다.");
                         break;
                     }
@@ -96,7 +96,7 @@ namespace Client
                     if (Encoding.UTF8.GetString(recvData).Equals("server finished"))
                     {
 
-                        clientShutdown();
+                        this.Invoke(new clientShutdownDelegate(clientShutdown));
                         break;
                     }
                 }
@@ -155,6 +155,11 @@ namespace Client
   
             
             socketServer.Close();
+            clientCommandListener.CloseControlUdpSocket();
+
+            this.Invoke(new MethodInvoker(() => { Dispose(); }));
+
+
 
         }
 
@@ -162,17 +167,8 @@ namespace Client
         {
 
 
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new MethodInvoker(Dispose));
-            }
-            else
-            {
-                Dispose();
-            }
-            
+            this.Invoke(new clientShutdownDelegate(clientShutdown));
 
-            //this.Invoke(new clientShutdownDelegate(clientShutdown));
 
 
         }

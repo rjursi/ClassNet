@@ -39,7 +39,10 @@ namespace Client
             this.clientShutdownFlag = clientShutdownFlag;
         }
 
-
+        public void CloseControlUdpSocket()
+        {
+            this.udp.Close();
+        }
 
         private void Receive()
         {
@@ -58,11 +61,12 @@ namespace Client
             while (!clientShutdownFlag)
             {
                 //Console.WriteLine("Waiting...");
-                byte[] recvBuffer = udp.Receive(ref from);
-                
-
                 try
                 {
+
+
+                    byte[] recvBuffer = udp.Receive(ref from);
+                
                     if (udp != null)
                     {
                         string message = Encoding.UTF8.GetString(recvBuffer);
@@ -114,16 +118,19 @@ namespace Client
                         }
                     }
                 }
+                /*
                 catch (SocketException se)
                 {
                     MessageBox.Show(string.Format("SocketException : {0}", se.Message));
-                }
-                
+                }*/
+
+                catch (SocketException) { }
+
                 catch (Exception e)
                 {
                     MessageBox.Show(string.Format("Exception : {0}", e.Message));
                 }
-               
+                
                 
         }
     }
