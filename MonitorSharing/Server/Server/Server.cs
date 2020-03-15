@@ -215,9 +215,19 @@ namespace Server
         private void AllThreadKill()
         {
             if (ctrlStopThread != null && ctrlStopThread.IsAlive)
+            {
+                ctrlStopThread.Interrupt();
                 ctrlStopThread.Abort();
+            }
+                
+                
             if (ctrlStartThread != null && ctrlStartThread.IsAlive)
+            {
+                ctrlStartThread.Interrupt();
                 ctrlStartThread.Abort();
+            }
+                
+                
         }
 
         private void btnShutdown_Click(object sender, EventArgs e)

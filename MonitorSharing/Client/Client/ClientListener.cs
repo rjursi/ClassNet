@@ -20,15 +20,26 @@ namespace Client
         private AnonymousPipeServerStream pipeServer;
         public bool ctrlStatus;
         private StreamWriter streamWriter;
-        
+        private bool clientShutdownFlag;
+
+
         public void Start()
         {
+
             if(udp != null)
             {
                 throw new Exception("Already started, stop first plz...");
             }
             Receive();
         }
+
+
+        public void setClientShutdownFlagToCtrlPart(bool clientShutdownFlag)
+        {
+            this.clientShutdownFlag = clientShutdownFlag;
+        }
+
+
 
         private void Receive()
         {
@@ -44,12 +55,11 @@ namespace Client
 
             var from = new IPEndPoint(0, 0);
 
-            while (true)
+            while (!clientShutdownFlag)
             {
                 //Console.WriteLine("Waiting...");
                 byte[] recvBuffer = udp.Receive(ref from);
                 
-
 
                 try
                 {
@@ -97,8 +107,8 @@ namespace Client
                         {
                             if (ctrlStatus) { QuitProcess(); }
 
-                            
 
+                            setClientShutdownFlagToCtrlPart(true);
                             this.Stop();
                             break;
                         }
@@ -108,15 +118,15 @@ namespace Client
                 {
                     MessageBox.Show(string.Format("SocketException : {0}", se.Message));
                 }
-                /*
+                
                 catch (Exception e)
                 {
                     MessageBox.Show(string.Format("Exception : {0}", e.Message));
                 }
-                */
+               
                 
-            }
         }
+    }
         
 
         public void QuitProcess()
