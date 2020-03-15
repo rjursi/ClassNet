@@ -41,7 +41,11 @@ namespace Client
 
         public void CloseControlUdpSocket()
         {
-            this.udp.Close();
+            if(udp != null)
+            {
+                this.udp.Close();
+            }
+            
         }
 
         private void Receive()
