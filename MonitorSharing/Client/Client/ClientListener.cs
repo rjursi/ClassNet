@@ -11,17 +11,21 @@ namespace Client
 {
     class ClientListener
     {
-        const int PORT = 9991;
+        const int MOSH_CMDSERVICE_PORT = 9991;
 
         private UdpClient udp = null;
         private Process hookerProcess;
         private ProcessStartInfo hookerProcessStartInfo;
         //private form_keyMouseControlling ctrlForm;
         private AnonymousPipeServerStream pipeServer;
-        private bool ctrlStatus;
-        
+        public bool ctrlStatus;
+        private StreamWriter streamWriter;
+        private bool clientShutdownFlag;
+
+
         public void Start()
         {
+
             if(udp != null)
             {
                 throw new Exception("Already started, stop first plz...");
@@ -29,11 +33,26 @@ namespace Client
             Receive();
         }
 
+
+        public void setClientShutdownFlagToCtrlPart(bool clientShutdownFlag)
+        {
+            this.clientShutdownFlag = clientShutdownFlag;
+        }
+
+        public void CloseControlUdpSocket()
+        {
+            if(udp != null)
+            {
+                this.udp.Close();
+            }
+            
+        }
+
         private void Receive()
         {
             udp = new UdpClient();
 
-            IPEndPoint localEp = new IPEndPoint(IPAddress.Any, PORT);
+            IPEndPoint localEp = new IPEndPoint(IPAddress.Any, MOSH_CMDSERVICE_PORT);
 
             udp.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             udp.ExclusiveAddressUse = false;
@@ -43,18 +62,20 @@ namespace Client
 
             var from = new IPEndPoint(0, 0);
 
-            while (true)
+            while (!clientShutdownFlag)
             {
                 //Console.WriteLine("Waiting...");
-                byte[] recvBuffer = udp.Receive(ref from);
-
                 try
                 {
+
+
+                    byte[] recvBuffer = udp.Receive(ref from);
+                
                     if (udp != null)
                     {
                         string message = Encoding.UTF8.GetString(recvBuffer);
+                        
 
-                     
                         if (message.Equals("ctrlstart"))
                         {
 
@@ -62,11 +83,11 @@ namespace Client
 
 
                             {
-                                hookerProcess = new Process();
-                                hookerProcess.StartInfo = hookerProcessStartInfo;
 
                                 pipeServer = new AnonymousPipeServerStream(PipeDirection.Out, HandleInheritability.Inheritable);
 
+                                hookerProcess = new Process();
+                                hookerProcess.StartInfo = hookerProcessStartInfo;
                                 hookerProcess.StartInfo.Arguments = pipeServer.GetClientHandleAsString();
                                 hookerProcess.Start();
 
@@ -82,48 +103,59 @@ namespace Client
                             {
                                 pipeServer.DisposeLocalCopyOfClientHandle();
 
-                                try
-                                {
-                                    using (StreamWriter streamWriter = new StreamWriter(pipeServer))
-                                    {
-                                        streamWriter.AutoFlush = true;
-                                        streamWriter.WriteLine("quit");
-                                    }
 
-                                }
-                                catch (IOException e)
-                                {
-                                    MessageBox.Show(e.Message);
-                                }
-
+                                QuitProcess();
                                 
-                                hookerProcess.WaitForExit();
                                 this.ctrlStatus = false;
 
-                                // Console.WriteLine("Hooking Status : No Hooking");
+                               
                             }
                         }
                         else if (message.Equals("server shutdown"))
                         {
+                            if (ctrlStatus) { QuitProcess(); }
+
+
+                            setClientShutdownFlagToCtrlPart(true);
                             this.Stop();
                             break;
                         }
                     }
                 }
+                /*
                 catch (SocketException se)
                 {
                     MessageBox.Show(string.Format("SocketException : {0}", se.Message));
-                }
+                }*/
+
+                catch (SocketException) { }
+
                 catch (Exception e)
                 {
                     MessageBox.Show(string.Format("Exception : {0}", e.Message));
                 }
-
-            }
+                
+                
         }
+    }
+        
+
+        public void QuitProcess()
+        {
+
+            streamWriter = new StreamWriter(pipeServer);
+            streamWriter.AutoFlush = true;
+            streamWriter.WriteLine("quit");
+            
+
+            hookerProcess.WaitForExit(); // here
+        }
+
 
         public void Stop()
         {
+
+           
             try
             {
                 if(udp != null)
@@ -144,6 +176,12 @@ namespace Client
             this.hookerProcessStartInfo.CreateNoWindow = false;
             this.hookerProcessStartInfo.UseShellExecute = false;
             this.hookerProcessStartInfo.FileName = "HookerProcess.exe";
+
+
+            
+            
+
+
         }
     }
 }

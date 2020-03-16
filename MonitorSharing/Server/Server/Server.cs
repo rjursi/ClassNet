@@ -14,6 +14,9 @@ namespace Server
 {
     public partial class Server : Form
     {
+
+        private const int MOSHPORT = 9990;
+        
         Socket socketListener;
         Socket socketClient;
         IPEndPoint serverEndPoint;
@@ -24,7 +27,6 @@ namespace Server
         static EncoderParameters param;
 
         private ServerProcMsgSender commander;
-
 
         public Thread ctrlStartThread, ctrlStopThread;
 
@@ -41,6 +43,10 @@ namespace Server
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
             serverShutdownFlag = true;
+            AllThreadKill();
+            commander.serverShutdown();
+
+
             if (socketListener != null)
                 socketListener.Close();
             Dispose();
@@ -53,8 +59,10 @@ namespace Server
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
+            
             ThreadPool.SetMinThreads(40, 40);
             ThreadPool.SetMaxThreads(60, 60);
+            
         }
 
         private ImageCodecInfo GetEncoder(ImageFormat format)
@@ -196,7 +204,7 @@ namespace Server
         {
             // 클라이언트 연결 대기
             socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverEndPoint = new IPEndPoint(IPAddress.Any, 9999);
+            serverEndPoint = new IPEndPoint(IPAddress.Any, MOSHPORT);
 
             socketListener.Bind(serverEndPoint);
             socketListener.Listen(10);
@@ -207,9 +215,19 @@ namespace Server
         private void AllThreadKill()
         {
             if (ctrlStopThread != null && ctrlStopThread.IsAlive)
+            {
+               
                 ctrlStopThread.Abort();
+            }
+                
+                
             if (ctrlStartThread != null && ctrlStartThread.IsAlive)
+            {
+                
                 ctrlStartThread.Abort();
+            }
+                
+                
         }
 
         private void btnShutdown_Click(object sender, EventArgs e)
@@ -233,17 +251,18 @@ namespace Server
                 case false:
                     {
                         commander.ctrlStatus = true;
+                        
 
                         if (this.ctrlStopThread != null)
                         {
                             if (this.ctrlStopThread.IsAlive)
                             {
-                                
-                                this.ctrlStopThread.Join() ;
+
+                                this.ctrlStopThread.Join();
                             }
                         }
-
-                        commander.ctrlStatus = true;
+                        
+                        
                         this.ctrlStartThread = new Thread(commander.ctrlStart);
                         this.ctrlStartThread.Start();
 

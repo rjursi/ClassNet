@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace Client
 {
@@ -14,9 +15,15 @@ namespace Client
     {
         bool isConnected = true;
 
+        private const int MOSHPORT = 9990;
+        private const string SERVER_IP = "127.0.0.1"; 
+        // 서버 IP는 여기서 변수 하나로 공통으로 바꿔서 사용하세요.
+        // 포트 번호도 위 변수에서 공통으로 변경하면서 사용하세용
+
+
         Socket socketServer;
         Thread clientReceiveThread;
-        bool clientShutdownFlag;
+        public bool clientShutdownFlag;
         ClientListener clientCommandListener;
         Thread clientControlThread;
 
@@ -52,10 +59,17 @@ namespace Client
                 {
                     socketServer.Send(sendData_r);
                 }
+                catch (ObjectDisposedException)
+                {
+                    break;
+                }
                 catch (SocketException)
                 {
-                    MessageBox.Show("서버 종료로 인해 클라이언트를 종료합니다.");
                     clientShutdown();
+
+                    MessageBox.Show("서버 종료로 인해 클라이언트를 종료합니다.");
+                   
+                    break;
                 }
 
                 try
@@ -71,14 +85,17 @@ namespace Client
                     }
                     catch (SocketException)
                     {
-                        clientShutdown();
+                        this.Invoke(new clientShutdownDelegate(clientShutdown));
+
                         MessageBox.Show("서버 종료로 인해 클라이언트를 종료합니다.");
+                        break;
                     }
 
                     socketServer.Receive(recvData);
 
                     if (Encoding.UTF8.GetString(recvData).Equals("server finished"))
                     {
+
                         this.Invoke(new clientShutdownDelegate(clientShutdown));
                         break;
                     }
@@ -111,8 +128,11 @@ namespace Client
                 Array.Clear(sendData_r, 0, sendData_r.Length);
                 Array.Clear(sendData_s, 0, sendData_s.Length);
 
+
                 Thread.Sleep(100);
             }
+
+
         }
 
         public void outputDelegate(int imgSize, Image img)
@@ -123,18 +143,34 @@ namespace Client
 
         public void clientShutdown()
         {
+
+
             clientShutdownFlag = true;
+            clientCommandListener.setClientShutdownFlagToCtrlPart(clientShutdownFlag);
+
+            if (clientCommandListener.ctrlStatus)
+            {
+                clientCommandListener.QuitProcess();
+            }
+  
             
             socketServer.Close();
-            if (this.InvokeRequired)
-            {
-                this.Invoke(new MethodInvoker(() => { Dispose(); }));
-            }
+            clientCommandListener.CloseControlUdpSocket();
+
+            this.Invoke(new MethodInvoker(() => { Dispose(); }));
+
+
+
         }
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
+
+
             this.Invoke(new clientShutdownDelegate(clientShutdown));
+
+
+
         }
 
         private void Client_Load(object sender, EventArgs e)
@@ -144,7 +180,7 @@ namespace Client
                 try
                 {
                     socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9999); // 192.168.31.218 // 192.168.31.200
+                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(SERVER_IP), MOSHPORT); // 192.168.31.218 // 192.168.31.200
                     socketServer.Connect(serverEndPoint);
 
                     isConnected = false;
@@ -158,16 +194,24 @@ namespace Client
                     pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
                     clientReceiveThread = new Thread(() => receiveThread());
+                    clientReceiveThread.Name = "ClientReceiveThread";
                     clientReceiveThread.Start();
 
                     clientControlThread = new Thread(() => runClientListenerThread());
+                    clientControlThread.Name = "ClientControlThread";
                     clientControlThread.Start();
+
+
+                    
                 }
                 catch (SocketException)
                 {
-                    isConnected = true;
+                    isConnected = true; // 해당 bool 변수로 인해서 다시한번 위 반복문이 실행
+
+                    
                     //MessageBox.Show("서버가 아직 동작중이지 않습니다.", "서버 확인", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+                
             }
         }
     }
