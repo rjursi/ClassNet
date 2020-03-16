@@ -36,14 +36,15 @@ namespace Client
             clientShutdownFlag = false;
 
             clientCommandListener = new ClientListener();
+            ThreadPool.SetMaxThreads(3, 3);
         }
 
-        private void runClientListenerThread()
+        private void runClientListenerThread(Object ob)
         {
             clientCommandListener.Start();
         }
 
-        public void receiveThread()
+        public void receiveThread(Object ob)
         {
             Byte[] sendData_r, sendData_s;
 
@@ -129,7 +130,8 @@ namespace Client
                 Array.Clear(sendData_s, 0, sendData_s.Length);
 
 
-                Thread.Sleep(100);
+                //Thread.Sleep(100);
+                Thread.Yield();
             }
 
 
@@ -193,26 +195,22 @@ namespace Client
                     pictureBox1.Width = Screen.PrimaryScreen.Bounds.Width;
                     pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
-                    clientReceiveThread = new Thread(() => receiveThread());
-                    clientReceiveThread.Name = "ClientReceiveThread";
-                    clientReceiveThread.Start();
+                    //clientReceiveThread = new Thread(() => receiveThread());
+                    //clientReceiveThread.Name = "ClientReceiveThread";
+                    //clientReceiveThread.Start();
 
-                    clientControlThread = new Thread(() => runClientListenerThread());
-                    clientControlThread.Name = "ClientControlThread";
-                    clientControlThread.Start();
-
-
-                    
+                    //clientControlThread = new Thread(() => runClientListenerThread());
+                    //clientControlThread.Name = "ClientControlThread";
+                    //clientControlThread.Start();
                 }
                 catch (SocketException)
                 {
                     isConnected = true; // 해당 bool 변수로 인해서 다시한번 위 반복문이 실행
-
-                    
                     //MessageBox.Show("서버가 아직 동작중이지 않습니다.", "서버 확인", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-                
             }
+            ThreadPool.QueueUserWorkItem(receiveThread);
+            ThreadPool.QueueUserWorkItem(runClientListenerThread);
         }
     }
 
