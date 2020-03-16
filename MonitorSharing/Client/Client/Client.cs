@@ -16,7 +16,7 @@ namespace Client
         bool isConnected = true;
 
         private const int MOSHPORT = 9990;
-        private const string SERVER_IP = "192.168.0.114"; 
+        private const string SERVER_IP = "127.0.0.1"; 
         // 서버 IP는 여기서 변수 하나로 공통으로 바꿔서 사용하세요.
         // 포트 번호도 위 변수에서 공통으로 변경하면서 사용하세용
 
