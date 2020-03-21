@@ -177,6 +177,9 @@ namespace Client
 
         private void Client_Load(object sender, EventArgs e)
         {
+            // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
+            this.ShowInTaskbar = false;
+
             while(isConnected)
             {
                 try
