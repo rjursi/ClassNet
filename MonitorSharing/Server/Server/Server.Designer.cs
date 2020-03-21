@@ -28,39 +28,38 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnStart = new System.Windows.Forms.Button();
+            this.btnShutdown = new System.Windows.Forms.Button();
             this.btnControl = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // button1
+            // btnStart
             // 
-            this.button1.Location = new System.Drawing.Point(11, 12);
-            this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(138, 35);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "시작";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnStart_Click);
+            this.btnStart.Location = new System.Drawing.Point(10, 10);
+            this.btnStart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(121, 28);
+            this.btnStart.TabIndex = 0;
+            this.btnStart.Text = "시작";
+            this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
-            // button2
+            // btnShutdown
             // 
-            this.button2.Location = new System.Drawing.Point(11, 56);
-            this.button2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(138, 35);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "종료";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.btnShutdown_Click);
+            this.btnShutdown.Location = new System.Drawing.Point(10, 45);
+            this.btnShutdown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnShutdown.Name = "btnShutdown";
+            this.btnShutdown.Size = new System.Drawing.Size(121, 28);
+            this.btnShutdown.TabIndex = 1;
+            this.btnShutdown.Text = "종료";
+            this.btnShutdown.UseVisualStyleBackColor = true;
+            this.btnShutdown.Click += new System.EventHandler(this.btnShutdown_Click);
             // 
             // btnControl
             // 
-            this.btnControl.Location = new System.Drawing.Point(155, 12);
-            this.btnControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnControl.Location = new System.Drawing.Point(136, 10);
             this.btnControl.Name = "btnControl";
-            this.btnControl.Size = new System.Drawing.Size(89, 79);
+            this.btnControl.Size = new System.Drawing.Size(78, 63);
             this.btnControl.TabIndex = 2;
             this.btnControl.Text = "제어";
             this.btnControl.UseVisualStyleBackColor = true;
@@ -68,12 +67,12 @@
             // 
             // Server
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(256, 106);
+            this.ClientSize = new System.Drawing.Size(224, 85);
             this.Controls.Add(this.btnControl);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnShutdown);
+            this.Controls.Add(this.btnStart);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Server";
@@ -86,8 +85,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.Button btnShutdown;
         private System.Windows.Forms.Button btnControl;
     }
 }

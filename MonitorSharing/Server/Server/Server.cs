@@ -54,6 +54,10 @@ namespace Server
 
         private void Server_Load(object sender, EventArgs e)
         {
+            
+
+
+
             // JPEG 압축 수준 설정
             codec = GetEncoder(ImageFormat.Jpeg);
             param = new EncoderParameters();
@@ -202,6 +206,9 @@ namespace Server
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            // 초기 서버 한번 켜진 이후 다시 한번 켜지지 않도록 수정
+            btnStart.Enabled = false;
+
             // 클라이언트 연결 대기
             socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             serverEndPoint = new IPEndPoint(IPAddress.Any, MOSHPORT);
