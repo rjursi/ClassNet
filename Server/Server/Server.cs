@@ -170,7 +170,7 @@ namespace Server
         private void btnStart_Click(object sender, EventArgs e)
         {
             notifyIcon.ContextMenu.MenuItems[0].Checked = true;
-
+            notifyIcon.ContextMenu.MenuItems[0].Enabled = false;
             // 초기 서버 한번 켜진 이후 다시 한번 켜지지 않도록 수정
             btnStart.Enabled = false;
 
@@ -209,6 +209,7 @@ namespace Server
             Dispose();
         }
 
+     
         private void btnControl_Click(object sender, EventArgs e)
         {
             switch (serverCtrlFlag)
