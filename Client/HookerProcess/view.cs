@@ -39,13 +39,8 @@ namespace HookerProcess
 
             int y = Screen.PrimaryScreen.Bounds.Height - (this.Size.Height  + 20);
 
-
-
             this.Location = new Point(x, y);
 
-
-
-      
             childProcessQuitThread = new Thread(childProcessQuit);
             childProcessQuitThread.Start(this.parentQuitMsg);
             /*

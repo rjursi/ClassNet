@@ -7,7 +7,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
-using System.Diagnostics;
+
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
+using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Client
 {
@@ -20,7 +25,8 @@ namespace Client
         private const string SERVER_IP = "127.0.0.1"; 
 
         Socket socketServer;
-        ClientListener clientCommandListener;
+        SignalObj standardSignalObj;
+        CmdProcssController cmdProcessController;
 
         delegate void ThreadDelegate(int imgSize, Byte[] recvData);
         delegate void clientShutdownDelegate();
@@ -30,9 +36,28 @@ namespace Client
             InitializeComponent();
             clientShutdownFlag = false;
 
-            clientCommandListener = new ClientListener();
+            cmdProcessController = new CmdProcssController();
             ThreadPool.SetMaxThreads(3, 3);
         }
+
+       
+
+
+        public SignalObj ByteToObject(byte[] buffer)
+        {
+            JObject jObj;
+            string jsonData;
+            SignalObj sObj;
+
+            jsonData = Encoding.UTF8.GetString(buffer);
+            jObj =  JsonConvert.DeserializeObject(jsonData) as JObject;
+
+            sObj = jObj.ToObject<SignalObj>();
+
+            return sObj;
+        }
+
+
 
         private void Client_Load(object sender, EventArgs e)
         {
@@ -55,6 +80,8 @@ namespace Client
                     pictureBox1.Width = Screen.PrimaryScreen.Bounds.Width;
                     pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
+
+
                     isConnected = false;
                 }
                 catch (SocketException)
@@ -63,7 +90,7 @@ namespace Client
                 }
             }
             ThreadPool.QueueUserWorkItem(receiveThread);
-            ThreadPool.QueueUserWorkItem(runClientListenerThread);
+            
         }
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
@@ -71,14 +98,15 @@ namespace Client
             this.Invoke(new clientShutdownDelegate(clientShutdown));
         }
 
-        private void runClientListenerThread(Object ob)
-        {
-            clientCommandListener.Start();
-        }
-
+       
         public void receiveThread(Object ob)
         {
-            Byte[] sendData, recvData = new Byte[4];
+            Byte[] sendData;
+            Byte[] recvData;
+            Byte[] lenData = new Byte[4];
+            Byte[] imgData = new Byte[4];
+
+
             int imgSize = 0;
 
             while (!clientShutdownFlag)
@@ -101,31 +129,42 @@ namespace Client
 
                 try
                 {
+
+                    // 서버측에서 전송한 객체를 byte 로 받고 객체로 변환
+                    
+                    socketServer.Receive(lenData);
+
+                    recvData = new Byte[BitConverter.ToInt32(lenData, 0)];
+                    
                     socketServer.Receive(recvData);
-                    imgSize = BitConverter.ToInt32(recvData, 0);
-                    Array.Resize<Byte>(ref recvData, imgSize);
+                    standardSignalObj = ByteToObject(recvData);
 
-                    try
+                  
+                    // 서버가 현재 방송중인 상태이면
+                    if (standardSignalObj.IsServerBroadcasting)
                     {
-                        socketServer.Send(sendData);
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        break;
-                    }
-                    catch (SocketException)
-                    {
-                        clientShutdown();
-                        break;
-                    }
-                    socketServer.Receive(recvData);
+                        // 이미지를 받아서 여기서 버퍼를 설정하는 부분
+                        imgData = standardSignalObj.ImgData;
 
-                    this.Invoke(new ThreadDelegate(outputDelegate), imgSize, recvData);
+                        //imgSize = BitConverter.ToInt32(imgData, 0);
 
-                    Array.Clear(recvData, 0, recvData.Length);
-                    Array.Clear(sendData, 0, sendData.Length);
 
-                    imgSize = 0;
+                        imgSize = imgData.Length;
+                        Array.Resize<Byte>(ref imgData, imgSize);
+
+                        this.Invoke(new ThreadDelegate(outputDelegate), imgSize, imgData);
+
+                        Array.Clear(recvData, 0, recvData.Length);
+                        Array.Clear(sendData, 0, sendData.Length);
+                        Array.Clear(imgData, 0, imgData.Length);
+                        imgSize = 0;
+                    }
+
+                    // 서버가 제어 신호가 걸린 상태이면
+                    
+                     cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
+                    
+                        
                 }
                 catch (SocketException) { }
                 catch (ObjectDisposedException) { }
@@ -164,16 +203,14 @@ namespace Client
 
         public void clientShutdown()
         {
-            clientShutdownFlag = true;
-            clientCommandListener.setClientShutdownFlagToCtrlPart(clientShutdownFlag);
 
-            if (clientCommandListener.ctrlStatus)
+            if (cmdProcessController.NowCtrlStatus)
             {
-                clientCommandListener.QuitProcess();
+                cmdProcessController.QuitProcess();
             }
-
+           
             socketServer.Close();
-            clientCommandListener.CloseControlUdpSocket();
+            
 
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
         }

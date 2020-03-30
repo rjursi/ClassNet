@@ -9,6 +9,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Diagnostics;
+using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
 
 namespace Server
 {
@@ -20,24 +22,30 @@ namespace Server
         Socket socketClient;
         IPEndPoint serverEndPoint;
 
-        static bool serverShutdownFlag;
-        bool serverCtrlFlag;
-
+        static SignalObj standardSignalObj; // 서버 표준 신호 객체
+      
         static ImageCodecInfo codec;
         static EncoderParameters param;
-
-        private ServerProcMsgSender commander;
-
-        public Thread ctrlStartThread, ctrlStopThread;
 
         public Server()
         {
             InitializeComponent();
-            serverShutdownFlag = false;
-            serverCtrlFlag = false;
 
-            commander = new ServerProcMsgSender();
-            commander.executeCommanderProcess();
+            standardSignalObj = new SignalObj();
+            
+            
+        }
+        
+        private void BroadcastOn()
+        {
+            // 클라이언트 연결 대기
+            socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            serverEndPoint = new IPEndPoint(IPAddress.Any, MOSHPORT);
+
+            socketListener.Bind(serverEndPoint);
+            socketListener.Listen(50);
+
+            socketListener.BeginAccept(AcceptCallback, null);
         }
 
         private void Server_Load(object sender, EventArgs e)
@@ -57,17 +65,18 @@ namespace Server
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
+            // 서버 데이터 전송 스레드 바로 켜지자마자 가동
+
+            BroadcastOn();
+
             ThreadPool.SetMinThreads(40, 40);
             ThreadPool.SetMaxThreads(50, 50);
         }
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
-            serverShutdownFlag = true;
-            AllThreadKill();
-            commander.serverShutdown();
-
-
+            standardSignalObj.IsServerShutdown = true;
+            
             if(socketListener != null) socketListener.Close();
             Dispose();
         }
@@ -88,48 +97,94 @@ namespace Server
         void AcceptCallback(IAsyncResult ar)
         {
             // 클라이언트의 연결 요청을 수락
-            if (!serverShutdownFlag)
+            if (!standardSignalObj.IsServerShutdown)
             {
                 socketClient = socketListener.EndAccept(ar);
                 // 클라이언트의 연결 요청을 대기(다른 클라이언트가 또 연결할 수 있으므로)
                 socketListener.BeginAccept(AcceptCallback, null);
 
                 ThreadPool.QueueUserWorkItem(clientThread, socketClient);
-
-                multiProcessing();
             }
         }
 
         public static void clientThread(Object ParamSocketClient)
         {
             Byte[] recvData = new Byte[4];
+            Byte[] imgData;
             Byte[] sendData;
+            Byte[] sendDataLenInfo = new byte[4];
+            
 
             Socket socketClient = (Socket)ParamSocketClient;
 
-            while (!serverShutdownFlag)
+            while (!standardSignalObj.IsServerShutdown)
+                // 서버가 꺼지지 않은 상태라면
             {
+                // 클라이언트로부터 next라는 메시지가 들어오면
                 if (socketClient.Receive(recvData) > 0)
                 {
-                    sendData = imgCreate();
-                    socketClient.Send(BitConverter.GetBytes(sendData.Length));
-
-                    try
+                    // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
+                    if (standardSignalObj.IsServerBroadcasting)
                     {
-                        if (socketClient.Receive(recvData) > 0) socketClient.Send(sendData);
-                    }
-                    catch (SocketException)
-                    {
-                        break;
-                    }
+                        imgData = imgCreate();
+                        standardSignalObj.ImgData = imgData;
 
-                    Array.Clear(sendData, 0, sendData.Length);
-                    Array.Clear(recvData, 0, recvData.Length);
+                        sendData = SignalObjToByte(standardSignalObj);
+                        sendDataLenInfo = BitConverter.GetBytes(sendData.Length);
+
+                        socketClient.Send(sendDataLenInfo);
+                        
+                        socketClient.Send(sendData);
+                        
+                     
+                        Array.Clear(imgData, 0, imgData.Length);
+                        Array.Clear(recvData, 0, recvData.Length);
+                    }
+                    else
+                    {
+                        sendData = SignalObjToByte(standardSignalObj);
+                        sendDataLenInfo = BitConverter.GetBytes(sendData.Length);
+                        // 서버 측에서 방송중인 상태가 아닐 경우에는 그냥 서버 데이터가 담긴 데이터를 일반적으로 보냄
+                        socketClient.Send(sendDataLenInfo);
+                        socketClient.Send(sendData);
+                    }
                 }
-                //Thread.Yield();
+                
                 if (Thread.Yield()) Thread.Sleep(40);
             }
         }
+
+        private static byte[] SignalObjToByte(SignalObj signalObj)
+        {
+            /*
+            MemoryStream ms = new MemoryStream();
+            BinaryFormatter binFmtr = new BinaryFormatter();
+
+            
+            binFmtr.Serialize(ms, signalObj);
+
+            ms.Position = 0;
+
+            byte[] buffer = new byte[ms.Length];
+
+            ms.Read(buffer, 0, (int)ms.Length);
+
+           
+            return buffer;
+            */
+
+            string jsonData;
+            byte[] buffer;
+            jsonData = JsonConvert.SerializeObject(signalObj);
+
+
+            buffer = Encoding.UTF8.GetBytes(jsonData);
+
+            return buffer;
+
+
+        }
+
 
         static public Byte[] imgCreate()
         {
@@ -169,41 +224,38 @@ namespace Server
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            notifyIcon.ContextMenu.MenuItems[0].Checked = true;
-            notifyIcon.ContextMenu.MenuItems[0].Enabled = false;
-            // 초기 서버 한번 켜진 이후 다시 한번 켜지지 않도록 수정
-            btnStart.Enabled = false;
+            // 스위치 역할을 하도록 수정
 
-            // 클라이언트 연결 대기
-            socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverEndPoint = new IPEndPoint(IPAddress.Any, MOSHPORT);
+            if (!standardSignalObj.IsServerBroadcasting)
+            {
+                // 폼 버튼 변경
+                btnStart.Text = "공유 중지";
 
-            socketListener.Bind(serverEndPoint);
-            socketListener.Listen(50);
+                // 트레이 아이콘 공유 버튼 상태 변경
+                notifyIcon.ContextMenu.MenuItems[0].Checked = true;
 
-            socketListener.BeginAccept(AcceptCallback, null);
+                // 공통으로 보내는 신호 상태 변경
+                standardSignalObj.IsServerBroadcasting = true;
+                
+
+            }
+            else
+            {
+
+                btnStart.Text = "공유";
+                notifyIcon.ContextMenu.MenuItems[0].Checked = false;
+
+                standardSignalObj.IsServerBroadcasting = false;
+
+            }
+            
         }
 
-        private void AllThreadKill()
-        {
-            if (ctrlStopThread != null && ctrlStopThread.IsAlive)
-            {
-                ctrlStopThread.Abort();
-            }
-                
-                
-            if (ctrlStartThread != null && ctrlStartThread.IsAlive)
-            {
-                ctrlStartThread.Abort();
-            }
-        }
+        
 
         private void btnShutdown_Click(object sender, EventArgs e)
         {
-            serverShutdownFlag = true;
-
-            AllThreadKill();
-            commander.serverShutdown();
+            standardSignalObj.IsServerShutdown = true;
 
             if (socketListener != null) socketListener.Close();
             Dispose();
@@ -212,54 +264,28 @@ namespace Server
      
         private void btnControl_Click(object sender, EventArgs e)
         {
-            switch (serverCtrlFlag)
+            switch (standardSignalObj.IsServerControlling)
             {
                 case false:
-                    {
-                        notifyIcon.ContextMenu.MenuItems[1].Checked = true;
-                        commander.ctrlStatus = true;
+                {
+                    standardSignalObj.IsServerControlling = true;
+                    notifyIcon.ContextMenu.MenuItems[1].Checked = true;
                         
-                        if (this.ctrlStopThread != null)
-                        {
-                            if (this.ctrlStopThread.IsAlive)
-                            {
-                                this.ctrlStopThread.Join();
-                            }
-                        }
-                        
-                        this.ctrlStartThread = new Thread(commander.ctrlStart);
-                        this.ctrlStartThread.Start();
-
-                        MessageBox.Show("키보드 마우스 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        btnControl.Text = "중지";
-                        
-                        this.serverCtrlFlag = true;
-                    
-                        break;
-                    }
+                    MessageBox.Show("키보드 마우스 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    btnControl.Text = "중지";
+                       
+                    break;
+                }
                 case true:
-                    {
-                        notifyIcon.ContextMenu.MenuItems[1].Checked = false;
-                        commander.ctrlStatus = false;
-
-                        if (this.ctrlStartThread != null)
-                        {
-                            if (this.ctrlStartThread.IsAlive)
-                            {
-                                this.ctrlStartThread.Join();
-                            }
-                        }
+                {
+                    standardSignalObj.IsServerControlling = false;
+                    notifyIcon.ContextMenu.MenuItems[1].Checked = false;
                         
-                        this.ctrlStopThread = new Thread(commander.ctrlStop);
-                        this.ctrlStopThread.Start();
-                        
-                        MessageBox.Show("키보드 마우스 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        btnControl.Text = "제어";
+                    MessageBox.Show("키보드 마우스 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    btnControl.Text = "제어";
 
-                        this.serverCtrlFlag = false;
-                    
-                        break;
-                    }
+                    break;
+                }
             }
         }
 
