@@ -1,2 +1,2 @@
 # MOSH (Monitor Sharing)
-Monitor Sharing Program for Collage Lab
+Screen Sharing & Keyboard Control Program for Collage Lab
