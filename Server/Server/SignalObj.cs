@@ -24,7 +24,6 @@ namespace Server
             isServerBroadcasting = false;
             isServerControlling = false;
 
-            
         }
 
 
@@ -36,9 +35,6 @@ namespace Server
 
 
         // 이미지 관련 데이터 getter, setter
-
-
-
 
     }
 

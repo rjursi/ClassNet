@@ -45,14 +45,13 @@ namespace Client
 
         public SignalObj ByteToObject(byte[] buffer)
         {
-            JObject jObj;
-            string jsonData;
+            //JObject jObj;
+            string jsonData = "";
             SignalObj sObj;
 
-            jsonData = Encoding.UTF8.GetString(buffer);
-            jObj =  JsonConvert.DeserializeObject(jsonData) as JObject;
-
-            sObj = jObj.ToObject<SignalObj>();
+            jsonData = Encoding.Default.GetString(buffer);
+            
+            sObj = JsonConvert.DeserializeObject<SignalObj>(jsonData);
 
             return sObj;
         }
@@ -102,16 +101,17 @@ namespace Client
         public void receiveThread(Object ob)
         {
             Byte[] sendData;
-            Byte[] recvData;
+            Byte[] recvData = new Byte[4];
             Byte[] lenData = new Byte[4];
             Byte[] imgData = new Byte[4];
 
 
             int imgSize = 0;
+            int recvDataSize = 0;
 
             while (!clientShutdownFlag)
             {
-                sendData = Encoding.UTF8.GetBytes("next");
+                sendData = Encoding.Default.GetBytes("next");
 
                 try
                 {
@@ -131,46 +131,49 @@ namespace Client
                 {
 
                     // 서버측에서 전송한 객체를 byte 로 받고 객체로 변환
-                    
+
                     socketServer.Receive(lenData);
 
-                    recvData = new Byte[BitConverter.ToInt32(lenData, 0)];
-                    
+                    socketServer.Send(sendData);
+
+                    recvDataSize = BitConverter.ToInt32(lenData, 0);
+                    Array.Resize<Byte>(ref recvData, recvDataSize);
+
                     socketServer.Receive(recvData);
                     standardSignalObj = ByteToObject(recvData);
 
-                  
+
                     // 서버가 현재 방송중인 상태이면
                     if (standardSignalObj.IsServerBroadcasting)
                     {
                         // 이미지를 받아서 여기서 버퍼를 설정하는 부분
                         imgData = standardSignalObj.ImgData;
 
-                        //imgSize = BitConverter.ToInt32(imgData, 0);
-
-
                         imgSize = imgData.Length;
                         Array.Resize<Byte>(ref imgData, imgSize);
 
                         this.Invoke(new ThreadDelegate(outputDelegate), imgSize, imgData);
 
-                        Array.Clear(recvData, 0, recvData.Length);
-                        Array.Clear(sendData, 0, sendData.Length);
-                        Array.Clear(imgData, 0, imgData.Length);
                         imgSize = 0;
                     }
 
                     // 서버가 제어 신호가 걸린 상태이면
-                    
-                     cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
-                    
-                        
+
+                    cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
+
+                    Array.Clear(imgData, 0, imgData.Length);
+                    Array.Clear(recvData, 0, recvData.Length);
+                    Array.Clear(sendData, 0, sendData.Length);
+                    Array.Clear(lenData, 0, lenData.Length);
+
                 }
                 catch (SocketException) { }
                 catch (ObjectDisposedException) { }
-
+               
+               
+                
                 //Thread.Yield();
-                if (Thread.Yield()) Thread.Sleep(40);
+                if (Thread.Yield()) Thread.Sleep(50);
             }
         }
 

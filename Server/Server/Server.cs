@@ -11,6 +11,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Server
 {
@@ -32,8 +33,8 @@ namespace Server
             InitializeComponent();
 
             standardSignalObj = new SignalObj();
-            
-            
+
+
         }
         
         private void BroadcastOn()
@@ -96,6 +97,7 @@ namespace Server
 
         void AcceptCallback(IAsyncResult ar)
         {
+
             // 클라이언트의 연결 요청을 수락
             if (!standardSignalObj.IsServerShutdown)
             {
@@ -112,11 +114,12 @@ namespace Server
             Byte[] recvData = new Byte[4];
             Byte[] imgData;
             Byte[] sendData;
-            Byte[] sendDataLenInfo = new byte[4];
+            Byte[] sendDataLenInfo = new Byte[4];
             
-
+            
             Socket socketClient = (Socket)ParamSocketClient;
-
+            
+            
             while (!standardSignalObj.IsServerShutdown)
                 // 서버가 꺼지지 않은 상태라면
             {
@@ -124,7 +127,7 @@ namespace Server
                 if (socketClient.Receive(recvData) > 0)
                 {
                     // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
-                    if (standardSignalObj.IsServerBroadcasting)
+                    if (standardSignalObj.IsServerBroadcasting) 
                     {
                         imgData = imgCreate();
                         standardSignalObj.ImgData = imgData;
@@ -133,53 +136,46 @@ namespace Server
                         sendDataLenInfo = BitConverter.GetBytes(sendData.Length);
 
                         socketClient.Send(sendDataLenInfo);
-                        
+                        socketClient.Receive(recvData);
                         socketClient.Send(sendData);
-                        
-                     
+
+                        Array.Clear(standardSignalObj.ImgData, 0, standardSignalObj.ImgData.Length);
                         Array.Clear(imgData, 0, imgData.Length);
-                        Array.Clear(recvData, 0, recvData.Length);
                     }
                     else
                     {
                         sendData = SignalObjToByte(standardSignalObj);
                         sendDataLenInfo = BitConverter.GetBytes(sendData.Length);
                         // 서버 측에서 방송중인 상태가 아닐 경우에는 그냥 서버 데이터가 담긴 데이터를 일반적으로 보냄
+
                         socketClient.Send(sendDataLenInfo);
+                        socketClient.Receive(recvData);
                         socketClient.Send(sendData);
                     }
+
+
+                    Array.Clear(sendDataLenInfo, 0, sendDataLenInfo.Length);
+                    Array.Clear(sendData, 0, sendData.Length);
+                    Array.Clear(recvData, 0, recvData.Length);
                 }
                 
-                if (Thread.Yield()) Thread.Sleep(40);
+                if (Thread.Yield()) Thread.Sleep(50);
             }
         }
 
         private static byte[] SignalObjToByte(SignalObj signalObj)
         {
-            /*
-            MemoryStream ms = new MemoryStream();
-            BinaryFormatter binFmtr = new BinaryFormatter();
 
             
-            binFmtr.Serialize(ms, signalObj);
-
-            ms.Position = 0;
-
-            byte[] buffer = new byte[ms.Length];
-
-            ms.Read(buffer, 0, (int)ms.Length);
-
-           
-            return buffer;
-            */
-
-            string jsonData;
+            string jsonData = "";
             byte[] buffer;
+
+            
             jsonData = JsonConvert.SerializeObject(signalObj);
 
 
-            buffer = Encoding.UTF8.GetBytes(jsonData);
-
+            buffer = Encoding.Default.GetBytes(jsonData);
+            
             return buffer;
 
 
@@ -209,17 +205,9 @@ namespace Server
                     postData = post_ms.ToArray();
                 }
             }
+
+
             return postData;
-        }
-
-        private void multiProcessing()
-        {
-            Process currentProcess = Process.GetCurrentProcess();
-
-            foreach (ProcessThread processThread in currentProcess.Threads)
-            {
-                processThread.ProcessorAffinity = currentProcess.ProcessorAffinity;
-            }
         }
 
         private void btnStart_Click(object sender, EventArgs e)
