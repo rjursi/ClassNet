@@ -33,8 +33,6 @@ namespace Server
             InitializeComponent();
 
             standardSignalObj = new SignalObj();
-
-
         }
         
         private void BroadcastOn()
@@ -116,12 +114,10 @@ namespace Server
             Byte[] sendData;
             Byte[] sendDataLenInfo = new Byte[4];
             
-            
             Socket socketClient = (Socket)ParamSocketClient;
-            
-            
+
+            // 서버가 꺼지지 않은 상태라면
             while (!standardSignalObj.IsServerShutdown)
-                // 서버가 꺼지지 않은 상태라면
             {
                 // 클라이언트로부터 next라는 메시지가 들어오면
                 if (socketClient.Receive(recvData) > 0)
@@ -136,8 +132,7 @@ namespace Server
                         sendDataLenInfo = BitConverter.GetBytes(sendData.Length);
 
                         socketClient.Send(sendDataLenInfo);
-                        socketClient.Receive(recvData);
-                        socketClient.Send(sendData);
+                        if (socketClient.Receive(recvData) > 0) socketClient.Send(sendData);
 
                         Array.Clear(standardSignalObj.ImgData, 0, standardSignalObj.ImgData.Length);
                         Array.Clear(imgData, 0, imgData.Length);
@@ -149,8 +144,7 @@ namespace Server
                         // 서버 측에서 방송중인 상태가 아닐 경우에는 그냥 서버 데이터가 담긴 데이터를 일반적으로 보냄
 
                         socketClient.Send(sendDataLenInfo);
-                        socketClient.Receive(recvData);
-                        socketClient.Send(sendData);
+                        if (socketClient.Receive(recvData) > 0) socketClient.Send(sendData);
                     }
 
 
@@ -181,12 +175,12 @@ namespace Server
 
         }
 
-
         static public Byte[] imgCreate()
         {
             Byte[] preData, postData;
 
-            Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            //Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            Bitmap bmp = new Bitmap(1920, 1080);
             Graphics g = Graphics.FromImage(bmp);
             g.CopyFromScreen(0, 0, 0, 0, new Size(bmp.Width, bmp.Height));
 
@@ -224,22 +218,16 @@ namespace Server
 
                 // 공통으로 보내는 신호 상태 변경
                 standardSignalObj.IsServerBroadcasting = true;
-                
-
             }
             else
             {
-
                 btnStart.Text = "공유";
                 notifyIcon.ContextMenu.MenuItems[0].Checked = false;
 
                 standardSignalObj.IsServerBroadcasting = false;
-
             }
             
         }
-
-        
 
         private void btnShutdown_Click(object sender, EventArgs e)
         {
@@ -249,7 +237,6 @@ namespace Server
             Dispose();
         }
 
-     
         private void btnControl_Click(object sender, EventArgs e)
         {
             switch (standardSignalObj.IsServerControlling)

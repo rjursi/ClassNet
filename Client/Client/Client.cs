@@ -40,9 +40,6 @@ namespace Client
             ThreadPool.SetMaxThreads(3, 3);
         }
 
-       
-
-
         public SignalObj ByteToObject(byte[] buffer)
         {
             //JObject jObj;
@@ -55,8 +52,6 @@ namespace Client
 
             return sObj;
         }
-
-
 
         private void Client_Load(object sender, EventArgs e)
         {
@@ -79,8 +74,6 @@ namespace Client
                     pictureBox1.Width = Screen.PrimaryScreen.Bounds.Width;
                     pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
-
-
                     isConnected = false;
                 }
                 catch (SocketException)
@@ -89,7 +82,6 @@ namespace Client
                 }
             }
             ThreadPool.QueueUserWorkItem(receiveThread);
-            
         }
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
@@ -97,22 +89,18 @@ namespace Client
             this.Invoke(new clientShutdownDelegate(clientShutdown));
         }
 
-       
         public void receiveThread(Object ob)
         {
-            Byte[] sendData;
+            Byte[] sendData = Encoding.Default.GetBytes("next");
             Byte[] recvData = new Byte[4];
             Byte[] lenData = new Byte[4];
             Byte[] imgData = new Byte[4];
-
 
             int imgSize = 0;
             int recvDataSize = 0;
 
             while (!clientShutdownFlag)
             {
-                sendData = Encoding.Default.GetBytes("next");
-
                 try
                 {
                     socketServer.Send(sendData);
@@ -129,19 +117,28 @@ namespace Client
 
                 try
                 {
-
-                    // 서버측에서 전송한 객체를 byte 로 받고 객체로 변환
-
+                    // 서버측에서 전송한 객체를 byte로 받고 객체로 변환
                     socketServer.Receive(lenData);
-
-                    socketServer.Send(sendData);
 
                     recvDataSize = BitConverter.ToInt32(lenData, 0);
                     Array.Resize<Byte>(ref recvData, recvDataSize);
 
+                    try
+                    {
+                        socketServer.Send(sendData);
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        break;
+                    }
+                    catch (SocketException)
+                    {
+                        clientShutdown();
+                        break;
+                    }
+
                     socketServer.Receive(recvData);
                     standardSignalObj = ByteToObject(recvData);
-
 
                     // 서버가 현재 방송중인 상태이면
                     if (standardSignalObj.IsServerBroadcasting)
@@ -158,20 +155,15 @@ namespace Client
                     }
 
                     // 서버가 제어 신호가 걸린 상태이면
-
                     cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
 
                     Array.Clear(imgData, 0, imgData.Length);
                     Array.Clear(recvData, 0, recvData.Length);
-                    Array.Clear(sendData, 0, sendData.Length);
                     Array.Clear(lenData, 0, lenData.Length);
-
                 }
                 catch (SocketException) { }
                 catch (ObjectDisposedException) { }
-               
-               
-                
+
                 //Thread.Yield();
                 if (Thread.Yield()) Thread.Sleep(50);
             }
@@ -206,7 +198,6 @@ namespace Client
 
         public void clientShutdown()
         {
-
             if (cmdProcessController.NowCtrlStatus)
             {
                 cmdProcessController.QuitProcess();
@@ -214,7 +205,6 @@ namespace Client
            
             socketServer.Close();
             
-
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
         }
 
