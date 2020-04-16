@@ -37,7 +37,7 @@ namespace Client
             clientShutdownFlag = false;
 
             cmdProcessController = new CmdProcssController();
-            ThreadPool.SetMaxThreads(3, 3);
+            ThreadPool.SetMaxThreads(3, 3); 
         }
 
         public SignalObj ByteToObject(byte[] buffer)
@@ -162,6 +162,13 @@ namespace Client
                 }
                 catch (SocketException) { }
                 catch (ObjectDisposedException) { }
+                catch (JsonReaderException)
+                {
+                    Array.Clear(sendData, 0, sendData.Length);
+                    Array.Clear(recvData, 0, recvData.Length);
+                    Array.Clear(lenData, 0, lenData.Length);
+                    continue;
+                }
 
                 Array.Clear(sendData, 0, sendData.Length);
                 Array.Clear(imgData, 0, imgData.Length);

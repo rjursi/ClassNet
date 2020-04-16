@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.ComponentModel;
 
 namespace Server
 {
@@ -24,7 +25,7 @@ namespace Server
         IPEndPoint serverEndPoint;
 
         static SignalObj standardSignalObj; // 서버 표준 신호 객체
-      
+       
         static ImageCodecInfo codec;
         static EncoderParameters param;
 
@@ -33,6 +34,7 @@ namespace Server
             InitializeComponent();
 
             standardSignalObj = new SignalObj();
+          
         }
         
         private void BroadcastOn()
@@ -117,13 +119,16 @@ namespace Server
             // 서버가 꺼지지 않은 상태라면
             while (!standardSignalObj.IsServerShutdown)
             {
+                
+                
                 // 클라이언트로부터 next라는 메시지가 들어오면
                 socketClient.Receive(recvData);
                 if (Encoding.UTF8.GetString(recvData).Contains("size"))
                 {
                     // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
-                    if (standardSignalObj.IsServerBroadcasting) 
+                    if (standardSignalObj.IsServerBroadcasting)
                     {
+     
                         imgData = imgCreate();
                         standardSignalObj.ImgData = imgData;
 
@@ -178,7 +183,22 @@ namespace Server
             //Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
             Bitmap bmp = new Bitmap(1920, 1080);
             Graphics g = Graphics.FromImage(bmp);
-            g.CopyFromScreen(0, 0, 0, 0, new Size(bmp.Width, bmp.Height));
+
+
+            try { 
+                g.CopyFromScreen(0, 0, 0, 0, new Size(bmp.Width, bmp.Height));
+            }
+            catch (Win32Exception)
+            {
+                // 가상 데스크톱으로 이동하여 이미지를 못 찍을 일이 생길 경우 그냥 기본 검정화면 으로 덮어씌움
+
+                g = Graphics.FromImage(bmp);
+            }
+            
+
+
+
+
 
             using (MemoryStream pre_ms = new MemoryStream())
             {
