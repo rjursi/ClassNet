@@ -81,6 +81,7 @@ namespace Client
                     isConnected = true; // 해당 bool 변수로 인해서 다시한번 위 반복문이 실행
                 }
             }
+
             ThreadPool.QueueUserWorkItem(receiveThread);
         }
 
@@ -91,7 +92,7 @@ namespace Client
 
         public void receiveThread(Object ob)
         {
-            Byte[] sendData = Encoding.Default.GetBytes("next");
+            Byte[] sendData = new Byte[4];
             Byte[] recvData = new Byte[4];
             Byte[] lenData = new Byte[4];
             Byte[] imgData = new Byte[4];
@@ -103,6 +104,7 @@ namespace Client
             {
                 try
                 {
+                    sendData = Encoding.UTF8.GetBytes("size");
                     socketServer.Send(sendData);
                 }
                 catch (ObjectDisposedException)
@@ -125,6 +127,7 @@ namespace Client
 
                     try
                     {
+                        sendData = Encoding.UTF8.GetBytes("recv");
                         socketServer.Send(sendData);
                     }
                     catch (ObjectDisposedException)
@@ -156,13 +159,14 @@ namespace Client
 
                     // 서버가 제어 신호가 걸린 상태이면
                     cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
-
-                    Array.Clear(imgData, 0, imgData.Length);
-                    Array.Clear(recvData, 0, recvData.Length);
-                    Array.Clear(lenData, 0, lenData.Length);
                 }
                 catch (SocketException) { }
                 catch (ObjectDisposedException) { }
+
+                Array.Clear(sendData, 0, sendData.Length);
+                Array.Clear(imgData, 0, imgData.Length);
+                Array.Clear(recvData, 0, recvData.Length);
+                Array.Clear(lenData, 0, lenData.Length);
 
                 //Thread.Yield();
                 if (Thread.Yield()) Thread.Sleep(50);

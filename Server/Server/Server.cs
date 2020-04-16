@@ -65,7 +65,6 @@ namespace Server
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
             // 서버 데이터 전송 스레드 바로 켜지자마자 가동
-
             BroadcastOn();
 
             ThreadPool.SetMinThreads(40, 40);
@@ -95,7 +94,6 @@ namespace Server
 
         void AcceptCallback(IAsyncResult ar)
         {
-
             // 클라이언트의 연결 요청을 수락
             if (!standardSignalObj.IsServerShutdown)
             {
@@ -120,7 +118,8 @@ namespace Server
             while (!standardSignalObj.IsServerShutdown)
             {
                 // 클라이언트로부터 next라는 메시지가 들어오면
-                if (socketClient.Receive(recvData) > 0)
+                socketClient.Receive(recvData);
+                if (Encoding.UTF8.GetString(recvData).Contains("size"))
                 {
                     // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
                     if (standardSignalObj.IsServerBroadcasting) 
@@ -132,7 +131,9 @@ namespace Server
                         sendDataLenInfo = BitConverter.GetBytes(sendData.Length);
 
                         socketClient.Send(sendDataLenInfo);
-                        if (socketClient.Receive(recvData) > 0) socketClient.Send(sendData);
+
+                        socketClient.Receive(recvData);
+                        if (Encoding.UTF8.GetString(recvData).Contains("recv")) socketClient.Send(sendData);
 
                         Array.Clear(standardSignalObj.ImgData, 0, standardSignalObj.ImgData.Length);
                         Array.Clear(imgData, 0, imgData.Length);
@@ -144,9 +145,10 @@ namespace Server
                         // 서버 측에서 방송중인 상태가 아닐 경우에는 그냥 서버 데이터가 담긴 데이터를 일반적으로 보냄
 
                         socketClient.Send(sendDataLenInfo);
-                        if (socketClient.Receive(recvData) > 0) socketClient.Send(sendData);
-                    }
 
+                        socketClient.Receive(recvData);
+                        if (Encoding.UTF8.GetString(recvData).Contains("recv")) socketClient.Send(sendData);
+                    }
 
                     Array.Clear(sendDataLenInfo, 0, sendDataLenInfo.Length);
                     Array.Clear(sendData, 0, sendData.Length);
@@ -159,20 +161,14 @@ namespace Server
 
         private static byte[] SignalObjToByte(SignalObj signalObj)
         {
-
-            
             string jsonData = "";
             byte[] buffer;
 
-            
             jsonData = JsonConvert.SerializeObject(signalObj);
-
 
             buffer = Encoding.Default.GetBytes(jsonData);
             
             return buffer;
-
-
         }
 
         static public Byte[] imgCreate()
@@ -200,14 +196,12 @@ namespace Server
                 }
             }
 
-
             return postData;
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
             // 스위치 역할을 하도록 수정
-
             if (!standardSignalObj.IsServerBroadcasting)
             {
                 // 폼 버튼 변경
