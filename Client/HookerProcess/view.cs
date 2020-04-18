@@ -18,7 +18,6 @@ namespace HookerProcess
 
         public form_keyMouseControlling(string[] parentQuitMsg)
         {
-            
             InitializeComponent();
 
             hooker = new Hooker();
@@ -34,12 +33,10 @@ namespace HookerProcess
             // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
             this.ShowInTaskbar = false;
 
-
-            int x = Screen.PrimaryScreen.Bounds.Width / 2 -  this.Size.Width / 2;
-
+            /*int x = Screen.PrimaryScreen.Bounds.Width / 2 -  this.Size.Width / 2;
             int y = Screen.PrimaryScreen.Bounds.Height - (this.Size.Height  + 20);
 
-            this.Location = new Point(x, y);
+            this.Location = new Point(x, y);*/
 
             childProcessQuitThread = new Thread(childProcessQuit);
             childProcessQuitThread.Start(this.parentQuitMsg);
@@ -57,8 +54,7 @@ namespace HookerProcess
             /*
             taskMgrController.EnableTaskMgr();
             hooker.UnHook();
-
-               */
+             */
             isHookerDoing = false;
         }
 

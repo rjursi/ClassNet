@@ -38,10 +38,10 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(10, 10);
+            this.btnStart.Location = new System.Drawing.Point(11, 13);
             this.btnStart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(121, 28);
+            this.btnStart.Size = new System.Drawing.Size(138, 35);
             this.btnStart.TabIndex = 0;
             this.btnStart.Text = "공유";
             this.btnStart.UseVisualStyleBackColor = true;
@@ -49,10 +49,10 @@
             // 
             // btnShutdown
             // 
-            this.btnShutdown.Location = new System.Drawing.Point(10, 45);
+            this.btnShutdown.Location = new System.Drawing.Point(11, 56);
             this.btnShutdown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnShutdown.Name = "btnShutdown";
-            this.btnShutdown.Size = new System.Drawing.Size(121, 28);
+            this.btnShutdown.Size = new System.Drawing.Size(138, 35);
             this.btnShutdown.TabIndex = 1;
             this.btnShutdown.Text = "종료";
             this.btnShutdown.UseVisualStyleBackColor = true;
@@ -60,9 +60,10 @@
             // 
             // btnControl
             // 
-            this.btnControl.Location = new System.Drawing.Point(136, 10);
+            this.btnControl.Location = new System.Drawing.Point(155, 13);
+            this.btnControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnControl.Name = "btnControl";
-            this.btnControl.Size = new System.Drawing.Size(78, 63);
+            this.btnControl.Size = new System.Drawing.Size(89, 78);
             this.btnControl.TabIndex = 2;
             this.btnControl.Text = "제어";
             this.btnControl.UseVisualStyleBackColor = true;
@@ -76,13 +77,13 @@
             // 
             // Server
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(224, 85);
+            this.ClientSize = new System.Drawing.Size(256, 106);
             this.Controls.Add(this.btnControl);
             this.Controls.Add(this.btnShutdown);
             this.Controls.Add(this.btnStart);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Server";
             this.Text = "Server";
