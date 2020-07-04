@@ -64,12 +64,12 @@ namespace Client
                     // this.ShowInTaskbar = false;
 
                     /* 받은 이미지 풀스크린으로 띄우는 소스입니다. 수정 ㄴㄴ - 태우 */
-                    /*FormBorderStyle = FormBorderStyle.None;
+                    //FormBorderStyle = FormBorderStyle.None;
                     WindowState = FormWindowState.Maximized;
                     TopMost = true;
 
                     pictureBox1.Width = Screen.PrimaryScreen.Bounds.Width;
-                    pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;*/
+                    pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;
 
                     isConnected = false;
                 }
@@ -109,7 +109,7 @@ namespace Client
                     // 서버가 현재 방송중인 상태이면
                     if (standardSignalObj.ServerBroadcastingData != null)
                     {
-                        Opacity = 1;
+                       Opacity = 1;
 
                         // 이미지를 받아서 여기서 버퍼를 설정하는 부분
                         this.Invoke(new ThreadDelegate(outputDelegate),
