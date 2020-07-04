@@ -16,8 +16,15 @@ using System.ComponentModel;
 
 namespace Server
 {
+
     public partial class Server : Form
     {
+        public class TestState
+        {
+            public Byte[] testbuffer;
+            public Socket testSocket;
+        }
+
         private const int MOSHPORT = 9990;
         
         Socket socketListener;
@@ -39,8 +46,10 @@ namespace Server
         
         private void BroadcastOn()
         {
-            ThreadPool.SetMinThreads(35, 35);
-            ThreadPool.SetMaxThreads(50, 50);
+            //ThreadPool.SetMinThreads(35, 35);
+            //ThreadPool.SetMaxThreads(50, 50);
+
+
 
             // 클라이언트 연결 대기
             socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -50,12 +59,13 @@ namespace Server
             socketListener.Listen(50);
 
             socketListener.BeginAccept(AcceptCallback, null);
+
+
         }
 
         private void Server_Load(object sender, EventArgs e)
         {
             BroadcastOn();
-
             ThreadPool.QueueUserWorkItem(imageCreate);
 
             // NotifyIcon에 메뉴 추가
@@ -103,23 +113,41 @@ namespace Server
                 // 클라이언트의 연결 요청을 대기(다른 클라이언트가 또 연결할 수 있으므로)
                 socketListener.BeginAccept(AcceptCallback, null);
 
-                ThreadPool.QueueUserWorkItem(clientThread, socketClient);
+                TestState test = new TestState();
+                test.testbuffer = new byte[4];
+                test.testSocket = socketClient;
+
+                
+                test.testSocket.BeginReceive(test.testbuffer, 0, test.testbuffer.Length, SocketFlags.None, asyncReceiveCallback, test);
+                
+
+                //ThreadPool.QueueUserWorkItem(clientThread, socketClient);
             }
         }
 
         public static void clientThread(Object ParamSocketClient)
         {
             Byte[] recvData = new Byte[4];
-            
+
             Socket socketClient = (Socket)ParamSocketClient;
+
+            //TestState test = new TestState();
+            //test.testbuffer = new byte[4];
+            //test.testSocket = (Socket)ParamSocketClient;
+
+
+
 
             // 서버가 꺼지지 않은 상태라면
             while (!standardSignalObj.IsServerShutdown)
             {
                 socketClient.Receive(recvData);
+                //test.testSocket.BeginReceive(test.testbuffer, 0, test.testbuffer.Length, SocketFlags.None, asyncReceiveCallback, test);
+
+
                 if (Encoding.UTF8.GetString(recvData).Contains("recv"))
                 {
-                    
+
                     if (standardSignalObj.ServerBroadcastingData != null)
                     {
                         // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
@@ -136,6 +164,62 @@ namespace Server
                 if (Thread.Yield()) Thread.Sleep(50);
             }
         }
+        
+        private static void asyncReceiveCallback(IAsyncResult ar) 
+        {
+            TestState ts = ar.AsyncState as TestState;
+
+            ts.testSocket.EndReceive(ar);
+
+            //while (!standardSignalObj.IsServerShutdown)
+            if(ts.testSocket.Connected) 
+            {
+                if (Encoding.UTF8.GetString(ts.testbuffer).Contains("recv"))
+                {
+
+                    if (standardSignalObj.ServerBroadcastingData != null)
+                    {
+                        // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
+                        standardSignalObj.ServerBroadcastingData = imageData;
+                        //ts.testSocket.Send(SignalObjToByte(standardSignalObj));
+
+                        ts.testSocket.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
+                           SocketFlags.None, asyncSendCallback, ts.testSocket);
+                    }
+                    else
+                    {
+                        //ts.testSocket.Send(SignalObjToByte(standardSignalObj));
+
+                        // 서버 측에서 방송중인 상태가 아닐 경우에는 그냥 서버 데이터가 담긴 데이터를 일반적으로 보냄
+                       
+                        ts.testSocket.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
+                          SocketFlags.None, asyncSendCallback, ts.testSocket);
+                    }
+                    Array.Clear(ts.testbuffer, 0, ts.testbuffer.Length);
+                }
+                    if (Thread.Yield()) Thread.Sleep(50);
+                    ts.testSocket.BeginReceive(ts.testbuffer, 0, ts.testbuffer.Length, SocketFlags.None, asyncReceiveCallback, ts);
+            }
+
+        }
+
+        /*오류!*/
+        private static void asyncSendCallback(IAsyncResult ar)
+        {
+            Socket socket = ar.AsyncState as Socket;
+            if (socket.Connected)
+            {
+                socket.EndSend(ar);
+
+            }
+            else
+            {
+                socket.Close();
+            }
+
+            
+        }
+
 
         private static byte[] SignalObjToByte(SignalObj signalObj)
         {
@@ -189,7 +273,6 @@ namespace Server
                 Array.Clear(preData, 0, preData.Length);
             }
         }
-
         private void btnStart_Click(object sender, EventArgs e)
         {
             // 스위치 역할을 하도록 수정
