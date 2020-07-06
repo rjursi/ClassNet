@@ -20,7 +20,7 @@ namespace Server
     {
         private const int MOSHPORT = 9990;
         
-        Socket socketListener;
+        Socket socketListener;      
         Socket socketClient;
         IPEndPoint serverEndPoint;
 

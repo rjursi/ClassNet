@@ -84,15 +84,23 @@ namespace Client
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
+           
             if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
             socketServer.Close();
 
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
+
         }
 
         public void receiveThread(Object obj)
         {
-            Opacity = 0;
+
+            // 해당 UI 작업을 UI 스레드가 아닌 receive 작업스레드에서 요청을 하므로 invoke 처리
+            // Invoke : Control.Invoke 메서드, 대리자를 실행해주는 메소드
+            // MethodInvoker : Windows.Forms.MethodInvoker - 대리자 형식
+
+            this.Invoke(new MethodInvoker(() => { Opacity = 0; }));
+            
 
             Byte[] recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
             Byte[] sendData = Encoding.UTF8.GetBytes("recv");
@@ -109,7 +117,7 @@ namespace Client
                     // 서버가 현재 방송중인 상태이면
                     if (standardSignalObj.ServerBroadcastingData != null)
                     {
-                        Opacity = 1;
+                        this.Invoke(new MethodInvoker(() => { Opacity = 1; }));
 
                         // 이미지를 받아서 여기서 버퍼를 설정하는 부분
                         this.Invoke(new ThreadDelegate(outputDelegate),
@@ -117,7 +125,7 @@ namespace Client
                     }
                     else
                     {
-                        Opacity = 0;
+                        this.Invoke(new MethodInvoker(() => { Opacity = 0; }));
                     }
 
                     // 서버가 제어 신호가 걸린 상태이면
