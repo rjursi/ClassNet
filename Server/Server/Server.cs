@@ -49,8 +49,6 @@ namespace Server
             //ThreadPool.SetMinThreads(35, 35);
             //ThreadPool.SetMaxThreads(50, 50);
 
-
-
             // 클라이언트 연결 대기
             socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             serverEndPoint = new IPEndPoint(IPAddress.Any, MOSHPORT);
@@ -116,11 +114,8 @@ namespace Server
                 TestState test = new TestState();
                 test.testbuffer = new byte[4];
                 test.testSocket = socketClient;
-
                 
                 test.testSocket.BeginReceive(test.testbuffer, 0, test.testbuffer.Length, SocketFlags.None, asyncReceiveCallback, test);
-                
-
                 //ThreadPool.QueueUserWorkItem(clientThread, socketClient);
             }
         }
@@ -135,19 +130,13 @@ namespace Server
             //test.testbuffer = new byte[4];
             //test.testSocket = (Socket)ParamSocketClient;
 
-
-
-
             // 서버가 꺼지지 않은 상태라면
             while (!standardSignalObj.IsServerShutdown)
             {
                 socketClient.Receive(recvData);
                 //test.testSocket.BeginReceive(test.testbuffer, 0, test.testbuffer.Length, SocketFlags.None, asyncReceiveCallback, test);
-
-
                 if (Encoding.UTF8.GetString(recvData).Contains("recv"))
                 {
-
                     if (standardSignalObj.ServerBroadcastingData != null)
                     {
                         // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
@@ -191,7 +180,6 @@ namespace Server
                         //ts.testSocket.Send(SignalObjToByte(standardSignalObj));
 
                         // 서버 측에서 방송중인 상태가 아닐 경우에는 그냥 서버 데이터가 담긴 데이터를 일반적으로 보냄
-                       
                         ts.testSocket.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
                           SocketFlags.None, asyncSendCallback, ts.testSocket);
                     }
@@ -200,26 +188,20 @@ namespace Server
                     if (Thread.Yield()) Thread.Sleep(50);
                     ts.testSocket.BeginReceive(ts.testbuffer, 0, ts.testbuffer.Length, SocketFlags.None, asyncReceiveCallback, ts);
             }
-
         }
-
-        /*오류!*/
+       
         private static void asyncSendCallback(IAsyncResult ar)
         {
             Socket socket = ar.AsyncState as Socket;
             if (socket.Connected)
             {
                 socket.EndSend(ar);
-
             }
             else
             {
                 socket.Close();
             }
-
-            
         }
-
 
         private static byte[] SignalObjToByte(SignalObj signalObj)
         {
