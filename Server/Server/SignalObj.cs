@@ -14,7 +14,7 @@ namespace Server
         private bool isServerControlling;
 
         // 서버 방송 데이터
-        private byte[] serverBroadcastingData = null;
+        private byte[] serverScreenData = null;
 
         public SignalObj()
         {
@@ -26,9 +26,7 @@ namespace Server
         public bool IsServerShutdown { get => isServerShutdown; set => isServerShutdown = value; }
         public bool IsServerControlling { get => isServerControlling; set => isServerControlling = value; }
 
-        // 방송 관련 데이터 getter, setter
-        public byte[] ServerBroadcastingData { get => serverBroadcastingData; set => serverBroadcastingData = value; }
-
+        // 화면 전송 데이터 getter, setter
+        public byte[] ServerScreenData { get => serverScreenData; set => serverScreenData = value; }
     }
-
 }
