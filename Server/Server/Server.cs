@@ -8,30 +8,26 @@ using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Diagnostics;
-using System.Runtime.Serialization.Formatters.Binary;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
 namespace Server
 {
-
     public partial class Server : Form
     {
-        public class TestState
-        {
-            public Byte[] testbuffer;
-            public Socket testSocket;
-        }
+        static SignalObj standardSignalObj; // 서버 표준 신호 객체
 
         private const int MOSHPORT = 9990;
+
+        public class ClientObject
+        {
+            public Byte[] recvBuffer;
+            public Socket socketClient;
+        }
         
         Socket socketListener;
-        Socket socketClient;
+        Socket socketObject;
         IPEndPoint serverEndPoint;
-
-        static SignalObj standardSignalObj; // 서버 표준 신호 객체
 
         static Byte[] imageData;
 
@@ -41,15 +37,10 @@ namespace Server
         public Server()
         {
             InitializeComponent();
-            standardSignalObj = new SignalObj();
         }
         
-        private void BroadcastOn()
+        private void SocketOn()
         {
-            //ThreadPool.SetMinThreads(35, 35);
-            //ThreadPool.SetMaxThreads(50, 50);
-
-            // 클라이언트 연결 대기
             socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             serverEndPoint = new IPEndPoint(IPAddress.Any, MOSHPORT);
 
@@ -57,16 +48,10 @@ namespace Server
             socketListener.Listen(50);
 
             socketListener.BeginAccept(AcceptCallback, null);
-
-
         }
 
-        private void Server_Load(object sender, EventArgs e)
+        private void NotifyIconSetting()
         {
-            BroadcastOn();
-            ThreadPool.QueueUserWorkItem(imageCreate);
-
-            // NotifyIcon에 메뉴 추가
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("공유", new EventHandler((s, ea) => btnStart_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("제어", new EventHandler((s, ea) => btnControl_Click(s, ea))));
@@ -74,8 +59,24 @@ namespace Server
             ctx.MenuItems.Add(new MenuItem("종료", new EventHandler((s, ea) => btnShutdown_Click(s, ea))));
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
+        }
 
-            // JPEG 압축 수준 설정
+        private void Server_Load(object sender, EventArgs e)
+        {
+            ThreadPool.SetMaxThreads(50, 50);
+
+            standardSignalObj = new SignalObj();
+
+            // 클라이언트 연결 대기
+            SocketOn();
+
+            // NotifyIcon에 메뉴 추가
+            NotifyIconSetting();
+
+            // 화면 이미지 객체 생성
+            ThreadPool.QueueUserWorkItem(imageCreate);
+
+            // JPEG 손실 압축 수준 설정
             codec = GetEncoder(ImageFormat.Jpeg);
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
@@ -84,11 +85,13 @@ namespace Server
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
             standardSignalObj.IsServerShutdown = true;
-            
-            if(socketListener != null) socketListener.Close();
+            standardSignalObj = null;
+
+            if (socketListener != null) socketListener.Close();
             Dispose();
         }
 
+        // 이미지 파일 형식(포맷) 인코더
         private ImageCodecInfo GetEncoder(ImageFormat format)
         {
             ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
@@ -107,7 +110,8 @@ namespace Server
             // 클라이언트의 연결 요청을 수락
             if (!standardSignalObj.IsServerShutdown)
             {
-                socketClient = socketListener.EndAccept(ar);
+                socketObject = socketListener.EndAccept(ar);
+
                 // 클라이언트의 연결 요청을 대기(다른 클라이언트가 또 연결할 수 있으므로)
                 socketListener.BeginAccept(AcceptCallback, null);
 
@@ -156,51 +160,39 @@ namespace Server
         
         private static void asyncReceiveCallback(IAsyncResult ar) 
         {
-            TestState ts = ar.AsyncState as TestState;
+            ClientObject co = ar.AsyncState as ClientObject;
+            co.socketClient.EndReceive(ar);
 
-            ts.testSocket.EndReceive(ar);
-
-            //while (!standardSignalObj.IsServerShutdown)
-            if(ts.testSocket.Connected) 
+            if(co.socketClient.Connected) 
             {
-                if (Encoding.UTF8.GetString(ts.testbuffer).Contains("recv"))
+                if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
                 {
-
-                    if (standardSignalObj.ServerBroadcastingData != null)
+                    if (standardSignalObj.ServerScreenData != null)
                     {
                         // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
-                        standardSignalObj.ServerBroadcastingData = imageData;
-                        //ts.testSocket.Send(SignalObjToByte(standardSignalObj));
+                        standardSignalObj.ServerScreenData = imageData;
 
-                        ts.testSocket.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
-                           SocketFlags.None, asyncSendCallback, ts.testSocket);
+                        co.socketClient.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
+                           SocketFlags.None, asyncSendCallback, co.socketClient);
                     }
                     else
                     {
-                        //ts.testSocket.Send(SignalObjToByte(standardSignalObj));
-
                         // 서버 측에서 방송중인 상태가 아닐 경우에는 그냥 서버 데이터가 담긴 데이터를 일반적으로 보냄
-                        ts.testSocket.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
-                          SocketFlags.None, asyncSendCallback, ts.testSocket);
+                        co.socketClient.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
+                          SocketFlags.None, asyncSendCallback, co.socketClient);
                     }
-                    Array.Clear(ts.testbuffer, 0, ts.testbuffer.Length);
+                    Array.Clear(co.recvBuffer, 0, co.recvBuffer.Length);
                 }
-                    if (Thread.Yield()) Thread.Sleep(50);
-                    ts.testSocket.BeginReceive(ts.testbuffer, 0, ts.testbuffer.Length, SocketFlags.None, asyncReceiveCallback, ts);
+                if (Thread.Yield()) Thread.Sleep(40);
+                co.socketClient.BeginReceive(co.recvBuffer, 0, co.recvBuffer.Length, SocketFlags.None, asyncReceiveCallback, co);
             }
         }
-       
+
         private static void asyncSendCallback(IAsyncResult ar)
         {
             Socket socket = ar.AsyncState as Socket;
-            if (socket.Connected)
-            {
-                socket.EndSend(ar);
-            }
-            else
-            {
-                socket.Close();
-            }
+            if (socket.Connected) socket.EndSend(ar);
+            else socket.Close();
         }
 
         private static byte[] SignalObjToByte(SignalObj signalObj)
@@ -209,7 +201,6 @@ namespace Server
             byte[] buffer;
 
             jsonData = JsonConvert.SerializeObject(signalObj);
-
             buffer = Encoding.Default.GetBytes(jsonData);
             
             return buffer;
@@ -220,7 +211,12 @@ namespace Server
             Byte[] preData;
 
             //Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+
+            // 실제 서비스할 땐 해상도가 다른 PC들을 포괄적으로 수용하기 위해 위에 소스를 사용할 것임.
+            // 다만, 테스트 과정에서 창모드를 사용하기 위해서는 아래 소스처럼 픽셀값을 지정해줘야 함.
+            // DPI 문제라고는 하나 이거까지 알 필요는 없다고 봄.
             Bitmap bmp = new Bitmap(1920, 1080);
+
             Graphics g = Graphics.FromImage(bmp);
 
             while (!standardSignalObj.IsServerShutdown)
@@ -255,12 +251,13 @@ namespace Server
                 Array.Clear(preData, 0, preData.Length);
             }
         }
+
         private void btnStart_Click(object sender, EventArgs e)
         {
             // 스위치 역할을 하도록 수정
-            if (standardSignalObj.ServerBroadcastingData == null)
+            if (standardSignalObj.ServerScreenData == null)
             {
-                standardSignalObj.ServerBroadcastingData = imageData;
+                standardSignalObj.ServerScreenData = imageData;
 
                 // 폼 버튼 변경
                 btnStart.Text = "공유 중지";
@@ -270,7 +267,7 @@ namespace Server
             }
             else
             {
-                standardSignalObj.ServerBroadcastingData = null;
+                standardSignalObj.ServerScreenData = null;
 
                 btnStart.Text = "공유";
 
@@ -288,28 +285,21 @@ namespace Server
 
         private void btnControl_Click(object sender, EventArgs e)
         {
-            switch (standardSignalObj.IsServerControlling)
+            if(standardSignalObj.IsServerControlling)
             {
-                case false:
-                {
-                    standardSignalObj.IsServerControlling = true;
-                    notifyIcon.ContextMenu.MenuItems[1].Checked = true;
-                        
-                    MessageBox.Show("키보드와 마우스 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    btnControl.Text = "중지";
-                       
-                    break;
-                }
-                case true:
-                {
-                    standardSignalObj.IsServerControlling = false;
-                    notifyIcon.ContextMenu.MenuItems[1].Checked = false;
-                        
-                    MessageBox.Show("키보드와 마우스 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    btnControl.Text = "제어";
+                standardSignalObj.IsServerControlling = false;
+                notifyIcon.ContextMenu.MenuItems[1].Checked = false;
 
-                    break;
-                }
+                MessageBox.Show("키보드와 마우스 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnControl.Text = "제어";
+            }
+            else
+            {
+                standardSignalObj.IsServerControlling = true;
+                notifyIcon.ContextMenu.MenuItems[1].Checked = true;
+
+                MessageBox.Show("키보드와 마우스 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnControl.Text = "중지";
             }
         }
     }

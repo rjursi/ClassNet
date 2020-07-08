@@ -28,45 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.screenImage = new System.Windows.Forms.PictureBox();
+            this.imageSize = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.screenImage)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // screenImage
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(640, 360);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.screenImage.Location = new System.Drawing.Point(0, 0);
+            this.screenImage.Margin = new System.Windows.Forms.Padding(0);
+            this.screenImage.Name = "screenImage";
+            this.screenImage.Size = new System.Drawing.Size(640, 360);
+            this.screenImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.screenImage.TabIndex = 0;
+            this.screenImage.TabStop = false;
             // 
-            // label1
+            // imageSize
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("맑은 고딕", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label1.Location = new System.Drawing.Point(21, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 19);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Image Size";
+            this.imageSize.AutoSize = true;
+            this.imageSize.Font = new System.Drawing.Font("맑은 고딕", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.imageSize.Location = new System.Drawing.Point(21, 20);
+            this.imageSize.Name = "imageSize";
+            this.imageSize.Size = new System.Drawing.Size(83, 19);
+            this.imageSize.TabIndex = 1;
+            this.imageSize.Text = "Image Size";
             // 
             // Client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(640, 360);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.imageSize);
+            this.Controls.Add(this.screenImage);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Client";
             this.Text = "Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Client_FormClosing);
             this.Load += new System.EventHandler(this.Client_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.screenImage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -74,8 +74,8 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.PictureBox screenImage;
+        private System.Windows.Forms.Label imageSize;
     }
 }
 
