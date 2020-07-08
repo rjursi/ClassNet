@@ -24,7 +24,7 @@ namespace Server
             public Byte[] recvBuffer;
             public Socket socketClient;
         }
-        
+
         Socket socketListener;
         Socket socketObject;
         IPEndPoint serverEndPoint;
@@ -38,7 +38,7 @@ namespace Server
         {
             InitializeComponent();
         }
-        
+
         private void SocketOn()
         {
             socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -115,55 +115,21 @@ namespace Server
                 // 클라이언트의 연결 요청을 대기(다른 클라이언트가 또 연결할 수 있으므로)
                 socketListener.BeginAccept(AcceptCallback, null);
 
-                TestState test = new TestState();
-                test.testbuffer = new byte[4];
-                test.testSocket = socketClient;
-                
-                test.testSocket.BeginReceive(test.testbuffer, 0, test.testbuffer.Length, SocketFlags.None, asyncReceiveCallback, test);
-                //ThreadPool.QueueUserWorkItem(clientThread, socketClient);
+                ClientObject tempClient = new ClientObject();
+
+                tempClient.recvBuffer = new byte[4];
+                tempClient.socketClient = socketObject;
+
+                tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, asyncReceiveCallback, tempClient);
             }
         }
 
-        public static void clientThread(Object ParamSocketClient)
-        {
-            Byte[] recvData = new Byte[4];
-
-            Socket socketClient = (Socket)ParamSocketClient;
-
-            //TestState test = new TestState();
-            //test.testbuffer = new byte[4];
-            //test.testSocket = (Socket)ParamSocketClient;
-
-            // 서버가 꺼지지 않은 상태라면
-            while (!standardSignalObj.IsServerShutdown)
-            {
-                socketClient.Receive(recvData);
-                //test.testSocket.BeginReceive(test.testbuffer, 0, test.testbuffer.Length, SocketFlags.None, asyncReceiveCallback, test);
-                if (Encoding.UTF8.GetString(recvData).Contains("recv"))
-                {
-                    if (standardSignalObj.ServerBroadcastingData != null)
-                    {
-                        // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
-                        standardSignalObj.ServerBroadcastingData = imageData;
-                        socketClient.Send(SignalObjToByte(standardSignalObj));
-                    }
-                    else
-                    {
-                        // 서버 측에서 방송중인 상태가 아닐 경우에는 그냥 서버 데이터가 담긴 데이터를 일반적으로 보냄
-                        socketClient.Send(SignalObjToByte(standardSignalObj));
-                    }
-                    Array.Clear(recvData, 0, recvData.Length);
-                }
-                if (Thread.Yield()) Thread.Sleep(50);
-            }
-        }
-        
-        private static void asyncReceiveCallback(IAsyncResult ar) 
+        private static void asyncReceiveCallback(IAsyncResult ar)
         {
             ClientObject co = ar.AsyncState as ClientObject;
             co.socketClient.EndReceive(ar);
 
-            if(co.socketClient.Connected) 
+            if (co.socketClient.Connected)
             {
                 if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
                 {
@@ -202,7 +168,7 @@ namespace Server
 
             jsonData = JsonConvert.SerializeObject(signalObj);
             buffer = Encoding.Default.GetBytes(jsonData);
-            
+
             return buffer;
         }
 
@@ -285,7 +251,7 @@ namespace Server
 
         private void btnControl_Click(object sender, EventArgs e)
         {
-            if(standardSignalObj.IsServerControlling)
+            if (standardSignalObj.IsServerControlling)
             {
                 standardSignalObj.IsServerControlling = false;
                 notifyIcon.ContextMenu.MenuItems[1].Checked = false;
