@@ -11,7 +11,6 @@ namespace Client
 {
     class CmdProcssController
     {
-        
         private Process hookerProcess;
         private ProcessStartInfo hookerProcessStartInfo;
         
@@ -20,9 +19,6 @@ namespace Client
         private StreamWriter streamWriter;
        
         private bool nowCtrlStatus;
-        
-
-        
         public bool NowCtrlStatus { get => nowCtrlStatus; set => nowCtrlStatus = value; }
 
         // 이전 상태와 다를 경우에만 프로세스가 새로 실행될 것인지를 결정
@@ -47,14 +43,12 @@ namespace Client
                     hookerProcess.StartInfo = hookerProcessStartInfo;
                     hookerProcess.StartInfo.Arguments = pipeServer.GetClientHandleAsString();
                     hookerProcess.Start();
-       
                 }
                               
                 if (!ctrlStatus) // 만약 프로세스가 돌고있는 상태에서만 아래 코드가 동작을 하도록 설정
                 {
                     pipeServer.DisposeLocalCopyOfClientHandle();
                     QuitProcess();
-                                       
                 }              
             }
                     
@@ -67,11 +61,9 @@ namespace Client
    
         public void QuitProcess()
         {
-
             streamWriter = new StreamWriter(pipeServer);
             streamWriter.AutoFlush = true;
             streamWriter.WriteLine("quit");
-
 
             hookerProcess.WaitForExit(); // here
         }
@@ -84,7 +76,6 @@ namespace Client
             this.hookerProcessStartInfo.CreateNoWindow = false;
             this.hookerProcessStartInfo.UseShellExecute = false;
             this.hookerProcessStartInfo.FileName = "HookerProcess.exe";
-
         }
     }
 }

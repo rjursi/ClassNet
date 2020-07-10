@@ -7,39 +7,33 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Windows.Forms;
-
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
-using System.Reflection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Client
 {
     public partial class Client : Form
     {
-        public bool isConnected = true;
+        public bool isConnected = false;
+
+        static SignalObj standardSignalObj;
 
         private const int MOSHPORT = 9990;
-        private const string SERVER_IP = "127.0.0.1"; 
+        private const string SERVER_IP = "127.0.0.1";
 
         Socket socketServer;
-        SignalObj standardSignalObj;
+
         CmdProcssController cmdProcessController;
 
-        delegate void ThreadDelegate(int imgSize, Byte[] recvData);
+        delegate void ScreenOnDelegate(int imgSize, Byte[] recvData, double isOpacity);
+        delegate void ScreenOffDelegate(double isOpacity);
 
         public Client()
         {
             InitializeComponent();
-
-            cmdProcessController = new CmdProcssController();
-            ThreadPool.SetMaxThreads(5, 5); 
         }
 
         public SignalObj ByteToObject(byte[] buffer)
         {
-            //JObject jObj;
             string jsonData = "";
             SignalObj sObj;
 
@@ -52,56 +46,54 @@ namespace Client
 
         private void Client_Load(object sender, EventArgs e)
         {
-            while (isConnected)
+            ThreadPool.SetMaxThreads(5, 5);
+
+            cmdProcessController = new CmdProcssController();
+
+            while (!isConnected)
             {
                 try
                 {
                     socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(SERVER_IP), MOSHPORT); // 192.168.31.218 // 192.168.31.200
+                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(SERVER_IP), MOSHPORT);
                     socketServer.Connect(serverEndPoint);
 
-                    // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정 → 프로젝트 진행과정에서는 작업표시줄에 표시할게! - 태우
+                    // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
+                    // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
                     // this.ShowInTaskbar = false;
 
-                    /* 받은 이미지 풀스크린으로 띄우는 소스입니다. 수정 ㄴㄴ - 태우 */
+                    // 받은 이미지를 풀스크린으로 띄우는 설정
+                    // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
                     /*FormBorderStyle = FormBorderStyle.None;
                     WindowState = FormWindowState.Maximized;
-                    TopMost = true;
-
                     pictureBox1.Width = Screen.PrimaryScreen.Bounds.Width;
                     pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
-                    isConnected = false;
+                    // 화면 폼을 가장 맨 위로
+                    TopMost = true;
+
+                    isConnected = true;
                 }
                 catch (SocketException)
                 {
-                    isConnected = true; // 해당 bool 변수로 인해서 다시한번 위 반복문이 실행
+                    isConnected = false; // 해당 bool 변수로 인해서 다시한번 위 반복문이 실행
                 }
             }
 
+            Opacity = 0;
             ThreadPool.QueueUserWorkItem(receiveThread);
         }
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
-           
             if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
             socketServer.Close();
 
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
-
         }
 
         public void receiveThread(Object obj)
         {
-
-            // 해당 UI 작업을 UI 스레드가 아닌 receive 작업스레드에서 요청을 하므로 invoke 처리
-            // Invoke : Control.Invoke 메서드, 대리자를 실행해주는 메소드
-            // MethodInvoker : Windows.Forms.MethodInvoker - 대리자 형식
-
-            this.Invoke(new MethodInvoker(() => { Opacity = 0; }));
-            
-
             Byte[] recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
             Byte[] sendData = Encoding.UTF8.GetBytes("recv");
 
@@ -112,24 +104,24 @@ namespace Client
                     socketServer.Send(sendData);
 
                     socketServer.Receive(recvData);
-                    standardSignalObj = ByteToObject(recvData);
 
-                    // 서버가 현재 방송중인 상태이면
-                    if (standardSignalObj.ServerBroadcastingData != null)
+                    using(standardSignalObj = ByteToObject(recvData))
                     {
-                        this.Invoke(new MethodInvoker(() => { Opacity = 1; }));
+                        // 서버가 현재 방송중인 상태이면
+                        if (standardSignalObj.ServerScreenData != null)
+                        {
+                            // 이미지를 받아서 여기서 버퍼를 설정하는 부분
+                            this.Invoke(new ScreenOnDelegate(outputDelegate),
+                                standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, 1);
+                        }
+                        else
+                        {
+                            this.Invoke(new ScreenOffDelegate(opacityDelegate), 0);
+                        }
 
-                        // 이미지를 받아서 여기서 버퍼를 설정하는 부분
-                        this.Invoke(new ThreadDelegate(outputDelegate),
-                            standardSignalObj.ServerBroadcastingData.Length, standardSignalObj.ServerBroadcastingData);
+                        // 서버가 제어 신호가 걸린 상태이면
+                        cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
                     }
-                    else
-                    {
-                        this.Invoke(new MethodInvoker(() => { Opacity = 0; }));
-                    }
-
-                    // 서버가 제어 신호가 걸린 상태이면
-                    cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
                 }
                 catch (SocketException)
                 {
@@ -137,7 +129,6 @@ namespace Client
                     socketServer.Close();
 
                     this.Invoke(new MethodInvoker(() => { Dispose(); }));
-
                     break;
                 }
                 catch (ObjectDisposedException)
@@ -155,8 +146,15 @@ namespace Client
             }
         }
 
-        public void outputDelegate(int imgSize, Byte[] recvData)
+        public void opacityDelegate(double isOpacity)
         {
+            Opacity = isOpacity;
+        }
+
+        public void outputDelegate(int imgSize, Byte[] recvData, double isOpacity)
+        {
+            Opacity = isOpacity;
+
             using (MemoryStream pre_ms = new MemoryStream(recvData))
             {
                 using (MemoryStream post_ms = new MemoryStream())
@@ -167,12 +165,13 @@ namespace Client
                         {
                             ds.CopyTo(post_ms);
                         }
-                        catch { }
-                        ds.Close();
+                        finally
+                        {
+                            ds.Close();
+                        }
                     }
-
-                    label1.Text = imgSize.ToString();
-                    pictureBox1.Image = Image.FromStream(post_ms);
+                    imageSize.Text = imgSize.ToString();
+                    screenImage.Image = Image.FromStream(post_ms);
 
                     post_ms.Close();
                 }
