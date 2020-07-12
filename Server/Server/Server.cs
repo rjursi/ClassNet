@@ -102,7 +102,7 @@ namespace Server
                     return codec;
                 }
             }
-            return null;
+            return null;    
         }
 
         void AcceptCallback(IAsyncResult ar)
@@ -223,7 +223,7 @@ namespace Server
             // 스위치 역할을 하도록 수정
             if (standardSignalObj.ServerScreenData == null)
             {
-                standardSignalObj.ServerScreenData = imageData;
+                standardSignalObj.ServerScreenData = imageData; 
 
                 // 폼 버튼 변경
                 btnStart.Text = "공유 중지";
