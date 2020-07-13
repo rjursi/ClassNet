@@ -133,18 +133,21 @@ namespace Server
             {
                 if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
                 {
+                    byte[] serializeData;
                     if (standardSignalObj.ServerScreenData != null)
                     {
                         // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
                         standardSignalObj.ServerScreenData = imageData;
 
-                        co.socketClient.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
+                        serializeData = SignalObjToByte(standardSignalObj);
+                        co.socketClient.BeginSend(serializeData, 0, serializeData.Length,
                            SocketFlags.None, asyncSendCallback, co.socketClient);
                     }
                     else
                     {
+                        serializeData = SignalObjToByte(standardSignalObj);
                         // 서버 측에서 방송중인 상태가 아닐 경우에는 그냥 서버 데이터가 담긴 데이터를 일반적으로 보냄
-                        co.socketClient.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
+                        co.socketClient.BeginSend(serializeData, 0, serializeData.Length,
                           SocketFlags.None, asyncSendCallback, co.socketClient);
                     }
                     Array.Clear(co.recvBuffer, 0, co.recvBuffer.Length);
