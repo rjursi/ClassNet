@@ -10,6 +10,9 @@ using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Server
 {
@@ -251,7 +254,7 @@ namespace Server
 
         private void btnControl_Click(object sender, EventArgs e)
         {
-            if(standardSignalObj.IsServerControlling)
+            if(standardSignalObj.IsServerControlling) 
             {
                 standardSignalObj.IsServerControlling = false;
                 notifyIcon.ContextMenu.MenuItems[1].Checked = false;
@@ -267,6 +270,56 @@ namespace Server
                 MessageBox.Show("키보드와 마우스 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 btnControl.Text = "중지";
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if(standardSignalObj.IsServerUpload == false)
+            {
+                UploadFile();
+                standardSignalObj.IsServerUpload = true;
+                button2.Text = "ㅈㄻㄻㅈㄹ";
+                Thread.Sleep(1000);
+                standardSignalObj.IsServerUpload = false;
+                button2.Text = standardSignalObj.IsServerUpload.ToString();
+            }   
+        }
+
+        public void UploadFile()
+        {
+
+            string sourceFilePath = "c:\\works/test.txt";
+            string targetFileURI = "ftp://localhost/mosh/sample.txt";
+            string userID = "moshFtp";
+            string password = "123";
+
+
+            Uri targetFileUri = new Uri(targetFileURI);
+
+                FtpWebRequest ftpWebRequest = WebRequest.Create(targetFileUri) as FtpWebRequest;
+
+                ftpWebRequest.Credentials = new NetworkCredential(userID, password);
+                ftpWebRequest.Method = WebRequestMethods.Ftp.UploadFile;
+
+
+                FileStream sourceFileStream = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read);
+                Stream targetStream = ftpWebRequest.GetRequestStream();
+
+                byte[] bufferByteArray = new byte[1024];
+                while (true)
+                {
+                    int byteCount = sourceFileStream.Read(bufferByteArray, 0, bufferByteArray.Length);
+                    if (byteCount == 0)
+                    {
+                        break;
+                    }
+                    targetStream.Write(bufferByteArray, 0, byteCount);
+                }
+                targetStream.Close();
+                sourceFileStream.Close();
+           
+
+
         }
     }
 }

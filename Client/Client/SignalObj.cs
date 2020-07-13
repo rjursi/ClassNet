@@ -14,6 +14,7 @@ namespace Client
         // 서버 상태, 제어명령 상태 저장 변수
         private bool isServerShutdown;
         private bool isServerControlling;
+        private bool isServerUpload;
 
         // 서버에서 보내는 이미지 관련 데이터
         private byte[] serverScreenData;
@@ -22,6 +23,8 @@ namespace Client
         {
             isServerShutdown = false;
             isServerControlling = false;
+
+            isServerUpload = false;
         }
 
         ~SignalObj()
@@ -38,6 +41,9 @@ namespace Client
         // 위 서버가 꺼져있는지, 서버가 컨트롤 중인지는 서버만 제어함
         public bool IsServerShutdown { get => isServerShutdown; set => isServerShutdown = value; }
         public bool IsServerControlling { get => isServerControlling; set => isServerControlling = value; }
+
+        public bool IsServerUpload { get => isServerUpload; set=>isServerUpload=value; }
+
 
         // 방송 관련 데이터 getter, setter
         public byte[] ServerScreenData { get => serverScreenData; set => serverScreenData = value; }
