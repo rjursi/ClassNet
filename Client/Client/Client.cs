@@ -5,51 +5,39 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace Client
 {
     public partial class Client : Form
     {
-        public bool isConnected = false;
-
-        static SignalObj standardSignalObj;
-
-        private const int MOSHPORT = 9990;
+        private const int MOSHPORT = 53178;
         private const string SERVER_IP = "127.0.0.1";
 
-        Socket socketServer;
+        private Socket socketServer;
+        private bool isConnected = false;
 
-        CmdProcssController cmdProcessController;
+        private static Action mainAction;
 
-        delegate void ScreenOnDelegate(int imgSize, Byte[] recvData, double isOpacity);
-        delegate void ScreenOffDelegate(double isOpacity);
+        private static SignalObj standardSignalObj;
+
+        private CmdProcessController cmdProcessController;
+
+        private delegate void ScreenOnDelegate(int imgSize, Byte[] recvData, double isOpacity);
+        private delegate void ScreenOffDelegate(double isOpacity);
+
+        private static Byte[] recvData;
+        private static Byte[] sendData;
 
         public Client()
         {
             InitializeComponent();
         }
 
-        public SignalObj ByteToObject(byte[] buffer)
-        {
-            string jsonData = "";
-            SignalObj sObj;
-
-            jsonData = Encoding.Default.GetString(buffer);
-            
-            sObj = JsonConvert.DeserializeObject<SignalObj>(jsonData);
-
-            return sObj;
-        }
-
         private void Client_Load(object sender, EventArgs e)
         {
-            ThreadPool.SetMaxThreads(5, 5);
-
-            cmdProcessController = new CmdProcssController();
-
             while (!isConnected)
             {
                 try
@@ -66,73 +54,80 @@ namespace Client
                     // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
                     /*FormBorderStyle = FormBorderStyle.None;
                     WindowState = FormWindowState.Maximized;
-                    pictureBox1.Width = Screen.PrimaryScreen.Bounds.Width;
-                    pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;
-                    */
-
-
+                    screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
+                    screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
                     // 화면 폼을 가장 맨 위로
-                    TopMost = true;
+                    // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
+                    // TopMost = true;
 
                     isConnected = true;
                 }
                 catch (SocketException)
                 {
-                    isConnected = false; // 해당 bool 변수로 인해서 다시한번 위 반복문이 실행
+                    isConnected = false; // 연결이 안 되면 대기상태 유지
                 }
             }
 
+            cmdProcessController = new CmdProcessController();
+
+            recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
+            sendData = Encoding.UTF8.GetBytes("recv");
+
             Opacity = 0;
-            ThreadPool.QueueUserWorkItem(receiveThread);
+
+            // 이런식으로 구현 기능에 대한 메소드를 추가하기 위해 아래와 같이 람다식으로 작성
+            InsertAction(() => ControllingProcessing());
+            InsertAction(() => ImageProcessing());
+
+            Task.Run(()=> MainTask());
         }
 
-        private void Client_FormClosing(object sender, FormClosingEventArgs e)
+        public void InsertAction(Action action)
         {
-            if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
-            socketServer.Close();
-
-            this.Invoke(new MethodInvoker(() => { Dispose(); }));
+            mainAction += action;
         }
 
-        public void receiveThread(Object obj)
+        public SignalObj ByteToObject(byte[] buffer)
         {
-            Byte[] recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
-            Byte[] sendData = Encoding.UTF8.GetBytes("recv");
+            string jsonData = "";
+            SignalObj signal;
 
+            jsonData = Encoding.Default.GetString(buffer);
+            signal = JsonConvert.DeserializeObject<SignalObj>(jsonData);
+
+            return signal;
+        }
+
+        public SignalObj ReceiveObject()
+        {
+            try
+            {
+                socketServer.Send(sendData);
+                socketServer.Receive(recvData);
+                
+                return ByteToObject(recvData);
+            }
+            catch (SocketException)
+            {
+                socketServer.Close();
+                if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
+                this.Invoke(new MethodInvoker(() => { Dispose(); }));
+
+                return null;
+            }
+        }
+
+        public void MainTask()
+        {
             while (true)
             {
                 try
                 {
-                    socketServer.Send(sendData);
-
-                    socketServer.Receive(recvData);
-
-                    using(standardSignalObj = ByteToObject(recvData))
+                    using (standardSignalObj = ReceiveObject())
                     {
-                        // 서버가 현재 방송중인 상태이면
-                        if (standardSignalObj.ServerScreenData != null)
-                        {
-                            // 이미지를 받아서 여기서 버퍼를 설정하는 부분
-                            this.Invoke(new ScreenOnDelegate(outputDelegate),
-                                standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, 1);
-                        }
-                        else
-                        {
-                            this.Invoke(new ScreenOffDelegate(opacityDelegate), 0);
-                        }
-
-                        // 서버가 제어 신호가 걸린 상태이면
-                        cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
+                        if(standardSignalObj != null) mainAction();
                     }
-                }
-                catch (SocketException)
-                {
-                    if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
-                    socketServer.Close();
-
-                    this.Invoke(new MethodInvoker(() => { Dispose(); }));
-                    break;
                 }
                 catch (ObjectDisposedException)
                 {
@@ -140,21 +135,40 @@ namespace Client
                 }
                 catch (JsonReaderException)
                 {
-                    Array.Clear(recvData, 0, recvData.Length);
-                    continue;
+                    break;
                 }
-                Array.Clear(recvData, 0, recvData.Length);
-
-                Thread.Yield();
+                finally
+                {
+                    Array.Clear(recvData, 0, recvData.Length);
+                }
             }
         }
 
-        public void opacityDelegate(double isOpacity)
+        public void ControllingProcessing()
+        {
+            cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
+        }
+
+        public void ImageProcessing()
+        {
+            if (standardSignalObj.ServerScreenData != null)
+            {
+                // 이미지를 받아서 여기서 버퍼를 설정하는 부분
+                this.Invoke(new ScreenOnDelegate(OutputDelegate),
+                    standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, 1);
+            }
+            else
+            {
+                this.Invoke(new ScreenOffDelegate(OpacityDelegate), 0);
+            }
+        }
+
+        public void OpacityDelegate(double isOpacity)
         {
             Opacity = isOpacity;
         }
 
-        public void outputDelegate(int imgSize, Byte[] recvData, double isOpacity)
+        public void OutputDelegate(int imgSize, Byte[] recvData, double isOpacity)
         {
             Opacity = isOpacity;
 
@@ -180,6 +194,13 @@ namespace Client
                 }
                 pre_ms.Close();
             }
+        }
+
+        private void Client_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            socketServer.Close();
+            if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
+            this.Invoke(new MethodInvoker(() => { Dispose(); }));
         }
     }
 }
