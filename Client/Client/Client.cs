@@ -67,7 +67,10 @@ namespace Client
                     /*FormBorderStyle = FormBorderStyle.None;
                     WindowState = FormWindowState.Maximized;
                     pictureBox1.Width = Screen.PrimaryScreen.Bounds.Width;
-                    pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;*/
+                    pictureBox1.Height = Screen.PrimaryScreen.Bounds.Height;
+                    */
+
+
 
                     // 화면 폼을 가장 맨 위로
                     TopMost = true;

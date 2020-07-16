@@ -10,6 +10,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace Server
 {
@@ -25,6 +26,9 @@ namespace Server
             public Socket socketClient;
         }
 
+        static int clientCount = 0; //접속 클라이언트 수
+        static public Dictionary<Socket, string> connectedClientList = new Dictionary<Socket, string>(); //클라이언트 리스트
+       
         Socket socketListener;
         Socket socketObject;
         IPEndPoint serverEndPoint;
@@ -38,6 +42,20 @@ namespace Server
         {
             InitializeComponent();
         }
+
+        //동적으로 PictureBox 생성하는 로직:
+        //Form_Load를 하고 
+        public void ClientBoxes_Load(object sender,EventArgs e)
+        {
+            DynamicClientBoxesCreate();
+        }
+
+        public void DynamicClientBoxesCreate()
+        {
+
+        }
+
+
 
         private void SocketOn()
         {
@@ -115,11 +133,15 @@ namespace Server
                 // 클라이언트의 연결 요청을 대기(다른 클라이언트가 또 연결할 수 있으므로)
                 socketListener.BeginAccept(AcceptCallback, null);
 
+
                 ClientObject tempClient = new ClientObject();
 
                 tempClient.recvBuffer = new byte[4];
                 tempClient.socketClient = socketObject;
 
+                clientCount++;
+                connectedClientList.Add(socketObject, "테수투!");
+                Console.WriteLine($"{clientCount}테스트! {connectedClientList.Values}");
                 tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, asyncReceiveCallback, tempClient);
             }
         }
@@ -131,6 +153,8 @@ namespace Server
 
             if (co.socketClient.Connected)
             {
+               
+                
                 if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
                 {
                     byte[] serializeData;
@@ -138,7 +162,7 @@ namespace Server
                     {
                         // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
                         standardSignalObj.ServerScreenData = imageData;
-
+                        
                         serializeData = SignalObjToByte(standardSignalObj);
                         co.socketClient.BeginSend(serializeData, 0, serializeData.Length,
                            SocketFlags.None, asyncSendCallback, co.socketClient);
