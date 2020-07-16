@@ -53,6 +53,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ClientsPanel.Designer.cs">
+      <DependentUpon>ClientsPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Server.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,6 +68,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignalObj.cs" />
+    <EmbeddedResource Include="ClientsPanel.resx">
+      <DependentUpon>ClientsPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Server.resx">
       <DependentUpon>Server.cs</DependentUpon>
     </EmbeddedResource>
