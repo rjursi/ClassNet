@@ -1,61 +1,54 @@
-﻿using System.Drawing;
-using System.IO;
+﻿using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace HookerProcess
 {
-    public partial class form_keyMouseControlling : Form
+    public partial class KeyMouseController : Form
     {
-        Hooker hooker;
-        TaskMgrController taskMgrController;
-        CtrlAltDeleteScreen ctrlAltDeleteScreenMgr;
-        bool isHookerDoing;
-        string[] parentQuitMsg;
+        public string[] parentQuitMsg;
 
-        Thread childProcessQuitThread;
+        private static Hooker hooker;
+        private static TaskMgrController taskMgrController;
+        private static CtrlAltDeleteScreen ctrlAltDeleteScreenMgr;
 
-        public form_keyMouseControlling(string[] parentQuitMsg)
+        private Thread childProcessQuitThread;
+
+        public KeyMouseController(string[] parentQuitMsg)
         {
             InitializeComponent();
 
             hooker = new Hooker();
             taskMgrController = new TaskMgrController();
             ctrlAltDeleteScreenMgr = new CtrlAltDeleteScreen();
-            isHookerDoing = false;
 
             this.parentQuitMsg = parentQuitMsg;
         }
         
-        private void form_keyMouseControlling_Load(object sender, System.EventArgs e)
+        private void KeyMouseController_Load(object sender, System.EventArgs e)
         {
             // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
             this.ShowInTaskbar = false;
 
-            /*int x = Screen.PrimaryScreen.Bounds.Width / 2 -  this.Size.Width / 2;
-            int y = Screen.PrimaryScreen.Bounds.Height - (this.Size.Height  + 20);
-            this.Location = new Point(x, y);*/
+            TopMost = true;
 
-            childProcessQuitThread = new Thread(childProcessQuit);
+            childProcessQuitThread = new Thread(ChildProcessQuit);
             childProcessQuitThread.Start(this.parentQuitMsg);
 
+            // 제어 기능 사용 시 아래 주석 제거
             /*taskMgrController.KillTaskMgr();
             hooker.SetHook();
             ctrlAltDeleteScreenMgr.StartListeningForDesktopSwitch(hooker);*/
-
-            isHookerDoing = true;
         }
 
-        private void form_keyMouseControlling_FormClosing(object sender, FormClosingEventArgs e)
+        private void KeyMouseController_FormClosing(object sender, FormClosingEventArgs e)
         {
             /*taskMgrController.EnableTaskMgr();
             hooker.UnHook();*/
-
-            isHookerDoing = false;
         }
 
-        private void childProcessQuit(object parentQuitMsg)
+        private void ChildProcessQuit(object parentQuitMsg)
         {
             string[] quitMsg = (string[])parentQuitMsg;
 

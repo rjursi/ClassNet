@@ -30,44 +30,44 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Server));
-            this.btnStart = new System.Windows.Forms.Button();
+            this.btnScreenSend = new System.Windows.Forms.Button();
             this.btnShutdown = new System.Windows.Forms.Button();
             this.btnControl = new System.Windows.Forms.Button();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.SuspendLayout();
             // 
-            // btnStart
+            // btnScreenSend
             // 
-            this.btnStart.Location = new System.Drawing.Point(11, 13);
-            this.btnStart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(138, 35);
-            this.btnStart.TabIndex = 0;
-            this.btnStart.Text = "공유";
-            this.btnStart.UseVisualStyleBackColor = true;
-            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            this.btnScreenSend.Location = new System.Drawing.Point(12, 11);
+            this.btnScreenSend.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnScreenSend.Name = "btnScreenSend";
+            this.btnScreenSend.Size = new System.Drawing.Size(196, 35);
+            this.btnScreenSend.TabIndex = 0;
+            this.btnScreenSend.Text = "화면 전송";
+            this.btnScreenSend.UseVisualStyleBackColor = true;
+            this.btnScreenSend.Click += new System.EventHandler(this.BtnScreenSend_Click);
             // 
             // btnShutdown
             // 
-            this.btnShutdown.Location = new System.Drawing.Point(11, 56);
+            this.btnShutdown.Location = new System.Drawing.Point(12, 180);
             this.btnShutdown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnShutdown.Name = "btnShutdown";
-            this.btnShutdown.Size = new System.Drawing.Size(138, 35);
+            this.btnShutdown.Size = new System.Drawing.Size(196, 35);
             this.btnShutdown.TabIndex = 1;
             this.btnShutdown.Text = "종료";
             this.btnShutdown.UseVisualStyleBackColor = true;
-            this.btnShutdown.Click += new System.EventHandler(this.btnShutdown_Click);
+            this.btnShutdown.Click += new System.EventHandler(this.BtnShutdown_Click);
             // 
             // btnControl
             // 
-            this.btnControl.Location = new System.Drawing.Point(155, 13);
+            this.btnControl.Location = new System.Drawing.Point(12, 52);
             this.btnControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnControl.Name = "btnControl";
-            this.btnControl.Size = new System.Drawing.Size(89, 78);
+            this.btnControl.Size = new System.Drawing.Size(196, 35);
             this.btnControl.TabIndex = 2;
-            this.btnControl.Text = "제어";
+            this.btnControl.Text = "조작 제어";
             this.btnControl.UseVisualStyleBackColor = true;
-            this.btnControl.Click += new System.EventHandler(this.btnControl_Click);
+            this.btnControl.Click += new System.EventHandler(this.BtnControl_Click);
             // 
             // notifyIcon
             // 
@@ -79,10 +79,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(256, 106);
+            this.ClientSize = new System.Drawing.Size(220, 226);
             this.Controls.Add(this.btnControl);
             this.Controls.Add(this.btnShutdown);
-            this.Controls.Add(this.btnStart);
+            this.Controls.Add(this.btnScreenSend);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Server";
@@ -95,7 +95,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.Button btnScreenSend;
         private System.Windows.Forms.Button btnShutdown;
         private System.Windows.Forms.Button btnControl;
         private System.Windows.Forms.NotifyIcon notifyIcon;

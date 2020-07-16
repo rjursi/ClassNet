@@ -2,32 +2,28 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Client
 {
-    class CmdProcssController
+    class CmdProcessController
     {
         private Process hookerProcess;
-        private ProcessStartInfo hookerProcessStartInfo;
+        private readonly ProcessStartInfo hookerProcessStartInfo;
         
         private AnonymousPipeServerStream pipeServer;
         
         private StreamWriter streamWriter;
-       
-        private bool nowCtrlStatus;
-        public bool NowCtrlStatus { get => nowCtrlStatus; set => nowCtrlStatus = value; }
+
+        public bool NowCtrlStatus { get; set; }
 
         // 이전 상태와 다를 경우에만 프로세스가 새로 실행될 것인지를 결정
         public void CtrlStatusEventCheck(bool newCtrlStatus)
         {
-            if(nowCtrlStatus != newCtrlStatus)
+            if(NowCtrlStatus != newCtrlStatus)
             {
-                nowCtrlStatus = newCtrlStatus;
-                this.HostControl(nowCtrlStatus);
+                NowCtrlStatus = newCtrlStatus;
+                this.HostControl(NowCtrlStatus);
             }
         }
 
@@ -39,8 +35,10 @@ namespace Client
                 {
                     pipeServer = new AnonymousPipeServerStream(PipeDirection.Out, HandleInheritability.Inheritable);
 
-                    hookerProcess = new Process();
-                    hookerProcess.StartInfo = hookerProcessStartInfo;
+                    hookerProcess = new Process
+                    {
+                        StartInfo = hookerProcessStartInfo
+                    };
                     hookerProcess.StartInfo.Arguments = pipeServer.GetClientHandleAsString();
                     hookerProcess.Start();
                 }
@@ -51,31 +49,33 @@ namespace Client
                     QuitProcess();
                 }              
             }
-                    
             catch (Exception e)
             {
                 MessageBox.Show(string.Format("Exception : {0}", e.Message));
             }
-                     
         }
    
         public void QuitProcess()
         {
-            streamWriter = new StreamWriter(pipeServer);
-            streamWriter.AutoFlush = true;
+            streamWriter = new StreamWriter(pipeServer)
+            {
+                AutoFlush = true
+            };
             streamWriter.WriteLine("quit");
 
-            hookerProcess.WaitForExit(); // here
+            hookerProcess.WaitForExit();
         }
 
-        public CmdProcssController()
+        public CmdProcessController()
         {
             this.NowCtrlStatus = false;
 
-            this.hookerProcessStartInfo = new ProcessStartInfo();
-            this.hookerProcessStartInfo.CreateNoWindow = false;
-            this.hookerProcessStartInfo.UseShellExecute = false;
-            this.hookerProcessStartInfo.FileName = "HookerProcess.exe";
+            this.hookerProcessStartInfo = new ProcessStartInfo
+            {
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                FileName = "HookerProcess.exe"
+            };
         }
     }
 }

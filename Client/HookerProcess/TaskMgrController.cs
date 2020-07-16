@@ -6,7 +6,6 @@ namespace HookerProcess
 {
     class TaskMgrController
     {
-
         public void KillTaskMgr()
         {
             RegistryKey regkey;
