@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 
 namespace HookerProcess
@@ -10,7 +7,6 @@ namespace HookerProcess
     class Hooker
     {
         public bool ctrlFlag;
-       
 
         private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
         // wParam -  get handle or Int, keyboard or mouse status (ex. press)
@@ -18,7 +14,6 @@ namespace HookerProcess
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
-       
         const int WH_KEYBOARD_LL = 13;
         const int WH_MOUSE_LL = 14;
 
@@ -36,15 +31,12 @@ namespace HookerProcess
 
         const int WM_MOUSEWHEEL = 0x020A;
         
-
-
         private static IntPtr keyboardHook = IntPtr.Zero;
         private static IntPtr mouseHook = IntPtr.Zero;
 
-        private LowLevelKeyboardProc _keyboardProc = keyboardHookProc;
-        private LowLevelMouseProc _mouseProc = mouseHookProc;
+        private readonly LowLevelKeyboardProc _keyboardProc = KeyboardHookProc;
+        private readonly LowLevelMouseProc _mouseProc = MouseHookProc;
 
-       
         // Dll Load for hooking
 
         [DllImport("user32.dll")]
@@ -65,7 +57,7 @@ namespace HookerProcess
         [DllImport("kernel32.dll")]
         static extern IntPtr LoadLibrary(string lpFileName);
 
-        public static IntPtr mouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
+        public static IntPtr MouseHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             switch ((int)wParam)
             {
@@ -87,14 +79,11 @@ namespace HookerProcess
             return CallNextHookEx(mouseHook, nCode, (int)wParam, lParam);
         }
 
-        public static IntPtr keyboardHookProc(int nCode, IntPtr wParam, IntPtr lParam)
+        public static IntPtr KeyboardHookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-               
-            if( nCode >= 0)
+            if(nCode >= 0)
             {
-             
                 return (IntPtr)1;
-                
             }
             
             return CallNextHookEx(keyboardHook, nCode, (int)wParam, lParam);
@@ -110,16 +99,12 @@ namespace HookerProcess
 
             keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, _keyboardProc, hInstance, 0);
             mouseHook = SetWindowsHookEx(WH_MOUSE_LL, _mouseProc, hInstance, 0);
-            
-         
         }
 
         public void UnHook()
         {
             UnhookWindowsHookEx(keyboardHook);
             UnhookWindowsHookEx(mouseHook);
-
-           
         }
 
         public Hooker()

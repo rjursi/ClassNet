@@ -13,7 +13,7 @@ namespace HookerProcess
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new form_keyMouseControlling(args));
+            Application.Run(new KeyMouseController(args));
         }
     }
 }

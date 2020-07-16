@@ -10,32 +10,29 @@ using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
 using System.ComponentModel;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Server
 {
     public partial class Server : Form
     {
-        static SignalObj standardSignalObj; // 서버 표준 신호 객체
+        private static SignalObj standardSignalObj; // 서버 표준 신호 객체
 
-        private const int MOSHPORT = 9990;
+        private const int MOSHPORT = 53178;
 
-        public class ClientObject
+        private class ClientObject
         {
             public Byte[] recvBuffer;
             public Socket socketClient;
         }
         
-        Socket socketListener;
-        Socket socketObject;
-        IPEndPoint serverEndPoint;
+        private Socket socketListener;
+        private Socket socketObject;
+        private IPEndPoint serverEndPoint;
 
-        static Byte[] imageData;
+        private static Byte[] imageData;
 
-        static ImageCodecInfo codec;
-        static EncoderParameters param;
+        private static ImageCodecInfo codec;
+        private static EncoderParameters param;
 
         public Server()
         {
@@ -56,10 +53,10 @@ namespace Server
         private void NotifyIconSetting()
         {
             ContextMenu ctx = new ContextMenu();
-            ctx.MenuItems.Add(new MenuItem("공유", new EventHandler((s, ea) => btnStart_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("제어", new EventHandler((s, ea) => btnControl_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("화면 전송", new EventHandler((s, ea) => BtnScreenSend_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("조작 제어", new EventHandler((s, ea) => BtnControl_Click(s, ea))));
             ctx.MenuItems.Add("-");
-            ctx.MenuItems.Add(new MenuItem("종료", new EventHandler((s, ea) => btnShutdown_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("종료", new EventHandler((s, ea) => BtnShutdown_Click(s, ea))));
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
         }
@@ -77,21 +74,12 @@ namespace Server
             NotifyIconSetting();
 
             // 화면 이미지 객체 생성
-            ThreadPool.QueueUserWorkItem(imageCreate);
+            ThreadPool.QueueUserWorkItem(ImageCreate);
 
             // JPEG 손실 압축 수준 설정
             codec = GetEncoder(ImageFormat.Jpeg);
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
-        }
-
-        private void Server_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            standardSignalObj.IsServerShutdown = true;
-            standardSignalObj = null;
-
-            if (socketListener != null) socketListener.Close();
-            Dispose();
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -123,11 +111,11 @@ namespace Server
                 tempClient.recvBuffer = new byte[4];
                 tempClient.socketClient = socketObject;
 
-                tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, asyncReceiveCallback, tempClient);
+                tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, tempClient);
             }
         }
         
-        private static void asyncReceiveCallback(IAsyncResult ar) 
+        private static void AsyncReceiveCallback(IAsyncResult ar) 
         {
             ClientObject co = ar.AsyncState as ClientObject;
             co.socketClient.EndReceive(ar);
@@ -136,28 +124,21 @@ namespace Server
             {
                 if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
                 {
-                    if (standardSignalObj.ServerScreenData != null)
-                    {
-                        // 방송중일 때는 이미지랑 같이 넣어서 보내도록 설정
-                        standardSignalObj.ServerScreenData = imageData;
+                    if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;
 
-                        co.socketClient.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
-                           SocketFlags.None, asyncSendCallback, co.socketClient);
-                    }
-                    else
-                    {
-                        // 서버 측에서 방송중인 상태가 아닐 경우에는 그냥 서버 데이터가 담긴 데이터를 일반적으로 보냄
-                        co.socketClient.BeginSend(SignalObjToByte(standardSignalObj), 0, SignalObjToByte(standardSignalObj).Length,
-                          SocketFlags.None, asyncSendCallback, co.socketClient);
-                    }
+                    byte[] signal = SignalObjToByte(standardSignalObj);
+                    co.socketClient.BeginSend(signal, 0, signal.Length, SocketFlags.None, AsyncSendCallback, co.socketClient);
+
+                    signal = null;
                     Array.Clear(co.recvBuffer, 0, co.recvBuffer.Length);
                 }
+
                 if (Thread.Yield()) Thread.Sleep(40);
-                co.socketClient.BeginReceive(co.recvBuffer, 0, co.recvBuffer.Length, SocketFlags.None, asyncReceiveCallback, co);
+                co.socketClient.BeginReceive(co.recvBuffer, 0, co.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, co);
             }
         }
 
-        private static void asyncSendCallback(IAsyncResult ar)
+        private static void AsyncSendCallback(IAsyncResult ar)
         {
             Socket socket = ar.AsyncState as Socket;
             if (socket.Connected) socket.EndSend(ar);
@@ -175,16 +156,13 @@ namespace Server
             return buffer;
         }
 
-        public static void imageCreate(Object obj)
+        public static void ImageCreate(Object obj)
         {
             Byte[] preData;
 
-            //Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-
-            // 실제 서비스할 땐 해상도가 다른 PC들을 포괄적으로 수용하기 위해 위에 소스를 사용할 것임.
-            // 다만, 테스트 과정에서 창모드를 사용하기 위해서는 아래 소스처럼 픽셀값을 지정해줘야 함.
-            // DPI 문제라고는 하나 이거까지 알 필요는 없다고 봄.
             Bitmap bmp = new Bitmap(1920, 1080);
+            // 실제 서비스할 땐 해상도가 다른 PC들을 포괄적으로 수용하기 위해 아래 소스를 사용할 것임.
+            // Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
             Graphics g = Graphics.FromImage(bmp);
 
@@ -196,7 +174,7 @@ namespace Server
                 }
                 catch (Win32Exception)
                 {
-                    // 가상 데스크톱으로 이동하여 이미지를 못 찍을 일이 생길 경우 그냥 기본 검정화면으로 덮어씌움
+                    // 가상 데스크톱으로 이동하면 화면을 복사하지 않음.
                     g = Graphics.FromImage(bmp);
                 }
 
@@ -221,7 +199,7 @@ namespace Server
             }
         }
 
-        private void btnStart_Click(object sender, EventArgs e)
+        private void BtnScreenSend_Click(object sender, EventArgs e)
         {
             // 스위치 역할을 하도록 수정
             if (standardSignalObj.ServerScreenData == null)
@@ -229,7 +207,7 @@ namespace Server
                 standardSignalObj.ServerScreenData = imageData;
 
                 // 폼 버튼 변경
-                btnStart.Text = "공유 중지";
+                btnScreenSend.Text = "전송 중지";
 
                 // 트레이 아이콘 공유 버튼 상태 변경
                 notifyIcon.ContextMenu.MenuItems[0].Checked = true;
@@ -238,13 +216,13 @@ namespace Server
             {
                 standardSignalObj.ServerScreenData = null;
 
-                btnStart.Text = "공유";
+                btnScreenSend.Text = "화면 전송";
 
                 notifyIcon.ContextMenu.MenuItems[0].Checked = false;
             }
         }
 
-        private void btnShutdown_Click(object sender, EventArgs e)
+        private void BtnShutdown_Click(object sender, EventArgs e)
         {
             standardSignalObj.IsServerShutdown = true;
 
@@ -252,15 +230,15 @@ namespace Server
             Dispose();
         }
 
-        private void btnControl_Click(object sender, EventArgs e)
+        private void BtnControl_Click(object sender, EventArgs e)
         {
-            if(standardSignalObj.IsServerControlling) 
+            if(standardSignalObj.IsServerControlling)
             {
                 standardSignalObj.IsServerControlling = false;
                 notifyIcon.ContextMenu.MenuItems[1].Checked = false;
 
                 MessageBox.Show("키보드와 마우스 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnControl.Text = "제어";
+                btnControl.Text = "조작 제어";
             }
             else
             {
@@ -268,58 +246,17 @@ namespace Server
                 notifyIcon.ContextMenu.MenuItems[1].Checked = true;
 
                 MessageBox.Show("키보드와 마우스 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnControl.Text = "중지";
+                btnControl.Text = "제어 중지";
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(standardSignalObj.IsServerUpload == false)
-            {
-                UploadFile();
-                standardSignalObj.IsServerUpload = true;
-                button2.Text = "ㅈㄻㄻㅈㄹ";
-                Thread.Sleep(1000);
-                standardSignalObj.IsServerUpload = false;
-                button2.Text = standardSignalObj.IsServerUpload.ToString();
-            }   
-        }
+            standardSignalObj.IsServerShutdown = true;
+            standardSignalObj = null;
 
-        public void UploadFile()
-        {
-
-            string sourceFilePath = "c:\\works/test.txt";
-            string targetFileURI = "ftp://localhost/mosh/sample.txt";
-            string userID = "moshFtp";
-            string password = "123";
-
-
-            Uri targetFileUri = new Uri(targetFileURI);
-
-                FtpWebRequest ftpWebRequest = WebRequest.Create(targetFileUri) as FtpWebRequest;
-
-                ftpWebRequest.Credentials = new NetworkCredential(userID, password);
-                ftpWebRequest.Method = WebRequestMethods.Ftp.UploadFile;
-
-
-                FileStream sourceFileStream = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read);
-                Stream targetStream = ftpWebRequest.GetRequestStream();
-
-                byte[] bufferByteArray = new byte[1024];
-                while (true)
-                {
-                    int byteCount = sourceFileStream.Read(bufferByteArray, 0, bufferByteArray.Length);
-                    if (byteCount == 0)
-                    {
-                        break;
-                    }
-                    targetStream.Write(bufferByteArray, 0, byteCount);
-                }
-                targetStream.Close();
-                sourceFileStream.Close();
-           
-
-
+            if (socketListener != null) socketListener.Close();
+            Dispose();
         }
     }
 }
