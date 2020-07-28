@@ -57,6 +57,7 @@ namespace Server
             ctx.MenuItems.Add(new MenuItem("조작 제어", new EventHandler((s, ea) => BtnControl_Click(s, ea))));
             ctx.MenuItems.Add("-");
             ctx.MenuItems.Add(new MenuItem("종료", new EventHandler((s, ea) => BtnShutdown_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("전원 끄기", new EventHandler((s, ea) => BtnPowerOff_Click(s, ea))));
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
         }
@@ -228,6 +229,13 @@ namespace Server
 
             if (socketListener != null) socketListener.Close();
             Dispose();
+        }
+        
+        private void BtnPowerOff_Click(object sender, EventArgs e)
+        {
+            standardSignalObj.PowerOffIp = "192.168.0.18";  // 전원차단하려고하는 컴퓨터의 IP주소 입력
+            Thread.Sleep(500);
+            standardSignalObj.PowerOffIp = "";
         }
 
         private void BtnControl_Click(object sender, EventArgs e)

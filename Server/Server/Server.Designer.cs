@@ -33,6 +33,7 @@
             this.btnScreenSend = new System.Windows.Forms.Button();
             this.btnShutdown = new System.Windows.Forms.Button();
             this.btnControl = new System.Windows.Forms.Button();
+            this.btnPowerOff = new System.Windows.Forms.Button();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.SuspendLayout();
             // 
@@ -69,6 +70,17 @@
             this.btnControl.UseVisualStyleBackColor = true;
             this.btnControl.Click += new System.EventHandler(this.BtnControl_Click);
             // 
+            // btnPowerOff
+            // 
+            this.btnPowerOff.Location = new System.Drawing.Point(12, 93);
+            this.btnPowerOff.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnPowerOff.Name = "btnPowerOff";
+            this.btnPowerOff.Size = new System.Drawing.Size(196, 35);
+            this.btnPowerOff.TabIndex = 3;
+            this.btnPowerOff.Text = "전원 끄기";
+            this.btnPowerOff.UseVisualStyleBackColor = true;
+            this.btnPowerOff.Click += new System.EventHandler(this.BtnPowerOff_Click);
+            // 
             // notifyIcon
             // 
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
@@ -83,6 +95,7 @@
             this.Controls.Add(this.btnControl);
             this.Controls.Add(this.btnShutdown);
             this.Controls.Add(this.btnScreenSend);
+            this.Controls.Add(this.btnPowerOff);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Server";
@@ -98,6 +111,7 @@
         private System.Windows.Forms.Button btnScreenSend;
         private System.Windows.Forms.Button btnShutdown;
         private System.Windows.Forms.Button btnControl;
+        private System.Windows.Forms.Button btnPowerOff;
         private System.Windows.Forms.NotifyIcon notifyIcon;
     }
 }

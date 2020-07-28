@@ -12,10 +12,12 @@ using System.Threading.Tasks;
 namespace Client
 {
     public partial class Client : Form
-    {
+    { 
         private const int MOSHPORT = 53178;
         private const string SERVER_IP = "127.0.0.1";
 
+        private String myIpAddr; // 전원 종료할 때 필요한 클라이언트 IP
+              
         private Socket socketServer;
         private bool isConnected = false;
 
@@ -59,13 +61,24 @@ namespace Client
 
                     // 화면 폼을 가장 맨 위로
                     // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
-                    // TopMost = true;
+                    // TopMost = true; 
 
                     isConnected = true;
                 }
                 catch (SocketException)
                 {
                     isConnected = false; // 연결이 안 되면 대기상태 유지
+                }
+            }
+
+            // 클라이언트 실행 할 시에 생성자에서  자기 컴퓨터 IP주소 알아내서 변수에 담기
+            var ipEntry = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in ipEntry.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    myIpAddr = ip.ToString();
+                    break;
                 }
             }
 
@@ -76,9 +89,10 @@ namespace Client
 
             Opacity = 0;
 
-            // 이런식으로 구현 기능에 대한 메소드를 추가하기 위해 아래와 같이 람다식으로 작성
+            // 이런식으로 구현 기능에 대한 메소드를 추가하기 위해 아래와 같이 람다식으로 작성 함...
             InsertAction(() => ControllingProcessing());
             InsertAction(() => ImageProcessing());
+            InsertAction(() => PowerOffProcessing());
 
             Task.Run(()=> MainTask());
         }
@@ -147,6 +161,15 @@ namespace Client
         public void ControllingProcessing()
         {
             cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
+        }
+
+        public void PowerOffProcessing()
+        {
+            if(standardSignalObj.PowerOffIp.Equals(myIpAddr))
+            {
+                Console.WriteLine(standardSignalObj.PowerOffIp);
+                // System.Diagnostics.Process.Start("ShutDown.exe", "-s -f -t 00");
+            }
         }
 
         public void ImageProcessing()
