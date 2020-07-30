@@ -25,7 +25,7 @@ namespace Server
             public Byte[] recvBuffer;
             public Socket socketClient;
         }
-        
+
         private Socket socketListener;
         private Socket socketObject;
         private IPEndPoint serverEndPoint;
@@ -42,7 +42,7 @@ namespace Server
 
         //동적으로 PictureBox 생성하는 로직:
         //Form_Load를 하고 
-        public void ClientBoxes_Load(object sender,EventArgs e)
+        public void ClientBoxes_Load(object sender, EventArgs e)
         {
             DynamicClientBoxesCreate();
         }
@@ -130,16 +130,16 @@ namespace Server
                 tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, tempClient);
             }
         }
-        
-        private static void AsyncReceiveCallback(IAsyncResult ar) 
+
+        private static void AsyncReceiveCallback(IAsyncResult ar)
         {
             ClientObject co = ar.AsyncState as ClientObject;
             co.socketClient.EndReceive(ar);
 
             if (co.socketClient.Connected)
             {
-               
-                
+
+
                 if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
                 {
                     if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;

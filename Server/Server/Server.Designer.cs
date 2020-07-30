@@ -34,14 +34,15 @@
             this.btnShutdown = new System.Windows.Forms.Button();
             this.btnControl = new System.Windows.Forms.Button();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.btnClientsView = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnScreenSend
             // 
-            this.btnScreenSend.Location = new System.Drawing.Point(12, 11);
+            this.btnScreenSend.Location = new System.Drawing.Point(10, 9);
             this.btnScreenSend.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnScreenSend.Name = "btnScreenSend";
-            this.btnScreenSend.Size = new System.Drawing.Size(196, 35);
+            this.btnScreenSend.Size = new System.Drawing.Size(172, 28);
             this.btnScreenSend.TabIndex = 0;
             this.btnScreenSend.Text = "화면 전송";
             this.btnScreenSend.UseVisualStyleBackColor = true;
@@ -49,10 +50,10 @@
             // 
             // btnShutdown
             // 
-            this.btnShutdown.Location = new System.Drawing.Point(12, 180);
+            this.btnShutdown.Location = new System.Drawing.Point(10, 144);
             this.btnShutdown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnShutdown.Name = "btnShutdown";
-            this.btnShutdown.Size = new System.Drawing.Size(196, 35);
+            this.btnShutdown.Size = new System.Drawing.Size(172, 28);
             this.btnShutdown.TabIndex = 1;
             this.btnShutdown.Text = "종료";
             this.btnShutdown.UseVisualStyleBackColor = true;
@@ -60,10 +61,9 @@
             // 
             // btnControl
             // 
-            this.btnControl.Location = new System.Drawing.Point(12, 52);
-            this.btnControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnControl.Location = new System.Drawing.Point(10, 42);
             this.btnControl.Name = "btnControl";
-            this.btnControl.Size = new System.Drawing.Size(196, 35);
+            this.btnControl.Size = new System.Drawing.Size(172, 28);
             this.btnControl.TabIndex = 2;
             this.btnControl.Text = "조작 제어";
             this.btnControl.UseVisualStyleBackColor = true;
@@ -75,11 +75,22 @@
             this.notifyIcon.Text = "MOSH";
             this.notifyIcon.Visible = true;
             // 
+            // btnClientsView
+            // 
+            this.btnClientsView.Location = new System.Drawing.Point(10, 76);
+            this.btnClientsView.Name = "btnClientsView";
+            this.btnClientsView.Size = new System.Drawing.Size(172, 28);
+            this.btnClientsView.TabIndex = 3;
+            this.btnClientsView.Text = "화면 보기";
+            this.btnClientsView.UseVisualStyleBackColor = true;
+            this.btnClientsView.Click += new System.EventHandler(this.btnClientsView_Click);
+            // 
             // Server
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(220, 226);
+            this.ClientSize = new System.Drawing.Size(192, 181);
+            this.Controls.Add(this.btnClientsView);
             this.Controls.Add(this.btnControl);
             this.Controls.Add(this.btnShutdown);
             this.Controls.Add(this.btnScreenSend);
@@ -99,6 +110,7 @@
         private System.Windows.Forms.Button btnShutdown;
         private System.Windows.Forms.Button btnControl;
         private System.Windows.Forms.NotifyIcon notifyIcon;
+        private System.Windows.Forms.Button btnClientsView;
     }
 }
 
