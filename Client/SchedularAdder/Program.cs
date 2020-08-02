@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Threading;
 
 namespace SchedularAdder
 {
@@ -38,7 +39,8 @@ namespace SchedularAdder
                     
                     
                     ts.RootFolder.RegisterTaskDefinition("MOSH Client\\Run When Logon", td);
-                    Console.WriteLine("Schedular Adder : 작업 등록이 성공적으로 완료되었습니다.");
+                    Console.WriteLine("Schedular Adder : 작업 등록이 성공적으로 완료되었습니다...");
+                    Thread.Sleep(1500);
                 }
                 catch(Exception e) { 
                 
