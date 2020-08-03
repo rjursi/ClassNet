@@ -10,6 +10,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace Server
 {
@@ -38,7 +39,30 @@ namespace Server
         {
             InitializeComponent();
         }
-        
+
+        // DPI 설정 부분 시작
+        private enum ProcessDPIAwareness
+        {
+            ProcessDPIUnaware = 0,
+            ProcessSystemDPIAware = 1,
+            ProcessPerMonitorDPIAware = 2
+        }
+
+        [DllImport("shcore.dll")]
+        private static extern int SetProcessDpiAwareness(ProcessDPIAwareness value);
+
+        private static void SetDpiAwareness()
+        {
+            try
+            {
+                if (Environment.OSVersion.Version.Major >= 6) SetProcessDpiAwareness(ProcessDPIAwareness.ProcessPerMonitorDPIAware);
+            }
+            catch (EntryPointNotFoundException) // OS가 해당 API를 구현하지 않을 경우 예외가 발생하지만 무시
+            {
+            }
+        }
+        // DPI 설정 부분 끝
+
         private void SocketOn()
         {
             socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -80,6 +104,9 @@ namespace Server
             codec = GetEncoder(ImageFormat.Jpeg);
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
+
+            // DPI 설정 메소드 호출
+            SetDpiAwareness();
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -133,7 +160,6 @@ namespace Server
                     Array.Clear(co.recvBuffer, 0, co.recvBuffer.Length);
                 }
 
-                if (Thread.Yield()) Thread.Sleep(40);
                 co.socketClient.BeginReceive(co.recvBuffer, 0, co.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, co);
             }
         }
@@ -160,10 +186,7 @@ namespace Server
         {
             Byte[] preData;
 
-            Bitmap bmp = new Bitmap(1920, 1080);
-            // 실제 서비스할 땐 해상도가 다른 PC들을 포괄적으로 수용하기 위해 아래 소스를 사용할 것임.
-            // Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-
+            Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
             Graphics g = Graphics.FromImage(bmp);
 
             while (!standardSignalObj.IsServerShutdown)

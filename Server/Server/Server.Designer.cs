@@ -41,7 +41,7 @@
             this.btnScreenSend.Location = new System.Drawing.Point(12, 11);
             this.btnScreenSend.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnScreenSend.Name = "btnScreenSend";
-            this.btnScreenSend.Size = new System.Drawing.Size(196, 35);
+            this.btnScreenSend.Size = new System.Drawing.Size(258, 35);
             this.btnScreenSend.TabIndex = 0;
             this.btnScreenSend.Text = "화면 전송";
             this.btnScreenSend.UseVisualStyleBackColor = true;
@@ -49,10 +49,10 @@
             // 
             // btnShutdown
             // 
-            this.btnShutdown.Location = new System.Drawing.Point(12, 180);
+            this.btnShutdown.Location = new System.Drawing.Point(12, 257);
             this.btnShutdown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnShutdown.Name = "btnShutdown";
-            this.btnShutdown.Size = new System.Drawing.Size(196, 35);
+            this.btnShutdown.Size = new System.Drawing.Size(258, 35);
             this.btnShutdown.TabIndex = 1;
             this.btnShutdown.Text = "종료";
             this.btnShutdown.UseVisualStyleBackColor = true;
@@ -63,7 +63,7 @@
             this.btnControl.Location = new System.Drawing.Point(12, 52);
             this.btnControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnControl.Name = "btnControl";
-            this.btnControl.Size = new System.Drawing.Size(196, 35);
+            this.btnControl.Size = new System.Drawing.Size(258, 35);
             this.btnControl.TabIndex = 2;
             this.btnControl.Text = "조작 제어";
             this.btnControl.UseVisualStyleBackColor = true;
@@ -79,7 +79,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(220, 226);
+            this.ClientSize = new System.Drawing.Size(282, 303);
             this.Controls.Add(this.btnControl);
             this.Controls.Add(this.btnShutdown);
             this.Controls.Add(this.btnScreenSend);
