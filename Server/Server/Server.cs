@@ -79,6 +79,7 @@ namespace Server
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("화면 전송", new EventHandler((s, ea) => BtnScreenSend_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("조작 제어", new EventHandler((s, ea) => BtnControl_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("인터넷 제어", new EventHandler((s, ea) => BtnInternetControl_Click(s, ea))));
             ctx.MenuItems.Add("-");
             ctx.MenuItems.Add(new MenuItem("종료", new EventHandler((s, ea) => BtnShutdown_Click(s, ea))));
             notifyIcon.ContextMenu = ctx;
@@ -273,6 +274,27 @@ namespace Server
             }
         }
 
+        private void BtnInternetControl_Click(object sender, EventArgs e)
+        {
+            if (standardSignalObj.IsServerInternetControlling)
+            {
+                standardSignalObj.IsServerInternetControlling = false;
+                notifyIcon.ContextMenu.MenuItems[2].Checked = false;
+
+                MessageBox.Show("인터넷 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnInternetControl.Text = "인터넷 조작 제어";
+            }
+            else
+            {
+                standardSignalObj.IsServerInternetControlling = true;
+                notifyIcon.ContextMenu.MenuItems[2].Checked = true;
+
+                MessageBox.Show("인터넷 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnInternetControl.Text = "인터넷 제어 중지";
+            }
+        }
+
+
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
             standardSignalObj.IsServerShutdown = true;
@@ -281,5 +303,7 @@ namespace Server
             if (socketListener != null) socketListener.Close();
             Dispose();
         }
+
+       
     }
 }

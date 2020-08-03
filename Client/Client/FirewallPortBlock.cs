@@ -7,6 +7,9 @@ namespace InternetControl
     {
         const string TCP_HTTP_HTTPS_BLOCK_RULENAME = "MOSH Internet Control_TCP_HTTP HTTPS";
         const string UDP_HTTP_BLOCK_RULENAME = "MOSH Internet Control_UDP_HTTP";
+        private bool disposedValue;
+
+
         public bool NowCtrlStatus { get; set; }
 
         public FirewallPortBlock()
@@ -18,14 +21,12 @@ namespace InternetControl
 
         public void CtrlStatusEventCheck(bool newCtrlStatus)
         {
-            if(NowCtrlStatus != newCtrlStatus)
+            if (NowCtrlStatus != newCtrlStatus)
             {
                 NowCtrlStatus = newCtrlStatus;
                 this.PortControl(NowCtrlStatus);
             }
         }
-
-        private bool disposedValue;
 
         private void PortControl(bool ctrlStatus)
         {
@@ -34,10 +35,11 @@ namespace InternetControl
                 TcpHttpHttpsBlock();
                 UdpHttpHttpsBlock();
             }
-            else (!ctrlStatus){
-                
+            else if(!ctrlStatus){
+                RuleRemove();
             }
         }
+
 
         public void TcpHttpHttpsBlock()
         {
@@ -52,11 +54,11 @@ namespace InternetControl
             firewallRule.InterfaceTypes = "All";
             firewallRule.Name = TCP_HTTP_HTTPS_BLOCK_RULENAME;
 
+            // 설정하기 위한 룰을 만드는 작업
+
             INetFwPolicy2 firewallPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
             firewallPolicy.Rules.Add(firewallRule);
 
-            //Console.WriteLine("TCP HTTP, HTTPS 포트 차단 정책 추가 .... 완료되었습니다.");
-            //Thread.Sleep(1000);
         }
 
         public void UdpHttpHttpsBlock()
@@ -75,15 +77,16 @@ namespace InternetControl
             INetFwPolicy2 firewallPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
             firewallPolicy.Rules.Add(firewallRule);
 
-            //Console.WriteLine("UDP HTTP 포트 차단 정책 추가 .... 완료되었습니다.");
-            //Thread.Sleep(1000);
+          
         }
 
         public void RuleRemove()
         {
             INetFwPolicy2 policyRemover = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
+
             policyRemover.Rules.Remove(TCP_HTTP_HTTPS_BLOCK_RULENAME);
             policyRemover.Rules.Remove(UDP_HTTP_BLOCK_RULENAME);
+                
         }
 
         protected virtual void Dispose(bool disposing)

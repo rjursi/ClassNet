@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using InternetControl;
 
 namespace Client
 {
@@ -24,7 +25,7 @@ namespace Client
         private static SignalObj standardSignalObj;
 
         private CmdProcessController cmdProcessController;
-
+        private FirewallPortBlock firewallPortBlocker;
         private delegate void ScreenOnDelegate(int imgSize, Byte[] recvData, double isOpacity);
         private delegate void ScreenOffDelegate(double isOpacity);
 
@@ -70,6 +71,8 @@ namespace Client
             }
 
             cmdProcessController = new CmdProcessController();
+            firewallPortBlocker = new FirewallPortBlock();
+
 
             recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
             sendData = Encoding.UTF8.GetBytes("recv");
@@ -79,6 +82,7 @@ namespace Client
             // 이런식으로 구현 기능에 대한 메소드를 추가하기 위해 아래와 같이 람다식으로 작성
             InsertAction(() => ControllingProcessing());
             InsertAction(() => ImageProcessing());
+            InsertAction(() => ControllingInternet());
 
             Task.Run(()=> MainTask());
         }
@@ -147,6 +151,11 @@ namespace Client
         public void ControllingProcessing()
         {
             cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
+        }
+
+        public void ControllingInternet()
+        {
+            firewallPortBlocker.CtrlStatusEventCheck(standardSignalObj.IsServerInternetControlling);
         }
 
         public void ImageProcessing()

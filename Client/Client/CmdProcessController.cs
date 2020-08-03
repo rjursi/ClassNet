@@ -16,8 +16,7 @@ namespace Client
         private StreamWriter streamWriter;
 
         public bool NowCtrlStatus { get; set; }
-
-        // 이전 상태와 다를 경우에만 프로세스가 새로 실행될 것인지를 결정
+        
         public void CtrlStatusEventCheck(bool newCtrlStatus)
         {
             if(NowCtrlStatus != newCtrlStatus)
