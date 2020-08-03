@@ -133,7 +133,7 @@ namespace Server
                 clientCount++;
                 connectedClientList.Add(socketObject, "테수투!");
 
-                ClientsView.currentClientCount = clientCount++;
+                ClientsView.currentClientCount = clientCount;
                 ClientsView.connectedClientList = connectedClientList;
 
 
@@ -148,8 +148,6 @@ namespace Server
 
             if (co.socketClient.Connected)
             {
-
-
                 if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
                 {
                     if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;
@@ -278,11 +276,10 @@ namespace Server
             }
         }
 
-        ClientsView clientsView = new ClientsView();
+        static ClientsView clientsView = new ClientsView();
         private void BtnClientsView_Click(object sender,EventArgs e)
         {
-            Console.WriteLine("눌리는 중");
-            clientsView.Show();
+            clientsView.ShowDialog();
         }
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
