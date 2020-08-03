@@ -83,7 +83,7 @@
             this.btnClientsView.TabIndex = 3;
             this.btnClientsView.Text = "화면 보기";
             this.btnClientsView.UseVisualStyleBackColor = true;
-            this.btnClientsView.Click += new System.EventHandler(this.btnClientsView_Click);
+            this.btnClientsView.Click += new System.EventHandler(this.BtnClientsView_Click);
             // 
             // Server
             // 

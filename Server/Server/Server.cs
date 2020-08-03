@@ -26,6 +26,9 @@ namespace Server
             public Socket socketClient;
         }
 
+        static int clientCount = 0; //접속 클라이언트 수
+        static public Dictionary<Socket, string> connectedClientList = new Dictionary<Socket, string>(); //소켓,학생 이름
+
         private Socket socketListener;
         private Socket socketObject;
         private IPEndPoint serverEndPoint;
@@ -126,6 +129,13 @@ namespace Server
 
                 tempClient.recvBuffer = new byte[4];
                 tempClient.socketClient = socketObject;
+
+                clientCount++;
+                connectedClientList.Add(socketObject, "테수투!");
+
+                ClientsView.currentClientCount = clientCount++;
+                ClientsView.connectedClientList = connectedClientList;
+
 
                 tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, tempClient);
             }
@@ -266,6 +276,13 @@ namespace Server
                 MessageBox.Show("키보드와 마우스 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 btnControl.Text = "제어 중지";
             }
+        }
+
+        ClientsView clientsView = new ClientsView();
+        private void BtnClientsView_Click(object sender,EventArgs e)
+        {
+            Console.WriteLine("눌리는 중");
+            clientsView.Show();
         }
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
