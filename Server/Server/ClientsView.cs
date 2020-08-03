@@ -16,8 +16,9 @@ namespace Server
         
         public static int currentClientCount = 0; //접속 클라이언트 수
         public static Dictionary<Socket, string> connectedClientList = new Dictionary<Socket, string>(); //클라이언트 리스트
-        public static int oldClientCount = currentClientCount;
 
+        public static int oldClientCount = currentClientCount;
+        
 
         public static Point initialViewLocationPoint=new Point(0,0);
         public static Point initialLabelLocationPoint = new Point(0, 0);
@@ -84,6 +85,7 @@ namespace Server
             {
                 //지우게 될 경우 eventHandler를 제거하고 Remove를 해주어야 완벽히 삭제가 된다.
                 //2)currentClientCount가 더 작을 경우 Remove? Remove는 대상의 전체를 지움
+                //그렇기에 특정 대상만을 지울 수 있는 메서드가 필요
             }
 
             Console.WriteLine($"이벤트 도는 중! {currentClientCount}");
