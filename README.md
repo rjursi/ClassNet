@@ -2,6 +2,6 @@
 ### Primary Function
 - Login
 - Screen Sharing
-- Keyboard & Mouse Control
-- File Sharing
-- Shutdown Control
+- Keyboard & Mouse Controlling
+- Internet Blocking
+- Shutdown Controlling
