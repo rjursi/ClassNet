@@ -32,6 +32,9 @@ namespace Client
         private static Byte[] recvData;
         private static Byte[] sendData;
 
+
+        private Socket socketTransmitFile;
+
         public Client()
         {
             InitializeComponent();
@@ -44,8 +47,11 @@ namespace Client
                 try
                 {
                     socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    socketTransmitFile = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
                     IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(SERVER_IP), MOSHPORT);
                     socketServer.Connect(serverEndPoint);
+                    socketTransmitFile.Connect(serverEndPoint);
 
                     // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
                     // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
@@ -84,7 +90,44 @@ namespace Client
             InsertAction(() => ImageProcessing());
             InsertAction(() => ControllingInternet());
 
+            InsertAction(() =>
+            {
+                if (standardSignalObj.SubmitAssignment == true)
+                {
+                    ShowFileOpenDialog();
+                    //후
+                    socketTransmitFile.SendFile(fileToServer);
+                }
+                    
+            });
+
             Task.Run(()=> MainTask());
+        }
+
+        String fileToServer;
+        public void ShowFileOpenDialog()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+
+            ofd.Title = "파일 오픈 예제창";
+            ofd.FileName = "test";
+            ofd.Filter = "모든 파일 (*.*) | *.*";
+
+            this.Invoke((MethodInvoker)(() => {
+                DialogResult dr = ofd.ShowDialog();
+                if (dr == DialogResult.OK)
+                {
+                    //이름 + 확장자
+                    string fileName = ofd.SafeFileName;
+                    //경로 + 이름 + 확장자
+                    string fileFullName = ofd.FileName;
+                    //경로
+                    string filePath = fileFullName.Replace(fileName, "");
+
+                    //File경로 + 파일명 리턴
+                    fileToServer = fileFullName;
+                }
+            }));
         }
 
         public void InsertAction(Action action)

@@ -10,6 +10,8 @@ namespace Server
             IsServerShutdown = false;
             IsServerControlling = false;
             IsServerInternetControlling = false;
+
+            SubmitAssignment = false;
         }
 
         // 서버가 꺼져있는지, 서버가 컨트롤 중인지는 서버만 제어
@@ -17,6 +19,7 @@ namespace Server
         public bool IsServerControlling { get; set; }
         public bool IsServerInternetControlling { get; set; }
 
+        public bool SubmitAssignment { get; set; }
 
 
         // 화면 전송 데이터 getter, setter

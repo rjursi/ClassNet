@@ -12,6 +12,8 @@ namespace Client
             IsServerShutdown = false;
             IsServerControlling = false;
             IsServerInternetControlling = false;
+
+            SubmitAssignment = false;
         }
 
         ~SignalObj()
@@ -29,6 +31,8 @@ namespace Client
         public bool IsServerShutdown { get; set; }
         public bool IsServerControlling { get; set; }
         public bool IsServerInternetControlling { get; set; }
+
+        public bool SubmitAssignment { get; set; }
 
         // 방송 관련 데이터 getter, setter
         public byte[] ServerScreenData { get; set; }

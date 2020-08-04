@@ -108,7 +108,11 @@ namespace Server
 
             // DPI 설정 메소드 호출
             SetDpiAwareness();
+
+            
         }
+
+        
 
         // 이미지 파일 형식(포맷) 인코더
         private ImageCodecInfo GetEncoder(ImageFormat format)
@@ -304,6 +308,13 @@ namespace Server
             Dispose();
         }
 
-       
+        private void button2_Click(object sender, EventArgs e)
+        {
+            standardSignalObj.SubmitAssignment = true;
+            Thread.Sleep(10);
+            standardSignalObj.SubmitAssignment = false;
+
+        }
+
     }
 }
