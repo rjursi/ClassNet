@@ -17,16 +17,16 @@ namespace Client
             InitializeComponent();
         }
 
-        public string SetLoginData()
+        public string SetLoginData()    // 로그인 데이터를 반환하는 메소드
         {
             string loginData;
-            loginData = loginTextBox1.Text + " " + loginTextBox2.Text;
+            loginData = loginTextBoxID.Text + " " + loginTextBoxName.Text;
             return loginData;
         }
 
-        private void loginButton1_Click(object sender, EventArgs e)
+        private void loginButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            this.Close(); // ShowDialog를 종료
         }
     }
 }

@@ -30,9 +30,9 @@
         {
             this.loginLbl1 = new System.Windows.Forms.Label();
             this.loginLbl2 = new System.Windows.Forms.Label();
-            this.loginTextBox1 = new System.Windows.Forms.TextBox();
-            this.loginTextBox2 = new System.Windows.Forms.TextBox();
-            this.loginButton1 = new System.Windows.Forms.Button();
+            this.loginTextBoxID = new System.Windows.Forms.TextBox();
+            this.loginTextBoxName = new System.Windows.Forms.TextBox();
+            this.loginButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // loginLbl1
@@ -53,38 +53,38 @@
             this.loginLbl2.TabIndex = 1;
             this.loginLbl2.Text = "이 름";
             // 
-            // loginTextBox1
+            // loginTextBoxID
             // 
-            this.loginTextBox1.Location = new System.Drawing.Point(184, 54);
-            this.loginTextBox1.Name = "loginTextBox1";
-            this.loginTextBox1.Size = new System.Drawing.Size(100, 21);
-            this.loginTextBox1.TabIndex = 2;
+            this.loginTextBoxID.Location = new System.Drawing.Point(184, 54);
+            this.loginTextBoxID.Name = "loginTextBoxID";
+            this.loginTextBoxID.Size = new System.Drawing.Size(100, 21);
+            this.loginTextBoxID.TabIndex = 2;
             // 
-            // loginTextBox2
+            // loginTextBoxName
             // 
-            this.loginTextBox2.Location = new System.Drawing.Point(184, 114);
-            this.loginTextBox2.Name = "loginTextBox2";
-            this.loginTextBox2.Size = new System.Drawing.Size(100, 21);
-            this.loginTextBox2.TabIndex = 3;
+            this.loginTextBoxName.Location = new System.Drawing.Point(184, 114);
+            this.loginTextBoxName.Name = "loginTextBoxName";
+            this.loginTextBoxName.Size = new System.Drawing.Size(100, 21);
+            this.loginTextBoxName.TabIndex = 3;
             // 
-            // loginButton1
+            // loginButton
             // 
-            this.loginButton1.Location = new System.Drawing.Point(209, 161);
-            this.loginButton1.Name = "loginButton1";
-            this.loginButton1.Size = new System.Drawing.Size(75, 23);
-            this.loginButton1.TabIndex = 4;
-            this.loginButton1.Text = "로그인";
-            this.loginButton1.UseVisualStyleBackColor = true;
-            this.loginButton1.Click += new System.EventHandler(this.loginButton1_Click);
+            this.loginButton.Location = new System.Drawing.Point(209, 161);
+            this.loginButton.Name = "loginButton";
+            this.loginButton.Size = new System.Drawing.Size(75, 23);
+            this.loginButton.TabIndex = 4;
+            this.loginButton.Text = "로그인";
+            this.loginButton.UseVisualStyleBackColor = true;
+            this.loginButton.Click += new System.EventHandler(this.loginButton_Click);
             // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(374, 240);
-            this.Controls.Add(this.loginButton1);
-            this.Controls.Add(this.loginTextBox2);
-            this.Controls.Add(this.loginTextBox1);
+            this.Controls.Add(this.loginButton);
+            this.Controls.Add(this.loginTextBoxName);
+            this.Controls.Add(this.loginTextBoxID);
             this.Controls.Add(this.loginLbl2);
             this.Controls.Add(this.loginLbl1);
             this.Name = "LoginForm";
@@ -98,8 +98,8 @@
 
         private System.Windows.Forms.Label loginLbl1;
         private System.Windows.Forms.Label loginLbl2;
-        private System.Windows.Forms.TextBox loginTextBox1;
-        private System.Windows.Forms.TextBox loginTextBox2;
-        private System.Windows.Forms.Button loginButton1;
+        private System.Windows.Forms.TextBox loginTextBoxID;
+        private System.Windows.Forms.TextBox loginTextBoxName;
+        private System.Windows.Forms.Button loginButton;
     }
 }
