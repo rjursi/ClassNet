@@ -38,6 +38,13 @@ namespace Client
 
         private void Client_Load(object sender, EventArgs e)
         {
+            LoginForm loginForm = new LoginForm();
+            string loginFormData;
+
+            loginForm.ShowDialog();
+            loginFormData = loginForm.SetLoginData();
+
+
             while (!isConnected)
             {
                 try
@@ -72,7 +79,7 @@ namespace Client
             cmdProcessController = new CmdProcessController();
 
             recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
-            sendData = Encoding.UTF8.GetBytes("recv");
+            sendData = Encoding.UTF8.GetBytes("recv" + " " + loginFormData);
 
             Opacity = 0;
 

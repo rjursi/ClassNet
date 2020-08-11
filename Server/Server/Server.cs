@@ -108,7 +108,7 @@ namespace Server
 
                 ClientObject tempClient = new ClientObject();
 
-                tempClient.recvBuffer = new byte[4];
+                tempClient.recvBuffer = new byte[32];
                 tempClient.socketClient = socketObject;
 
                 tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, tempClient);
@@ -122,8 +122,12 @@ namespace Server
 
             if(co.socketClient.Connected) 
             {
-                if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
+                if (Encoding.UTF8.GetString(co.recvBuffer).Substring(0, 4).Contains("recv"))
                 {
+                   //MessageBox.Show(Encoding.UTF8.GetString(co.recvBuffer)); //수신 데이터 확인 
+                    string receiveLoginData = Encoding.UTF8.GetString(co.recvBuffer);
+                    standardSignalObj.SetloginHashtable(receiveLoginData);
+
                     if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;
 
                     byte[] signal = SignalObjToByte(standardSignalObj);
