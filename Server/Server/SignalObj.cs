@@ -16,8 +16,8 @@ namespace Server
 
         public void SetloginHashtable(string data)
         {
-            String[] result = data.Replace("\0", string.Empty).Split(' ');
-            if (!loginHashtable.ContainsKey(result[1]))
+            String[] result = data.Replace("\0", string.Empty).Split(' '); // 끝마침문자 제거 및 공백 단위로 배열 저장.
+            if (!loginHashtable.ContainsKey(result[1])) // 헤시테이블 내 중복키 확인
             {
                 Console.WriteLine(result[1] + result[2]); // 헤시테이블 입력값 확인
                 loginHashtable.Add(result[1], result[2]);
