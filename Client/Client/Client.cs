@@ -38,6 +38,13 @@ namespace Client
 
         private void Client_Load(object sender, EventArgs e)
         {
+            LoginForm loginForm = new LoginForm();
+            string loginFormData; // 로그인 데이터를 담을 변수
+
+            loginForm.ShowDialog(); // ShowDialog 실행. 닫힐 때 까지 프로그램은 일시정지.
+            loginFormData = loginForm.SetLoginData(); // 로그인 데이터를 변수에 담음.
+
+
             while (!isConnected)
             {
                 try
@@ -72,7 +79,7 @@ namespace Client
             cmdProcessController = new CmdProcessController();
 
             recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
-            sendData = Encoding.UTF8.GetBytes("recv");
+            sendData = Encoding.UTF8.GetBytes("recv" + " " + loginFormData); // recv 텍스트 뒤에 로그인 데이터를 같이 저장.
 
             Opacity = 0;
 
