@@ -43,7 +43,7 @@ namespace Server
             clientView.Height = 115;
 
             initialViewLocationPoint.X += 20 + clientView.Width;
-            if(oldClientCount%5==0) initialViewLocationPoint.Y += 35 + clientView.Height;
+            if(oldClientCount%5==0) initialViewLocationPoint.Y += 50 + clientView.Height;
             
 
             clientView.Location = initialViewLocationPoint;
