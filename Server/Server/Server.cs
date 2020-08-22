@@ -10,7 +10,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace Server
 {
@@ -25,7 +25,10 @@ namespace Server
             public Byte[] recvBuffer;
             public Socket socketClient;
         }
-        
+
+        static int clientCount = 0; //접속 클라이언트 수
+        static public Dictionary<Socket, string> connectedClientList = new Dictionary<Socket, string>(); //소켓,학생 이름
+
         private Socket socketListener;
         private Socket socketObject;
         private IPEndPoint serverEndPoint;
@@ -40,28 +43,19 @@ namespace Server
             InitializeComponent();
         }
 
-        // DPI 설정 부분 시작
-        private enum ProcessDPIAwareness
+        //동적으로 PictureBox 생성하는 로직:
+        //Form_Load를 하고 
+        public void ClientBoxes_Load(object sender, EventArgs e)
         {
-            ProcessDPIUnaware = 0,
-            ProcessSystemDPIAware = 1,
-            ProcessPerMonitorDPIAware = 2
+            DynamicClientBoxesCreate();
         }
 
-        [DllImport("shcore.dll")]
-        private static extern int SetProcessDpiAwareness(ProcessDPIAwareness value);
-
-        private static void SetDpiAwareness()
+        public void DynamicClientBoxesCreate()
         {
-            try
-            {
-                if (Environment.OSVersion.Version.Major >= 6) SetProcessDpiAwareness(ProcessDPIAwareness.ProcessPerMonitorDPIAware);
-            }
-            catch (EntryPointNotFoundException) // OS가 해당 API를 구현하지 않을 경우 예외가 발생하지만 무시
-            {
-            }
+
         }
-        // DPI 설정 부분 끝
+
+
 
         private void SocketOn()
         {
@@ -79,7 +73,6 @@ namespace Server
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("화면 전송", new EventHandler((s, ea) => BtnScreenSend_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("조작 제어", new EventHandler((s, ea) => BtnControl_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("인터넷 제어", new EventHandler((s, ea) => BtnInternetControl_Click(s, ea))));
             ctx.MenuItems.Add("-");
             ctx.MenuItems.Add(new MenuItem("종료", new EventHandler((s, ea) => BtnShutdown_Click(s, ea))));
             notifyIcon.ContextMenu = ctx;
@@ -105,9 +98,6 @@ namespace Server
             codec = GetEncoder(ImageFormat.Jpeg);
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
-
-            // DPI 설정 메소드 호출
-            SetDpiAwareness();
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -121,7 +111,7 @@ namespace Server
                     return codec;
                 }
             }
-            return null;    
+            return null;
         }
 
         void AcceptCallback(IAsyncResult ar)
@@ -134,24 +124,35 @@ namespace Server
                 // 클라이언트의 연결 요청을 대기(다른 클라이언트가 또 연결할 수 있으므로)
                 socketListener.BeginAccept(AcceptCallback, null);
 
+
                 ClientObject tempClient = new ClientObject();
 
-                tempClient.recvBuffer = new byte[4];
+                tempClient.recvBuffer = new byte[32];
                 tempClient.socketClient = socketObject;
+
+                clientCount++;
+                connectedClientList.Add(socketObject, "테수투!");
+
+                ClientsView.currentClientCount = clientCount;
+                ClientsView.connectedClientList = connectedClientList;
+
 
                 tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, tempClient);
             }
         }
-        
-        private static void AsyncReceiveCallback(IAsyncResult ar) 
+
+        private static void AsyncReceiveCallback(IAsyncResult ar)
         {
             ClientObject co = ar.AsyncState as ClientObject;
             co.socketClient.EndReceive(ar);
 
-            if(co.socketClient.Connected) 
+            if (co.socketClient.Connected)
             {
-                if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
+                if (Encoding.UTF8.GetString(co.recvBuffer).Substring(0, 4).Contains("recv")) // 맨 앞 recv만 추려냄
                 {
+                    string receiveLoginData = Encoding.UTF8.GetString(co.recvBuffer);
+                    standardSignalObj.SetloginHashtable(receiveLoginData); // hashtable에 데이터 저장.
+
                     if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;
 
                     byte[] signal = SignalObjToByte(standardSignalObj);
@@ -161,6 +162,7 @@ namespace Server
                     Array.Clear(co.recvBuffer, 0, co.recvBuffer.Length);
                 }
 
+                if (Thread.Yield()) Thread.Sleep(40);
                 co.socketClient.BeginReceive(co.recvBuffer, 0, co.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, co);
             }
         }
@@ -179,7 +181,7 @@ namespace Server
 
             jsonData = JsonConvert.SerializeObject(signalObj);
             buffer = Encoding.Default.GetBytes(jsonData);
-            
+
             return buffer;
         }
 
@@ -187,7 +189,10 @@ namespace Server
         {
             Byte[] preData;
 
-            Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            Bitmap bmp = new Bitmap(1920, 1080);
+            // 실제 서비스할 땐 해상도가 다른 PC들을 포괄적으로 수용하기 위해 아래 소스를 사용할 것임.
+            // Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+
             Graphics g = Graphics.FromImage(bmp);
 
             while (!standardSignalObj.IsServerShutdown)
@@ -228,7 +233,7 @@ namespace Server
             // 스위치 역할을 하도록 수정
             if (standardSignalObj.ServerScreenData == null)
             {
-                standardSignalObj.ServerScreenData = imageData; 
+                standardSignalObj.ServerScreenData = imageData;
 
                 // 폼 버튼 변경
                 btnScreenSend.Text = "전송 중지";
@@ -256,7 +261,7 @@ namespace Server
 
         private void BtnControl_Click(object sender, EventArgs e)
         {
-            if(standardSignalObj.IsServerControlling)
+            if (standardSignalObj.IsServerControlling)
             {
                 standardSignalObj.IsServerControlling = false;
                 notifyIcon.ContextMenu.MenuItems[1].Checked = false;
@@ -274,26 +279,11 @@ namespace Server
             }
         }
 
-        private void BtnInternetControl_Click(object sender, EventArgs e)
+        static ClientsView clientsView = new ClientsView();
+        private void BtnClientsView_Click(object sender,EventArgs e)
         {
-            if (standardSignalObj.IsServerInternetControlling)
-            {
-                standardSignalObj.IsServerInternetControlling = false;
-                notifyIcon.ContextMenu.MenuItems[2].Checked = false;
-
-                MessageBox.Show("인터넷 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnInternetControl.Text = "인터넷 조작 제어";
-            }
-            else
-            {
-                standardSignalObj.IsServerInternetControlling = true;
-                notifyIcon.ContextMenu.MenuItems[2].Checked = true;
-
-                MessageBox.Show("인터넷 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnInternetControl.Text = "인터넷 제어 중지";
-            }
+            clientsView.ShowDialog();
         }
-
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -303,7 +293,5 @@ namespace Server
             if (socketListener != null) socketListener.Close();
             Dispose();
         }
-
-       
     }
 }
