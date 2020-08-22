@@ -73,6 +73,7 @@ namespace Server
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("화면 전송", new EventHandler((s, ea) => BtnScreenSend_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("조작 제어", new EventHandler((s, ea) => BtnControl_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("인터넷 제어", new EventHandler((s, ea) => btn_InternetControl_Click(s, ea))));
             ctx.MenuItems.Add("-");
             ctx.MenuItems.Add(new MenuItem("종료", new EventHandler((s, ea) => BtnShutdown_Click(s, ea))));
             notifyIcon.ContextMenu = ctx;
@@ -292,6 +293,26 @@ namespace Server
 
             if (socketListener != null) socketListener.Close();
             Dispose();
+        }
+
+        private void btn_InternetControl_Click(object sender, EventArgs e)
+        {
+            if (standardSignalObj.IsServerInternetControlling)
+            {
+                standardSignalObj.IsServerInternetControlling = false;
+                notifyIcon.ContextMenu.MenuItems[2].Checked = false;
+
+                MessageBox.Show("인터넷 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btn_InternetControl.Text = "인터넷 제어";
+            }
+            else
+            {
+                standardSignalObj.IsServerInternetControlling = true;
+                notifyIcon.ContextMenu.MenuItems[2].Checked = true;
+
+                MessageBox.Show("인터넷제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btn_InternetControl.Text = "제어 중지";
+            }
         }
     }
 }
