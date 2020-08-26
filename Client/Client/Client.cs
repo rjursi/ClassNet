@@ -20,6 +20,10 @@ namespace Client
         private Socket socketServer;
         private bool isConnected = false;
 
+        private LoginForm loginForm;
+        private string stuInfo; // 로그인 데이터를 담을 변수
+        private bool isLogin = false;
+
         private static Action mainAction;
 
         private static SignalObj standardSignalObj;
@@ -39,12 +43,17 @@ namespace Client
 
         private void Client_Load(object sender, EventArgs e)
         {
-            LoginForm loginForm = new LoginForm();
-            string loginFormData; // 로그인 데이터를 담을 변수
+            while(!isLogin)
+            {
+                loginForm = new LoginForm();
+                loginForm.ShowDialog(); // ShowDialog 실행, 닫힐 때 까지 프로그램은 일시정지.
+                stuInfo = loginForm.stuInfo; // 로그인 데이터를 변수에 담음.
 
-            loginForm.ShowDialog(); // ShowDialog 실행. 닫힐 때 까지 프로그램은 일시정지.
-            loginFormData = loginForm.SetLoginData(); // 로그인 데이터를 변수에 담음.
-
+                if(stuInfo.Length > 0)
+                {
+                    isLogin = true;
+                }
+            }
 
             while (!isConnected)
             {
@@ -80,9 +89,8 @@ namespace Client
             cmdProcessController = new CmdProcessController();
             firewallPortBlocker = new FirewallPortBlock();
 
-
             recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
-            sendData = Encoding.UTF8.GetBytes("recv" + " " + loginFormData); // recv 텍스트 뒤에 로그인 데이터를 같이 저장.
+            sendData = Encoding.UTF8.GetBytes("recv" + "&" + stuInfo); // recv 텍스트 뒤에 로그인 데이터를 같이 저장.
 
             Opacity = 0;
 

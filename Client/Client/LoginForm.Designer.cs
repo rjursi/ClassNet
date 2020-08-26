@@ -28,65 +28,73 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.loginLbl1 = new System.Windows.Forms.Label();
-            this.loginLbl2 = new System.Windows.Forms.Label();
-            this.loginTextBoxID = new System.Windows.Forms.TextBox();
-            this.loginTextBoxName = new System.Windows.Forms.TextBox();
-            this.loginButton = new System.Windows.Forms.Button();
+            this.lblLoginId = new System.Windows.Forms.Label();
+            this.lblLoginPW = new System.Windows.Forms.Label();
+            this.txtLoginID = new System.Windows.Forms.TextBox();
+            this.txtLoginPW = new System.Windows.Forms.TextBox();
+            this.LoginButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // loginLbl1
+            // lblLoginId
             // 
-            this.loginLbl1.AutoSize = true;
-            this.loginLbl1.Location = new System.Drawing.Point(108, 57);
-            this.loginLbl1.Name = "loginLbl1";
-            this.loginLbl1.Size = new System.Drawing.Size(33, 12);
-            this.loginLbl1.TabIndex = 0;
-            this.loginLbl1.Text = "학 번";
+            this.lblLoginId.AutoSize = true;
+            this.lblLoginId.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblLoginId.Location = new System.Drawing.Point(127, 46);
+            this.lblLoginId.Name = "lblLoginId";
+            this.lblLoginId.Size = new System.Drawing.Size(61, 23);
+            this.lblLoginId.TabIndex = 0;
+            this.lblLoginId.Text = "아이디";
             // 
-            // loginLbl2
+            // lblLoginPW
             // 
-            this.loginLbl2.AutoSize = true;
-            this.loginLbl2.Location = new System.Drawing.Point(108, 117);
-            this.loginLbl2.Name = "loginLbl2";
-            this.loginLbl2.Size = new System.Drawing.Size(33, 12);
-            this.loginLbl2.TabIndex = 1;
-            this.loginLbl2.Text = "이 름";
+            this.lblLoginPW.AutoSize = true;
+            this.lblLoginPW.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblLoginPW.Location = new System.Drawing.Point(127, 126);
+            this.lblLoginPW.Name = "lblLoginPW";
+            this.lblLoginPW.Size = new System.Drawing.Size(78, 23);
+            this.lblLoginPW.TabIndex = 1;
+            this.lblLoginPW.Text = "패스워드";
             // 
-            // loginTextBoxID
+            // txtLoginID
             // 
-            this.loginTextBoxID.Location = new System.Drawing.Point(184, 54);
-            this.loginTextBoxID.Name = "loginTextBoxID";
-            this.loginTextBoxID.Size = new System.Drawing.Size(100, 21);
-            this.loginTextBoxID.TabIndex = 2;
+            this.txtLoginID.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtLoginID.Location = new System.Drawing.Point(132, 75);
+            this.txtLoginID.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtLoginID.Name = "txtLoginID";
+            this.txtLoginID.Size = new System.Drawing.Size(160, 25);
+            this.txtLoginID.TabIndex = 2;
             // 
-            // loginTextBoxName
+            // txtLoginPW
             // 
-            this.loginTextBoxName.Location = new System.Drawing.Point(184, 114);
-            this.loginTextBoxName.Name = "loginTextBoxName";
-            this.loginTextBoxName.Size = new System.Drawing.Size(100, 21);
-            this.loginTextBoxName.TabIndex = 3;
+            this.txtLoginPW.Location = new System.Drawing.Point(132, 155);
+            this.txtLoginPW.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtLoginPW.Name = "txtLoginPW";
+            this.txtLoginPW.PasswordChar = '*';
+            this.txtLoginPW.Size = new System.Drawing.Size(160, 25);
+            this.txtLoginPW.TabIndex = 3;
             // 
-            // loginButton
+            // LoginButton
             // 
-            this.loginButton.Location = new System.Drawing.Point(209, 161);
-            this.loginButton.Name = "loginButton";
-            this.loginButton.Size = new System.Drawing.Size(75, 23);
-            this.loginButton.TabIndex = 4;
-            this.loginButton.Text = "로그인";
-            this.loginButton.UseVisualStyleBackColor = true;
-            this.loginButton.Click += new System.EventHandler(this.loginButton_Click);
+            this.LoginButton.Location = new System.Drawing.Point(132, 222);
+            this.LoginButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.LoginButton.Name = "LoginButton";
+            this.LoginButton.Size = new System.Drawing.Size(160, 29);
+            this.LoginButton.TabIndex = 4;
+            this.LoginButton.Text = "로그인";
+            this.LoginButton.UseVisualStyleBackColor = true;
+            this.LoginButton.Click += new System.EventHandler(this.LoginButton_Click);
             // 
             // LoginForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(374, 240);
-            this.Controls.Add(this.loginButton);
-            this.Controls.Add(this.loginTextBoxName);
-            this.Controls.Add(this.loginTextBoxID);
-            this.Controls.Add(this.loginLbl2);
-            this.Controls.Add(this.loginLbl1);
+            this.ClientSize = new System.Drawing.Size(427, 300);
+            this.Controls.Add(this.LoginButton);
+            this.Controls.Add(this.txtLoginPW);
+            this.Controls.Add(this.txtLoginID);
+            this.Controls.Add(this.lblLoginPW);
+            this.Controls.Add(this.lblLoginId);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "LoginForm";
             this.Text = "LoginForm";
             this.ResumeLayout(false);
@@ -96,10 +104,10 @@
 
         #endregion
 
-        private System.Windows.Forms.Label loginLbl1;
-        private System.Windows.Forms.Label loginLbl2;
-        private System.Windows.Forms.TextBox loginTextBoxID;
-        private System.Windows.Forms.TextBox loginTextBoxName;
-        private System.Windows.Forms.Button loginButton;
+        private System.Windows.Forms.Label lblLoginId;
+        private System.Windows.Forms.Label lblLoginPW;
+        private System.Windows.Forms.TextBox txtLoginID;
+        private System.Windows.Forms.TextBox txtLoginPW;
+        private System.Windows.Forms.Button LoginButton;
     }
 }

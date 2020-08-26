@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Server
@@ -19,10 +14,10 @@ namespace Server
 
         public static int oldClientCount;
         
-
         public static Point initialViewLocationPoint=new Point(0,0);
         public static Point initialLabelLocationPoint = new Point(0, 0);
         public static Timer renderingTimer = new Timer();
+
         public ClientsView()
         {
             InitializeComponent();
@@ -32,7 +27,6 @@ namespace Server
             renderingTimer.Interval = 1000;
             renderingTimer.Start();
         }
-
 
         //리스트에 담아서 화면을 뿌려주자!
         public PictureBox AddClientView() //재귀가 좋을까? 반복문이 좋을까? 
@@ -45,16 +39,13 @@ namespace Server
             initialViewLocationPoint.X += 20 + clientView.Width;
             if(oldClientCount%5==0) initialViewLocationPoint.Y += 50 + clientView.Height;
             
-
             clientView.Location = initialViewLocationPoint;
-
             clientView.BackColor = Color.Purple;
-
-            Console.WriteLine($"View Point {initialViewLocationPoint.X} : {initialViewLocationPoint.Y}");
-
+            //Console.WriteLine($"View Point {initialViewLocationPoint.X} : {initialViewLocationPoint.Y}");
 
             return clientView;
         }
+
         public Label AddClientLabel()
         {
             Label clientLabel = new Label();
@@ -64,7 +55,8 @@ namespace Server
             initialLabelLocationPoint.Y = (initialViewLocationPoint.Y - 10);
 
             clientLabel.Location = initialLabelLocationPoint;
-            Console.WriteLine($"Label Point {initialLabelLocationPoint.X} : {initialLabelLocationPoint.Y}");
+            //Console.WriteLine($"Label Point {initialLabelLocationPoint.X} : {initialLabelLocationPoint.Y}");
+
             return clientLabel;
         }
 
@@ -90,13 +82,11 @@ namespace Server
                 //그렇기에 특정 대상만을 지울 수 있는 메서드가 필요
             }
 
-            Console.WriteLine($"이벤트 도는 중! 현재 수:{currentClientCount}");
+            // Console.WriteLine($"이벤트 도는 중, 현재 수 : {currentClientCount}");
         }
         //해야할 것 Client의 코드를 풀어서 Server에 맞게 만들기
         //Server의 코드를 Client에 맞게 만들기
         //그래야 이미지가 불러들어 갈 수 있음
-
-       
 
         private void ClientsView_Load(object sender, EventArgs e)
         {
@@ -106,7 +96,7 @@ namespace Server
 
         private void ClientsView_Resize(object sender, EventArgs e)
         {
-            this.Text = $" 사이즈: Width:{this.Width} , Height:{this.Height}";
+            //this.Text = $"Width : {this.Width}, Height : {this.Height}";
         }
     }
 }

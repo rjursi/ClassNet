@@ -13,15 +13,14 @@ namespace Server
             IsServerInternetControlling = false;
         }
 
-        Hashtable loginHashtable = new Hashtable();
+        readonly Hashtable loginHashtable = new Hashtable();
 
-        public void SetloginHashtable(string data)
+        public void SetloginHashtable(string clientAddr, string clientInfo)
         {
-            String[] result = data.Replace("\0", string.Empty).Split(' '); // 끝마침문자 제거 및 공백 단위로 배열 저장.
-            if (!loginHashtable.ContainsKey(result[1])) // 헤시테이블 내 중복키 확인
+            if(!loginHashtable.ContainsKey(clientAddr))
             {
-                Console.WriteLine(result[1] + result[2]); // 헤시테이블 입력값 확인
-                loginHashtable.Add(result[1], result[2]);
+                //Console.WriteLine(clientAddr + " : " + clientInfo); // 해시테이블 입력값 확인
+                loginHashtable.Add(clientAddr, clientInfo);
             }
         }
 
@@ -29,8 +28,6 @@ namespace Server
         public bool IsServerShutdown { get; set; }
         public bool IsServerControlling { get; set; }
         public bool IsServerInternetControlling { get; set; }
-
-
 
         // 화면 전송 데이터 getter, setter
         public byte[] ServerScreenData { get; set; } = null;

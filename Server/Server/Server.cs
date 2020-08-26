@@ -27,7 +27,7 @@ namespace Server
         }
 
         static int clientCount = 0; //접속 클라이언트 수
-        static public Dictionary<Socket, string> connectedClientList = new Dictionary<Socket, string>(); //소켓,학생 이름
+        static public Dictionary<Socket, string> connectedClientList = new Dictionary<Socket, string>(); //소켓, 학생 이름
 
         private Socket socketListener;
         private Socket socketObject;
@@ -54,8 +54,6 @@ namespace Server
         {
 
         }
-
-
 
         private void SocketOn()
         {
@@ -125,18 +123,16 @@ namespace Server
                 // 클라이언트의 연결 요청을 대기(다른 클라이언트가 또 연결할 수 있으므로)
                 socketListener.BeginAccept(AcceptCallback, null);
 
-
                 ClientObject tempClient = new ClientObject();
 
                 tempClient.recvBuffer = new byte[32];
                 tempClient.socketClient = socketObject;
 
                 clientCount++;
-                connectedClientList.Add(socketObject, "테수투!");
+                connectedClientList.Add(socketObject, "테스트");
 
                 ClientsView.currentClientCount = clientCount;
                 ClientsView.connectedClientList = connectedClientList;
-
 
                 tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, tempClient);
             }
@@ -152,7 +148,7 @@ namespace Server
                 if (Encoding.UTF8.GetString(co.recvBuffer).Substring(0, 4).Contains("recv")) // 맨 앞 recv만 추려냄
                 {
                     string receiveLoginData = Encoding.UTF8.GetString(co.recvBuffer);
-                    standardSignalObj.SetloginHashtable(receiveLoginData); // hashtable에 데이터 저장.
+                    standardSignalObj.SetloginHashtable(co.socketClient.RemoteEndPoint.ToString(), receiveLoginData.Split('&')[1]); // hashtable에 데이터 저장.
 
                     if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;
 
@@ -177,11 +173,8 @@ namespace Server
 
         private static byte[] SignalObjToByte(SignalObj signalObj)
         {
-            string jsonData = "";
-            byte[] buffer;
-
-            jsonData = JsonConvert.SerializeObject(signalObj);
-            buffer = Encoding.Default.GetBytes(jsonData);
+            string jsonData = JsonConvert.SerializeObject(signalObj);
+            byte[] buffer = Encoding.Default.GetBytes(jsonData);
 
             return buffer;
         }
