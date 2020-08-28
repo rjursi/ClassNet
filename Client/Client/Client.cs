@@ -36,6 +36,8 @@ namespace Client
         private static Byte[] recvData;
         private static Byte[] sendData;
 
+        private static bool isFirst;
+
         public Client()
         {
             InitializeComponent();
@@ -69,10 +71,10 @@ namespace Client
 
                     // 받은 이미지를 풀스크린으로 띄우는 설정
                     // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
-                    /*FormBorderStyle = FormBorderStyle.None;*/
+                    /*FormBorderStyle = FormBorderStyle.None;
                     WindowState = FormWindowState.Maximized;
                     screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-                    screenImage.Height = Screen.PrimaryScreen.Bounds.Height;
+                    screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
                     // 화면 폼을 가장 맨 위로
                     // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
@@ -90,7 +92,7 @@ namespace Client
             firewallPortBlocker = new FirewallPortBlock();
 
             recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
-            sendData = Encoding.UTF8.GetBytes("recv" + "&" + stuInfo); // recv 텍스트 뒤에 로그인 데이터를 같이 저장.
+            isFirst = true;
 
             Opacity = 0;
 
@@ -109,11 +111,8 @@ namespace Client
 
         public SignalObj ByteToObject(byte[] buffer)
         {
-            string jsonData = "";
-            SignalObj signal;
-
-            jsonData = Encoding.Default.GetString(buffer);
-            signal = JsonConvert.DeserializeObject<SignalObj>(jsonData);
+            string jsonData = Encoding.Default.GetString(buffer);
+            SignalObj signal = JsonConvert.DeserializeObject<SignalObj>(jsonData);
             return signal;
         }
 
@@ -121,11 +120,17 @@ namespace Client
         {
             try
             {
+                if (isFirst)
+                {
+                    sendData = Encoding.UTF8.GetBytes("info" + "&" + stuInfo);
+                    isFirst = false;
+                }
+                else sendData = Encoding.UTF8.GetBytes("recv");
+
                 socketServer.Send(sendData);
                 socketServer.Receive(recvData);
 
                 return ByteToObject(recvData);
-
             }
             catch (SocketException)
             {
@@ -180,7 +185,6 @@ namespace Client
                 // 이미지를 받아서 여기서 버퍼를 설정하는 부분
                 this.Invoke(new ScreenOnDelegate(OutputDelegate),
                     standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, 1);
-                
             }
             else
             {
