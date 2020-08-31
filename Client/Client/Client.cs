@@ -224,7 +224,7 @@ namespace Client
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
             socketServer.Close();
-            if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
+           
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
         }
     }

@@ -247,7 +247,10 @@ namespace Server
 
         private void BtnShutdown_Click(object sender, EventArgs e)
         {
+
             standardSignalObj.IsServerShutdown = true;
+            standardSignalObj.IsServerInternetControlling = false;
+            standardSignalObj.IsServerControlling = false;
 
             if (socketListener != null) socketListener.Close();
             Dispose();
@@ -281,7 +284,12 @@ namespace Server
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
+            
             standardSignalObj.IsServerShutdown = true;
+            standardSignalObj.IsServerInternetControlling = false;
+            standardSignalObj.IsServerControlling = false;
+
+
             standardSignalObj = null;
 
             if (socketListener != null) socketListener.Close();
