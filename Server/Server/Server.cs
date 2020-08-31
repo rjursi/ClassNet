@@ -29,8 +29,8 @@ namespace Server
 
         private static Hashtable stuInfoTable;
 
+        private static ClientsView clientsView;
         private static int clientCount; // 접속 클라이언트 수
-        public static Dictionary<Socket, string> connectedClientList;
 
         private Socket socketListener;
         private Socket socketObject;
@@ -82,7 +82,7 @@ namespace Server
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("화면 전송", new EventHandler((s, ea) => BtnScreenSend_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("조작 제어", new EventHandler((s, ea) => BtnControl_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("인터넷 제어", new EventHandler((s, ea) => btn_InternetControl_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("인터넷 제어", new EventHandler((s, ea) => BtnInternetControl_Click(s, ea))));
             ctx.MenuItems.Add("-");
             ctx.MenuItems.Add(new MenuItem("종료", new EventHandler((s, ea) => BtnShutdown_Click(s, ea))));
             notifyIcon.ContextMenu = ctx;
@@ -111,8 +111,8 @@ namespace Server
 
             stuInfoTable = new Hashtable();
 
+            clientsView = new ClientsView();
             clientCount = 0;
-            connectedClientList = new Dictionary<Socket, string>();
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -145,12 +145,6 @@ namespace Server
                     socketClient = socketObject
                 };
 
-                clientCount++;
-                connectedClientList.Add(socketObject, "테스트");
-
-                ClientsView.currentClientCount = clientCount;
-                ClientsView.connectedClientList = connectedClientList;
-
                 tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, tempClient);
             }
         }
@@ -173,7 +167,14 @@ namespace Server
                     else if (Encoding.UTF8.GetString(co.recvBuffer).Contains("info"))
                     {
                         string receiveLoginData = Encoding.UTF8.GetString(co.recvBuffer);
-                        SetLoginHashtable(co.socketClient.RemoteEndPoint.ToString(), receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
+                        string clientIP = co.socketClient.RemoteEndPoint.ToString(); //.Split(':')[0]
+
+                        SetLoginHashtable(clientIP, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
+
+                        clientCount++;
+
+                        ClientsView.currentClientCount = clientCount;
+                        ClientsView.connectedClientList = stuInfoTable;
                     }
 
                     byte[] signal = SignalObjToByte(standardSignalObj);
@@ -186,6 +187,9 @@ namespace Server
                 }
                 catch (SocketException)
                 {
+                    clientCount--;
+                    ClientsView.currentClientCount = clientCount;
+                    ClientsView.connectedClientList.Remove(co.socketClient.RemoteEndPoint.ToString());
                     stuInfoTable.Remove(co.socketClient.RemoteEndPoint.ToString());
                     co.socketClient.Close();
                 }
@@ -304,8 +308,7 @@ namespace Server
             }
         }
 
-        static ClientsView clientsView = new ClientsView();
-        private void BtnClientsView_Click(object sender,EventArgs e)
+        private void BtnClientsView_Click(object sender, EventArgs e)
         {
             clientsView.ShowDialog();
         }
@@ -317,14 +320,13 @@ namespace Server
             standardSignalObj.IsServerInternetControlling = false;
             standardSignalObj.IsServerControlling = false;
 
-
             standardSignalObj = null;
 
             if (socketListener != null) socketListener.Close();
             Dispose();
         }
 
-        private void btn_InternetControl_Click(object sender, EventArgs e)
+        private void BtnInternetControl_Click(object sender, EventArgs e)
         {
             if (standardSignalObj.IsServerInternetControlling)
             {
@@ -332,7 +334,7 @@ namespace Server
                 notifyIcon.ContextMenu.MenuItems[2].Checked = false;
 
                 MessageBox.Show("인터넷 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btn_InternetControl.Text = "인터넷 제어";
+                btnInternetControl.Text = "인터넷 제어";
             }
             else
             {
@@ -340,7 +342,7 @@ namespace Server
                 notifyIcon.ContextMenu.MenuItems[2].Checked = true;
 
                 MessageBox.Show("인터넷제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btn_InternetControl.Text = "제어 중지";
+                btnInternetControl.Text = "제어 중지";
             }
         }
     }

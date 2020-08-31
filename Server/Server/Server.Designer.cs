@@ -35,7 +35,7 @@
             this.btnControl = new System.Windows.Forms.Button();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.btnClientsView = new System.Windows.Forms.Button();
-            this.btn_InternetControl = new System.Windows.Forms.Button();
+            this.btnInternetControl = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnScreenSend
@@ -88,23 +88,23 @@
             this.btnClientsView.UseVisualStyleBackColor = true;
             this.btnClientsView.Click += new System.EventHandler(this.BtnClientsView_Click);
             // 
-            // btn_InternetControl
+            // btnInternetControl
             // 
-            this.btn_InternetControl.Location = new System.Drawing.Point(12, 138);
-            this.btn_InternetControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btn_InternetControl.Name = "btn_InternetControl";
-            this.btn_InternetControl.Size = new System.Drawing.Size(197, 35);
-            this.btn_InternetControl.TabIndex = 3;
-            this.btn_InternetControl.Text = "인터넷 제어";
-            this.btn_InternetControl.UseVisualStyleBackColor = true;
-            this.btn_InternetControl.Click += new System.EventHandler(this.btn_InternetControl_Click);
+            this.btnInternetControl.Location = new System.Drawing.Point(12, 138);
+            this.btnInternetControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnInternetControl.Name = "btnInternetControl";
+            this.btnInternetControl.Size = new System.Drawing.Size(197, 35);
+            this.btnInternetControl.TabIndex = 3;
+            this.btnInternetControl.Text = "인터넷 제어";
+            this.btnInternetControl.UseVisualStyleBackColor = true;
+            this.btnInternetControl.Click += new System.EventHandler(this.BtnInternetControl_Click);
             // 
             // Server
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(219, 287);
-            this.Controls.Add(this.btn_InternetControl);
+            this.Controls.Add(this.btnInternetControl);
             this.Controls.Add(this.btnClientsView);
             this.Controls.Add(this.btnControl);
             this.Controls.Add(this.btnShutdown);
@@ -126,7 +126,7 @@
         private System.Windows.Forms.Button btnControl;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.Button btnClientsView;
-        private System.Windows.Forms.Button btn_InternetControl;
+        private System.Windows.Forms.Button btnInternetControl;
     }
 }
 

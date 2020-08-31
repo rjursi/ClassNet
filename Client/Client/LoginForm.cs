@@ -25,22 +25,24 @@ namespace Client
         private void LoginButton_Click(object sender, EventArgs e)
         {
             cookie = new CookieContainer();
-            HttpWebResponse res = SetLogin(txtLoginID.Text, txtLoginPW.Text);
+            //HttpWebResponse res = SetLogin(txtLoginID.Text, txtLoginPW.Text);
+            string result = SetLogin(txtLoginID.Text, txtLoginPW.Text);
 
-            if (GetInfo(res).Contains("fail"))
+            if (/*GetInfo(res).Contains("fail")*/ result.Contains("fail"))
             {
                 MessageBox.Show("아이디와 패스워드를 확인하세요.");
             }
             else
             {
-                stuInfo = GetInfo(res);
+                //stuInfo = GetInfo(res);
+                stuInfo = result;
                 this.Close();
             }
 
             cookie = null;
         }
 
-        public HttpWebResponse SetLogin(string id, string password)
+        public /*HttpWebResponse*/ string SetLogin(string id, string password)
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://portal.yuhan.ac.kr/user/loginProcess.face");
             string info = "userId=" + id + "&password=" + password;
@@ -57,7 +59,23 @@ namespace Client
             w.Close();
 
             HttpWebResponse res = (HttpWebResponse)req.GetResponse();
-            return res;
+            TextReader r = (TextReader)new StreamReader(res.GetResponseStream(), Encoding.GetEncoding("UTF-8"));
+
+            string full = r.ReadToEnd();
+            int start_idx = full.IndexOf("<span class=\"name\"><strong>");
+
+            if (start_idx > 0)
+            {
+                int last_idx = full.IndexOf("</strong>님</span>");
+                string result = full.Substring(start_idx, last_idx - start_idx);
+                return result.Substring(27);
+            }
+            else
+            {
+                return "fail";
+            }
+
+            //return res;
         }
 
         public string GetInfo(HttpWebResponse res)
