@@ -11,6 +11,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Server
 {
@@ -26,8 +27,10 @@ namespace Server
             public Socket socketClient;
         }
 
-        static int clientCount = 0; //접속 클라이언트 수
-        static public Dictionary<Socket, string> connectedClientList = new Dictionary<Socket, string>(); //소켓, 학생 이름
+        private static Hashtable stuInfoTable;
+
+        private static int clientCount; // 접속 클라이언트 수
+        public static Dictionary<Socket, string> connectedClientList;
 
         private Socket socketListener;
         private Socket socketObject;
@@ -43,8 +46,7 @@ namespace Server
             InitializeComponent();
         }
 
-        //동적으로 PictureBox 생성하는 로직:
-        //Form_Load를 하고 
+        // Form_Load를 하고 동적으로 PictureBox 생성하는 로직
         public void ClientBoxes_Load(object sender, EventArgs e)
         {
             DynamicClientBoxesCreate();
@@ -53,6 +55,15 @@ namespace Server
         public void DynamicClientBoxesCreate()
         {
 
+        }
+
+        private static void SetLoginHashtable(string clientAddr, string clientInfo)
+        {
+            if (!stuInfoTable.ContainsKey(clientAddr))
+            {
+                Console.WriteLine(clientAddr + " : " + clientInfo); // 해시테이블 입력 값 확인
+                stuInfoTable.Add(clientAddr, clientInfo);
+            }
         }
 
         private void SocketOn()
@@ -97,6 +108,11 @@ namespace Server
             codec = GetEncoder(ImageFormat.Jpeg);
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
+
+            stuInfoTable = new Hashtable();
+
+            clientCount = 0;
+            connectedClientList = new Dictionary<Socket, string>();
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -123,10 +139,11 @@ namespace Server
                 // 클라이언트의 연결 요청을 대기(다른 클라이언트가 또 연결할 수 있으므로)
                 socketListener.BeginAccept(AcceptCallback, null);
 
-                ClientObject tempClient = new ClientObject();
-
-                tempClient.recvBuffer = new byte[32];
-                tempClient.socketClient = socketObject;
+                ClientObject tempClient = new ClientObject
+                {
+                    recvBuffer = new byte[32],
+                    socketClient = socketObject
+                };
 
                 clientCount++;
                 connectedClientList.Add(socketObject, "테스트");
@@ -141,26 +158,37 @@ namespace Server
         private static void AsyncReceiveCallback(IAsyncResult ar)
         {
             ClientObject co = ar.AsyncState as ClientObject;
-            co.socketClient.EndReceive(ar);
 
             if (co.socketClient.Connected)
             {
-                if (Encoding.UTF8.GetString(co.recvBuffer).Substring(0, 4).Contains("recv")) // 맨 앞 recv만 추려냄
+                try
                 {
-                    string receiveLoginData = Encoding.UTF8.GetString(co.recvBuffer);
-                    standardSignalObj.SetloginHashtable(co.socketClient.RemoteEndPoint.ToString(), receiveLoginData.Split('&')[1]); // hashtable에 데이터 저장.
+                    co.socketClient.EndReceive(ar);
 
-                    if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;
+                    if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
+                    {
+                        string receiveLoginData = Encoding.UTF8.GetString(co.recvBuffer);
+                        if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;
+                    }
+                    else if (Encoding.UTF8.GetString(co.recvBuffer).Contains("info"))
+                    {
+                        string receiveLoginData = Encoding.UTF8.GetString(co.recvBuffer);
+                        SetLoginHashtable(co.socketClient.RemoteEndPoint.ToString(), receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
+                    }
 
                     byte[] signal = SignalObjToByte(standardSignalObj);
                     co.socketClient.BeginSend(signal, 0, signal.Length, SocketFlags.None, AsyncSendCallback, co.socketClient);
 
                     signal = null;
                     Array.Clear(co.recvBuffer, 0, co.recvBuffer.Length);
-                }
 
-                if (Thread.Yield()) Thread.Sleep(40);
-                co.socketClient.BeginReceive(co.recvBuffer, 0, co.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, co);
+                    co.socketClient.BeginReceive(co.recvBuffer, 0, co.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, co);
+                }
+                catch (SocketException)
+                {
+                    stuInfoTable.Remove(co.socketClient.RemoteEndPoint.ToString());
+                    co.socketClient.Close();
+                }
             }
         }
 
