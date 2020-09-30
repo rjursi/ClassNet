@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Server
 {
-    public partial class ClientsView : Form
+    public partial class Viewer : Form
     {
         public static int oldClientCount;
         public static int currentClientCount; // 현재 접속 클라이언트 수
@@ -15,7 +15,7 @@ namespace Server
 
         public static Timer renderingTimer;
 
-        public ClientsView()
+        public Viewer()
         {
             InitializeComponent();
 

@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Client
@@ -25,24 +19,24 @@ namespace Client
         private void LoginButton_Click(object sender, EventArgs e)
         {
             cookie = new CookieContainer();
-            //HttpWebResponse res = SetLogin(txtLoginID.Text, txtLoginPW.Text);
-            string result = SetLogin(txtLoginID.Text, txtLoginPW.Text);
+            HttpWebResponse res = SetLogin(txtLoginID.Text, txtLoginPW.Text);
+            //string result = SetLogin(txtLoginID.Text, txtLoginPW.Text);
 
-            if (/*GetInfo(res).Contains("fail")*/ result.Contains("fail"))
+            if (GetInfo(res).Contains("fail") /*result.Contains("fail")*/)
             {
                 MessageBox.Show("아이디와 패스워드를 확인하세요.");
             }
             else
             {
-                //stuInfo = GetInfo(res);
-                stuInfo = result;
+                stuInfo = GetInfo(res);
+                //stuInfo = result;
                 this.Close();
             }
 
             cookie = null;
         }
 
-        public /*HttpWebResponse*/ string SetLogin(string id, string password)
+        public HttpWebResponse /*string*/ SetLogin(string id, string password)
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://portal.yuhan.ac.kr/user/loginProcess.face");
             string info = "userId=" + id + "&password=" + password;
@@ -59,7 +53,8 @@ namespace Client
             w.Close();
 
             HttpWebResponse res = (HttpWebResponse)req.GetResponse();
-            TextReader r = (TextReader)new StreamReader(res.GetResponseStream(), Encoding.GetEncoding("UTF-8"));
+
+            /*TextReader r = (TextReader)new StreamReader(res.GetResponseStream(), Encoding.GetEncoding("UTF-8"));
 
             string full = r.ReadToEnd();
             int start_idx = full.IndexOf("<span class=\"name\"><strong>");
@@ -73,9 +68,9 @@ namespace Client
             else
             {
                 return "fail";
-            }
+            }*/
 
-            //return res;
+            return res;
         }
 
         public string GetInfo(HttpWebResponse res)
@@ -104,6 +99,14 @@ namespace Client
             {
                 return "fail";
             }
+        }
+
+        private void btnSimpleLogin_Click(object sender, EventArgs e)
+        {
+            SimpleLoginForm frm = new SimpleLoginForm();
+            frm.ShowDialog();
+            stuInfo = frm.stuInfo;
+            this.Close();
         }
     }
 }

@@ -33,6 +33,7 @@
             this.txtLoginID = new System.Windows.Forms.TextBox();
             this.txtLoginPW = new System.Windows.Forms.TextBox();
             this.LoginButton = new System.Windows.Forms.Button();
+            this.btnSimpleLogin = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblLoginId
@@ -84,11 +85,23 @@
             this.LoginButton.UseVisualStyleBackColor = true;
             this.LoginButton.Click += new System.EventHandler(this.LoginButton_Click);
             // 
+            // btnSimpleLogin
+            // 
+            this.btnSimpleLogin.Location = new System.Drawing.Point(132, 269);
+            this.btnSimpleLogin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnSimpleLogin.Name = "btnSimpleLogin";
+            this.btnSimpleLogin.Size = new System.Drawing.Size(160, 29);
+            this.btnSimpleLogin.TabIndex = 5;
+            this.btnSimpleLogin.Text = "간편 로그인";
+            this.btnSimpleLogin.UseVisualStyleBackColor = true;
+            this.btnSimpleLogin.Click += new System.EventHandler(this.btnSimpleLogin_Click);
+            // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(427, 300);
+            this.ClientSize = new System.Drawing.Size(427, 335);
+            this.Controls.Add(this.btnSimpleLogin);
             this.Controls.Add(this.LoginButton);
             this.Controls.Add(this.txtLoginPW);
             this.Controls.Add(this.txtLoginID);
@@ -109,5 +122,6 @@
         private System.Windows.Forms.TextBox txtLoginID;
         private System.Windows.Forms.TextBox txtLoginPW;
         private System.Windows.Forms.Button LoginButton;
+        private System.Windows.Forms.Button btnSimpleLogin;
     }
 }

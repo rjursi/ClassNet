@@ -93,6 +93,12 @@
     <Compile Include="CmdProcessController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleLoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SimpleLoginForm.Designer.cs">
+      <DependentUpon>SimpleLoginForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Client.resx">
       <DependentUpon>Client.cs</DependentUpon>
     </EmbeddedResource>
@@ -108,6 +114,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SimpleLoginForm.resx">
+      <DependentUpon>SimpleLoginForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">

@@ -29,7 +29,7 @@ namespace Server
 
         private static Hashtable stuInfoTable;
 
-        private static ClientsView clientsView;
+        private static Viewer clientsView;
         private static int clientCount; // 접속 클라이언트 수
 
         private Socket socketListener;
@@ -111,7 +111,7 @@ namespace Server
 
             stuInfoTable = new Hashtable();
 
-            clientsView = new ClientsView();
+            clientsView = new Viewer();
             clientCount = 0;
         }
 
@@ -173,8 +173,8 @@ namespace Server
 
                         clientCount++;
 
-                        ClientsView.currentClientCount = clientCount;
-                        ClientsView.connectedClientList = stuInfoTable;
+                        Viewer.currentClientCount = clientCount;
+                        Viewer.connectedClientList = stuInfoTable;
                     }
 
                     byte[] signal = SignalObjToByte(standardSignalObj);
@@ -188,8 +188,8 @@ namespace Server
                 catch (SocketException)
                 {
                     clientCount--;
-                    ClientsView.currentClientCount = clientCount;
-                    ClientsView.connectedClientList.Remove(co.socketClient.RemoteEndPoint.ToString());
+                    Viewer.currentClientCount = clientCount;
+                    Viewer.connectedClientList.Remove(co.socketClient.RemoteEndPoint.ToString());
                     stuInfoTable.Remove(co.socketClient.RemoteEndPoint.ToString());
                     co.socketClient.Close();
                 }

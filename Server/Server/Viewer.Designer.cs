@@ -1,6 +1,6 @@
 ﻿namespace Server
 {
-    partial class ClientsView
+    partial class Viewer
     {
         /// <summary>
         /// Required designer variable.
