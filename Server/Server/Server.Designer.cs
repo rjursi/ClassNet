@@ -40,34 +40,34 @@
             // 
             // btnScreenSend
             // 
-            this.btnScreenSend.Location = new System.Drawing.Point(11, 11);
+            this.btnScreenSend.Location = new System.Drawing.Point(12, 11);
             this.btnScreenSend.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnScreenSend.Name = "btnScreenSend";
-            this.btnScreenSend.Size = new System.Drawing.Size(197, 35);
+            this.btnScreenSend.Size = new System.Drawing.Size(198, 35);
             this.btnScreenSend.TabIndex = 0;
-            this.btnScreenSend.Text = "화면 전송";
+            this.btnScreenSend.Text = "실시간 방송";
             this.btnScreenSend.UseVisualStyleBackColor = true;
             this.btnScreenSend.Click += new System.EventHandler(this.BtnScreenSend_Click);
             // 
             // btnShutdown
             // 
-            this.btnShutdown.Location = new System.Drawing.Point(11, 213);
+            this.btnShutdown.Location = new System.Drawing.Point(12, 239);
             this.btnShutdown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnShutdown.Name = "btnShutdown";
-            this.btnShutdown.Size = new System.Drawing.Size(197, 35);
+            this.btnShutdown.Size = new System.Drawing.Size(198, 35);
             this.btnShutdown.TabIndex = 1;
-            this.btnShutdown.Text = "종료";
+            this.btnShutdown.Text = "강의실 PC 종료";
             this.btnShutdown.UseVisualStyleBackColor = true;
             this.btnShutdown.Click += new System.EventHandler(this.BtnShutdown_Click);
             // 
             // btnControl
             // 
-            this.btnControl.Location = new System.Drawing.Point(11, 52);
+            this.btnControl.Location = new System.Drawing.Point(12, 125);
             this.btnControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnControl.Name = "btnControl";
-            this.btnControl.Size = new System.Drawing.Size(197, 35);
+            this.btnControl.Size = new System.Drawing.Size(198, 35);
             this.btnControl.TabIndex = 2;
-            this.btnControl.Text = "조작 제어";
+            this.btnControl.Text = "키보드 및 마우스 잠금";
             this.btnControl.UseVisualStyleBackColor = true;
             this.btnControl.Click += new System.EventHandler(this.BtnControl_Click);
             // 
@@ -79,23 +79,23 @@
             // 
             // btnClientsView
             // 
-            this.btnClientsView.Location = new System.Drawing.Point(11, 95);
+            this.btnClientsView.Location = new System.Drawing.Point(12, 68);
             this.btnClientsView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnClientsView.Name = "btnClientsView";
-            this.btnClientsView.Size = new System.Drawing.Size(197, 35);
+            this.btnClientsView.Size = new System.Drawing.Size(198, 35);
             this.btnClientsView.TabIndex = 3;
-            this.btnClientsView.Text = "화면 보기";
+            this.btnClientsView.Text = "학생 화면 캡처";
             this.btnClientsView.UseVisualStyleBackColor = true;
             this.btnClientsView.Click += new System.EventHandler(this.BtnClientsView_Click);
             // 
             // btnInternetControl
             // 
-            this.btnInternetControl.Location = new System.Drawing.Point(12, 138);
+            this.btnInternetControl.Location = new System.Drawing.Point(12, 182);
             this.btnInternetControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnInternetControl.Name = "btnInternetControl";
-            this.btnInternetControl.Size = new System.Drawing.Size(197, 35);
+            this.btnInternetControl.Size = new System.Drawing.Size(198, 35);
             this.btnInternetControl.TabIndex = 3;
-            this.btnInternetControl.Text = "인터넷 제어";
+            this.btnInternetControl.Text = "인터넷 차단";
             this.btnInternetControl.UseVisualStyleBackColor = true;
             this.btnInternetControl.Click += new System.EventHandler(this.BtnInternetControl_Click);
             // 
@@ -103,7 +103,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(219, 287);
+            this.ClientSize = new System.Drawing.Size(222, 285);
             this.Controls.Add(this.btnInternetControl);
             this.Controls.Add(this.btnClientsView);
             this.Controls.Add(this.btnControl);

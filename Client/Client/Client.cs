@@ -100,6 +100,7 @@ namespace Client
             InsertAction(() => ControllingProcessing());
             InsertAction(() => ImageProcessing());
             InsertAction(() => ControllingInternet());
+            InsertAction(() => PowerOffProcessing());
 
             Task.Run(()=> MainTask());
         }
@@ -222,6 +223,15 @@ namespace Client
                     post_ms.Close();
                 }
                 pre_ms.Close();
+            }
+        }
+
+        public void PowerOffProcessing()
+        {
+            if (standardSignalObj.IsServerShutdown)
+            {
+                // Console.WriteLine("shutdown");
+                System.Diagnostics.Process.Start("ShutDown.exe", "-s -f -t 00");
             }
         }
 
