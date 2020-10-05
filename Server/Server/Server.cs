@@ -10,7 +10,6 @@ using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Collections;
 
 namespace Server
@@ -19,22 +18,22 @@ namespace Server
     {
         private static SignalObj standardSignalObj; // 서버 표준 신호 객체
 
-        private const int MOSHPORT = 53178;
+        private const int CLASSNETPORT = 53178;
 
         private class ClientObject
         {
-            public Byte[] recvBuffer;
-            public Socket socketClient;
+            public Byte[] buffer;
+            public Socket client;
+            public string address;
         }
 
         private static Hashtable stuInfoTable;
 
-        private static Viewer clientsView;
-        private static int clientCount; // 접속 클라이언트 수
+        private static Viewer clientsViewer;
+        private static int clientsCount; // 접속 클라이언트 수
 
-        private Socket socketListener;
-        private Socket socketObject;
-        private IPEndPoint serverEndPoint;
+        private Socket listener;
+        private IPEndPoint ep;
 
         private static Byte[] imageData;
 
@@ -44,17 +43,6 @@ namespace Server
         public Server()
         {
             InitializeComponent();
-        }
-
-        // Form_Load를 하고 동적으로 PictureBox 생성하는 로직
-        public void ClientBoxes_Load(object sender, EventArgs e)
-        {
-            DynamicClientBoxesCreate();
-        }
-
-        public void DynamicClientBoxesCreate()
-        {
-
         }
 
         private static void SetLoginHashtable(string clientAddr, string clientInfo)
@@ -68,23 +56,25 @@ namespace Server
 
         private void SocketOn()
         {
-            socketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverEndPoint = new IPEndPoint(IPAddress.Any, MOSHPORT);
+            listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            ep = new IPEndPoint(IPAddress.Any, CLASSNETPORT);
 
-            socketListener.Bind(serverEndPoint);
-            socketListener.Listen(50);
+            listener.Bind(ep);
+            listener.Listen(50);
 
-            socketListener.BeginAccept(AcceptCallback, null);
+            listener.BeginAccept(AcceptCallback, null);
         }
 
         private void NotifyIconSetting()
         {
             ContextMenu ctx = new ContextMenu();
-            ctx.MenuItems.Add(new MenuItem("화면 전송", new EventHandler((s, ea) => BtnScreenSend_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("조작 제어", new EventHandler((s, ea) => BtnControl_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("인터넷 제어", new EventHandler((s, ea) => BtnInternetControl_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("실시간 방송", new EventHandler((s, ea) => BtnStreaming_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("학습자 PC 모니터링", new EventHandler((s, ea) => BtnMonitoring_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("키보드 및 마우스 잠금", new EventHandler((s, ea) => BtnLock_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("인터넷 차단", new EventHandler((s, ea) => BtnInternet_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("강의실 PC 전원 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
             ctx.MenuItems.Add("-");
-            ctx.MenuItems.Add(new MenuItem("종료", new EventHandler((s, ea) => BtnShutdown_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => BtnShutdown_Click(s, ea))));
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
         }
@@ -111,8 +101,8 @@ namespace Server
 
             stuInfoTable = new Hashtable();
 
-            clientsView = new Viewer();
-            clientCount = 0;
+            clientsViewer = new Viewer();
+            clientsCount = 0;
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -132,20 +122,21 @@ namespace Server
         void AcceptCallback(IAsyncResult ar)
         {
             // 클라이언트의 연결 요청을 수락
-            if (!standardSignalObj.IsServerShutdown)
+            if (!standardSignalObj.IsShutdown)
             {
-                socketObject = socketListener.EndAccept(ar);
+                Socket tempSocket = listener.EndAccept(ar);
 
-                // 클라이언트의 연결 요청을 대기(다른 클라이언트가 또 연결할 수 있으므로)
-                socketListener.BeginAccept(AcceptCallback, null);
+                // 클라이언트의 연결 요청을 대기 (다른 클라이언트가 또 연결할 수 있으므로)
+                listener.BeginAccept(AcceptCallback, null);
 
                 ClientObject tempClient = new ClientObject
                 {
-                    recvBuffer = new byte[32],
-                    socketClient = socketObject
+                    buffer = new byte[32],
+                    client = tempSocket,
+                    address = tempSocket.RemoteEndPoint.ToString().Split(':')[0]
                 };
 
-                tempClient.socketClient.BeginReceive(tempClient.recvBuffer, 0, tempClient.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, tempClient);
+                tempClient.client.BeginReceive(tempClient.buffer, 0, tempClient.buffer.Length, SocketFlags.None, AsyncReceiveCallback, tempClient);
             }
         }
 
@@ -153,54 +144,57 @@ namespace Server
         {
             ClientObject co = ar.AsyncState as ClientObject;
 
-            if (co.socketClient.Connected)
+            if (co.client.Connected)
             {
                 try
                 {
-                    co.socketClient.EndReceive(ar);
+                    co.client.EndReceive(ar);
 
-                    if (Encoding.UTF8.GetString(co.recvBuffer).Contains("recv"))
+                    if (Encoding.UTF8.GetString(co.buffer).Contains("recv"))
                     {
-                        string receiveLoginData = Encoding.UTF8.GetString(co.recvBuffer);
+                        string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
                         if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;
                     }
-                    else if (Encoding.UTF8.GetString(co.recvBuffer).Contains("info"))
+                    else if (Encoding.UTF8.GetString(co.buffer).Contains("info"))
                     {
-                        string receiveLoginData = Encoding.UTF8.GetString(co.recvBuffer);
-                        string clientIP = co.socketClient.RemoteEndPoint.ToString(); //.Split(':')[0]
+                        string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
 
-                        SetLoginHashtable(clientIP, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
+                        SetLoginHashtable(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
 
-                        clientCount++;
+                        clientsCount++;
 
-                        Viewer.currentClientCount = clientCount;
-                        Viewer.connectedClientList = stuInfoTable;
+                        Viewer.currentClientsCount = clientsCount;
+                        Viewer.connectedClientsList = stuInfoTable;
                     }
 
                     byte[] signal = SignalObjToByte(standardSignalObj);
-                    co.socketClient.BeginSend(signal, 0, signal.Length, SocketFlags.None, AsyncSendCallback, co.socketClient);
+                    co.client.BeginSend(signal, 0, signal.Length, SocketFlags.None, AsyncSendCallback, co.client);
 
                     signal = null;
-                    Array.Clear(co.recvBuffer, 0, co.recvBuffer.Length);
+                    Array.Clear(co.buffer, 0, co.buffer.Length);
 
-                    co.socketClient.BeginReceive(co.recvBuffer, 0, co.recvBuffer.Length, SocketFlags.None, AsyncReceiveCallback, co);
+                    co.client.BeginReceive(co.buffer, 0, co.buffer.Length, SocketFlags.None, AsyncReceiveCallback, co);
                 }
                 catch (SocketException)
                 {
-                    clientCount--;
-                    Viewer.currentClientCount = clientCount;
-                    Viewer.connectedClientList.Remove(co.socketClient.RemoteEndPoint.ToString());
-                    stuInfoTable.Remove(co.socketClient.RemoteEndPoint.ToString());
-                    co.socketClient.Close();
+                    stuInfoTable.Remove(co.address);
+
+                    clientsCount--;
+
+                    Viewer.currentClientsCount = clientsCount;
+                    Viewer.connectedClientsList = stuInfoTable;
+
+                    co.client.Close();
+                    co = null;
                 }
             }
         }
 
         private static void AsyncSendCallback(IAsyncResult ar)
         {
-            Socket socket = ar.AsyncState as Socket;
-            if (socket.Connected) socket.EndSend(ar);
-            else socket.Close();
+            Socket client = ar.AsyncState as Socket;
+            if (client.Connected) client.EndSend(ar);
+            else client.Close();
         }
 
         private static byte[] SignalObjToByte(SignalObj signalObj)
@@ -221,7 +215,7 @@ namespace Server
 
             Graphics g = Graphics.FromImage(bmp);
 
-            while (!standardSignalObj.IsServerShutdown)
+            while (!standardSignalObj.IsShutdown)
             {
                 try
                 {
@@ -254,7 +248,7 @@ namespace Server
             }
         }
 
-        private void BtnScreenSend_Click(object sender, EventArgs e)
+        private void BtnStreaming_Click(object sender, EventArgs e)
         {
             // 스위치 역할을 하도록 수정
             if (standardSignalObj.ServerScreenData == null)
@@ -262,7 +256,7 @@ namespace Server
                 standardSignalObj.ServerScreenData = imageData;
 
                 // 폼 버튼 변경
-                btnScreenSend.Text = "전송 중지";
+                btnStreaming.Text = "방송 중지";
 
                 // 트레이 아이콘 공유 버튼 상태 변경
                 notifyIcon.ContextMenu.MenuItems[0].Checked = true;
@@ -271,79 +265,83 @@ namespace Server
             {
                 standardSignalObj.ServerScreenData = null;
 
-                btnScreenSend.Text = "화면 전송";
+                btnStreaming.Text = "실시간 방송";
 
                 notifyIcon.ContextMenu.MenuItems[0].Checked = false;
             }
         }
 
-        private void BtnShutdown_Click(object sender, EventArgs e)
+        private void BtnMonitoring_Click(object sender, EventArgs e)
         {
-
-            standardSignalObj.IsServerShutdown = true;
-            standardSignalObj.IsServerInternetControlling = false;
-            standardSignalObj.IsServerControlling = false;
-
-            if (socketListener != null) socketListener.Close();
-            Dispose();
+            clientsViewer.ShowDialog();
         }
 
-        private void BtnControl_Click(object sender, EventArgs e)
+        private void BtnLock_Click(object sender, EventArgs e)
         {
-            if (standardSignalObj.IsServerControlling)
+            if (standardSignalObj.IsLock)
             {
-                standardSignalObj.IsServerControlling = false;
+                standardSignalObj.IsLock = false;
                 notifyIcon.ContextMenu.MenuItems[1].Checked = false;
 
-                MessageBox.Show("키보드와 마우스 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnControl.Text = "조작 제어";
+                MessageBox.Show("키보드 및 마우스 잠금을 해제하였습니다.", "잠금 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnLock.Text = "키보드 및 마우스 잠금";
             }
             else
             {
-                standardSignalObj.IsServerControlling = true;
+                standardSignalObj.IsLock = true;
                 notifyIcon.ContextMenu.MenuItems[1].Checked = true;
 
-                MessageBox.Show("키보드와 마우스 제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnControl.Text = "제어 중지";
+                MessageBox.Show("키보드와 마우스 잠금을 설정하였습니다.", "잠금 설정", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnLock.Text = "잠금 해제";
             }
         }
 
-        private void BtnClientsView_Click(object sender, EventArgs e)
+        private void BtnInternet_Click(object sender, EventArgs e)
         {
-            clientsView.ShowDialog();
+            if (standardSignalObj.IsInternet)
+            {
+                standardSignalObj.IsInternet = false;
+                notifyIcon.ContextMenu.MenuItems[2].Checked = false;
+
+                MessageBox.Show("인터넷 차단을 해제하였습니다.", "차단 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnInternet.Text = "인터넷 차단";
+            }
+            else
+            {
+                standardSignalObj.IsInternet = true;
+                notifyIcon.ContextMenu.MenuItems[2].Checked = true;
+
+                MessageBox.Show("인터넷 차단을 설정하였습니다.", "차단 설정", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                btnInternet.Text = "차단 해제";
+            }
+        }
+
+        private void BtnPower_Click(object sender, EventArgs e)
+        {
+            standardSignalObj.IsPower = true;
+            Thread.Sleep(500);
+            standardSignalObj.IsPower = false;
+        }
+
+        private void BtnShutdown_Click(object sender, EventArgs e)
+        {
+            standardSignalObj.IsShutdown = true;
+            standardSignalObj.IsInternet = false;
+            standardSignalObj.IsLock = false;
+
+            if (listener != null) listener.Close();
+            Dispose();
         }
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
             
-            standardSignalObj.IsServerShutdown = true;
-            standardSignalObj.IsServerInternetControlling = false;
-            standardSignalObj.IsServerControlling = false;
+            standardSignalObj.IsShutdown = true;
+            standardSignalObj.IsInternet = false;
+            standardSignalObj.IsLock = false;
 
-            standardSignalObj = null;
-
-            if (socketListener != null) socketListener.Close();
+            if (listener != null) listener.Close();
             Dispose();
-        }
-
-        private void BtnInternetControl_Click(object sender, EventArgs e)
-        {
-            if (standardSignalObj.IsServerInternetControlling)
-            {
-                standardSignalObj.IsServerInternetControlling = false;
-                notifyIcon.ContextMenu.MenuItems[2].Checked = false;
-
-                MessageBox.Show("인터넷 제어를 중지하였습니다.", "제어 중지", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnInternetControl.Text = "인터넷 제어";
-            }
-            else
-            {
-                standardSignalObj.IsServerInternetControlling = true;
-                notifyIcon.ContextMenu.MenuItems[2].Checked = true;
-
-                MessageBox.Show("인터넷제어를 시작하였습니다.", "제어 시작", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnInternetControl.Text = "제어 중지";
-            }
         }
     }
 }

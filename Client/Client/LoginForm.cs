@@ -108,5 +108,12 @@ namespace Client
             stuInfo = frm.stuInfo;
             this.Close();
         }
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+            /*FormBorderStyle = FormBorderStyle.None;
+            WindowState = FormWindowState.Maximized;
+            TopMost = true;*/
+        }
     }
 }

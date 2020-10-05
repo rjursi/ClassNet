@@ -8,10 +8,10 @@ namespace Server
 {
     public partial class Viewer : Form
     {
-        public static int oldClientCount;
-        public static int currentClientCount; // 현재 접속 클라이언트 수
+        public static int oldClientsCount;
+        public static int currentClientsCount; // 현재 접속 클라이언트 수
 
-        public static Hashtable connectedClientList;
+        public static Hashtable connectedClientsList;
 
         public static Timer renderingTimer;
 
@@ -19,9 +19,9 @@ namespace Server
         {
             InitializeComponent();
 
-            oldClientCount = 0;
+            oldClientsCount = 0;
 
-            connectedClientList = new Hashtable(); // 클라이언트 리스트
+            connectedClientsList = new Hashtable(); // 클라이언트 리스트
 
             renderingTimer = new Timer();
             renderingTimer.Tick += new EventHandler(IterateShowViews);
@@ -40,7 +40,7 @@ namespace Server
 
             Label lblClient = new Label
             {
-                Text = connectedClientList[key].ToString(), // 학번(이름)
+                Text = connectedClientsList[key].ToString(), // 학번(이름)
                 Width = 160,
                 Height = 20,
                 Location = new Point(5, 8)
@@ -66,26 +66,26 @@ namespace Server
         private void IterateShowViews(object sender,EventArgs e)
         {
 
-            if (oldClientCount == currentClientCount)
+            if (oldClientsCount == currentClientsCount)
             { 
                 
             }
-            else if(oldClientCount < currentClientCount)
+            else if(oldClientsCount < currentClientsCount)
             {
-                oldClientCount++;
+                oldClientsCount++;
 
                 clientsViewPanel.Controls.Clear();
-                foreach (string key in connectedClientList.Keys)
+                foreach (string key in connectedClientsList.Keys)
                 {
                     clientsViewPanel.Controls.Add(AddClientPanel(key));
                 }
             }
-            else if (oldClientCount > currentClientCount)
+            else if (oldClientsCount > currentClientsCount)
             {
-                oldClientCount--;
+                oldClientsCount--;
 
                 clientsViewPanel.Controls.Clear();
-                foreach (string key in connectedClientList.Keys)
+                foreach (string key in connectedClientsList.Keys)
                 {
                     clientsViewPanel.Controls.Add(AddClientPanel(key));
                 }

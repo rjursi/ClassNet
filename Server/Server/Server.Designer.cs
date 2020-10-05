@@ -30,46 +30,47 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Server));
-            this.btnScreenSend = new System.Windows.Forms.Button();
+            this.btnStreaming = new System.Windows.Forms.Button();
             this.btnShutdown = new System.Windows.Forms.Button();
-            this.btnControl = new System.Windows.Forms.Button();
+            this.btnLock = new System.Windows.Forms.Button();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.btnClientsView = new System.Windows.Forms.Button();
-            this.btnInternetControl = new System.Windows.Forms.Button();
+            this.btnViewer = new System.Windows.Forms.Button();
+            this.btnInternet = new System.Windows.Forms.Button();
+            this.btnPower = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // btnScreenSend
+            // btnStreaming
             // 
-            this.btnScreenSend.Location = new System.Drawing.Point(12, 11);
-            this.btnScreenSend.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnScreenSend.Name = "btnScreenSend";
-            this.btnScreenSend.Size = new System.Drawing.Size(198, 35);
-            this.btnScreenSend.TabIndex = 0;
-            this.btnScreenSend.Text = "실시간 방송";
-            this.btnScreenSend.UseVisualStyleBackColor = true;
-            this.btnScreenSend.Click += new System.EventHandler(this.BtnScreenSend_Click);
+            this.btnStreaming.Location = new System.Drawing.Point(12, 11);
+            this.btnStreaming.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnStreaming.Name = "btnStreaming";
+            this.btnStreaming.Size = new System.Drawing.Size(221, 35);
+            this.btnStreaming.TabIndex = 0;
+            this.btnStreaming.Text = "실시간 방송";
+            this.btnStreaming.UseVisualStyleBackColor = true;
+            this.btnStreaming.Click += new System.EventHandler(this.BtnStreaming_Click);
             // 
             // btnShutdown
             // 
-            this.btnShutdown.Location = new System.Drawing.Point(12, 239);
+            this.btnShutdown.Location = new System.Drawing.Point(12, 291);
             this.btnShutdown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnShutdown.Name = "btnShutdown";
-            this.btnShutdown.Size = new System.Drawing.Size(198, 35);
+            this.btnShutdown.Size = new System.Drawing.Size(221, 35);
             this.btnShutdown.TabIndex = 1;
-            this.btnShutdown.Text = "강의실 PC 종료";
+            this.btnShutdown.Text = "클래스넷 종료";
             this.btnShutdown.UseVisualStyleBackColor = true;
             this.btnShutdown.Click += new System.EventHandler(this.BtnShutdown_Click);
             // 
-            // btnControl
+            // btnLock
             // 
-            this.btnControl.Location = new System.Drawing.Point(12, 125);
-            this.btnControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btnControl.Name = "btnControl";
-            this.btnControl.Size = new System.Drawing.Size(198, 35);
-            this.btnControl.TabIndex = 2;
-            this.btnControl.Text = "키보드 및 마우스 잠금";
-            this.btnControl.UseVisualStyleBackColor = true;
-            this.btnControl.Click += new System.EventHandler(this.BtnControl_Click);
+            this.btnLock.Location = new System.Drawing.Point(12, 123);
+            this.btnLock.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnLock.Name = "btnLock";
+            this.btnLock.Size = new System.Drawing.Size(221, 35);
+            this.btnLock.TabIndex = 2;
+            this.btnLock.Text = "키보드 및 마우스 잠금";
+            this.btnLock.UseVisualStyleBackColor = true;
+            this.btnLock.Click += new System.EventHandler(this.BtnLock_Click);
             // 
             // notifyIcon
             // 
@@ -77,38 +78,50 @@
             this.notifyIcon.Text = "MOSH";
             this.notifyIcon.Visible = true;
             // 
-            // btnClientsView
+            // btnViewer
             // 
-            this.btnClientsView.Location = new System.Drawing.Point(12, 68);
-            this.btnClientsView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btnClientsView.Name = "btnClientsView";
-            this.btnClientsView.Size = new System.Drawing.Size(198, 35);
-            this.btnClientsView.TabIndex = 3;
-            this.btnClientsView.Text = "학생 화면 캡처";
-            this.btnClientsView.UseVisualStyleBackColor = true;
-            this.btnClientsView.Click += new System.EventHandler(this.BtnClientsView_Click);
+            this.btnViewer.Location = new System.Drawing.Point(12, 67);
+            this.btnViewer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnViewer.Name = "btnViewer";
+            this.btnViewer.Size = new System.Drawing.Size(221, 35);
+            this.btnViewer.TabIndex = 3;
+            this.btnViewer.Text = "학생 PC 모니터링";
+            this.btnViewer.UseVisualStyleBackColor = true;
+            this.btnViewer.Click += new System.EventHandler(this.BtnMonitoring_Click);
             // 
-            // btnInternetControl
+            // btnInternet
             // 
-            this.btnInternetControl.Location = new System.Drawing.Point(12, 182);
-            this.btnInternetControl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btnInternetControl.Name = "btnInternetControl";
-            this.btnInternetControl.Size = new System.Drawing.Size(198, 35);
-            this.btnInternetControl.TabIndex = 3;
-            this.btnInternetControl.Text = "인터넷 차단";
-            this.btnInternetControl.UseVisualStyleBackColor = true;
-            this.btnInternetControl.Click += new System.EventHandler(this.BtnInternetControl_Click);
+            this.btnInternet.Location = new System.Drawing.Point(12, 179);
+            this.btnInternet.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnInternet.Name = "btnInternet";
+            this.btnInternet.Size = new System.Drawing.Size(221, 35);
+            this.btnInternet.TabIndex = 3;
+            this.btnInternet.Text = "인터넷 차단";
+            this.btnInternet.UseVisualStyleBackColor = true;
+            this.btnInternet.Click += new System.EventHandler(this.BtnInternet_Click);
+            // 
+            // btnPower
+            // 
+            this.btnPower.Location = new System.Drawing.Point(12, 235);
+            this.btnPower.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnPower.Name = "btnPower";
+            this.btnPower.Size = new System.Drawing.Size(221, 35);
+            this.btnPower.TabIndex = 1;
+            this.btnPower.Text = "강의실 PC 전원 종료";
+            this.btnPower.UseVisualStyleBackColor = true;
+            this.btnPower.Click += new System.EventHandler(this.BtnPower_Click);
             // 
             // Server
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(222, 285);
-            this.Controls.Add(this.btnInternetControl);
-            this.Controls.Add(this.btnClientsView);
-            this.Controls.Add(this.btnControl);
+            this.ClientSize = new System.Drawing.Size(245, 340);
+            this.Controls.Add(this.btnInternet);
+            this.Controls.Add(this.btnViewer);
+            this.Controls.Add(this.btnLock);
+            this.Controls.Add(this.btnPower);
             this.Controls.Add(this.btnShutdown);
-            this.Controls.Add(this.btnScreenSend);
+            this.Controls.Add(this.btnStreaming);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Server";
@@ -121,12 +134,13 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnScreenSend;
+        private System.Windows.Forms.Button btnStreaming;
         private System.Windows.Forms.Button btnShutdown;
-        private System.Windows.Forms.Button btnControl;
+        private System.Windows.Forms.Button btnLock;
         private System.Windows.Forms.NotifyIcon notifyIcon;
-        private System.Windows.Forms.Button btnClientsView;
-        private System.Windows.Forms.Button btnInternetControl;
+        private System.Windows.Forms.Button btnViewer;
+        private System.Windows.Forms.Button btnInternet;
+        private System.Windows.Forms.Button btnPower;
     }
 }
 

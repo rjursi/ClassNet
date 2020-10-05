@@ -14,10 +14,10 @@ namespace Client
 {
     public partial class Client : Form
     {
-        private const int MOSHPORT = 53178;
+        private const int CLASSNETPORT = 53178;
         private const string SERVER_IP = "127.0.0.1";
 
-        private Socket socketServer;
+        private Socket server;
         private bool isConnected = false;
 
         private LoginForm loginForm;
@@ -30,6 +30,7 @@ namespace Client
 
         private CmdProcessController cmdProcessController;
         private FirewallPortBlock firewallPortBlocker;
+
         private delegate void ScreenOnDelegate(int imgSize, Byte[] recvData, double isOpacity);
         private delegate void ScreenOffDelegate(double isOpacity);
 
@@ -61,13 +62,13 @@ namespace Client
             {
                 try
                 {
-                    socketServer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(SERVER_IP), MOSHPORT);
-                    socketServer.Connect(serverEndPoint);
+                    server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    IPEndPoint ep = new IPEndPoint(IPAddress.Parse(SERVER_IP), CLASSNETPORT);
+                    server.Connect(ep);
 
                     // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
                     // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
-                    // this.ShowInTaskbar = false;
+                    //this.ShowInTaskbar = false;
 
                     // 받은 이미지를 풀스크린으로 띄우는 설정
                     // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
@@ -78,7 +79,7 @@ namespace Client
 
                     // 화면 폼을 가장 맨 위로
                     // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
-                    // TopMost = true;
+                    //TopMost = true;
 
                     isConnected = true;
                 }
@@ -97,10 +98,10 @@ namespace Client
             Opacity = 0;
 
             // 이런식으로 구현 기능에 대한 메소드를 추가하기 위해 아래와 같이 람다식으로 작성
-            InsertAction(() => ControllingProcessing());
-            InsertAction(() => ImageProcessing());
+            InsertAction(() => ControllingLock());
             InsertAction(() => ControllingInternet());
-            InsertAction(() => PowerOffProcessing());
+            InsertAction(() => ControllingPower());
+            InsertAction(() => ImageProcessing());
 
             Task.Run(()=> MainTask());
         }
@@ -128,14 +129,14 @@ namespace Client
                 }
                 else sendData = Encoding.UTF8.GetBytes("recv");
 
-                socketServer.Send(sendData);
-                socketServer.Receive(recvData);
+                server.Send(sendData);
+                server.Receive(recvData);
 
                 return ByteToObject(recvData);
             }
             catch (SocketException)
             {
-                socketServer.Close();
+                server.Close();
                 if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
                 this.Invoke(new MethodInvoker(() => { Dispose(); }));
 
@@ -169,14 +170,19 @@ namespace Client
             }
         }
 
-        public void ControllingProcessing()
+        public void ControllingLock()
         {
-            cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsServerControlling);
+            cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsLock);
         }
 
         public void ControllingInternet()
         {
-            firewallPortBlocker.CtrlStatusEventCheck(standardSignalObj.IsServerInternetControlling);
+            firewallPortBlocker.CtrlStatusEventCheck(standardSignalObj.IsInternet);
+        }
+
+        public void ControllingPower()
+        {
+            if (standardSignalObj.IsPower) System.Diagnostics.Process.Start("ShutDown.exe", "-s -f -t 00");
         }
 
         public void ImageProcessing()
@@ -226,19 +232,9 @@ namespace Client
             }
         }
 
-        public void PowerOffProcessing()
-        {
-            if (standardSignalObj.IsServerShutdown)
-            {
-                // Console.WriteLine("shutdown");
-                System.Diagnostics.Process.Start("ShutDown.exe", "-s -f -t 00");
-            }
-        }
-
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
-            socketServer.Close();
-           
+            server.Close();
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
         }
     }

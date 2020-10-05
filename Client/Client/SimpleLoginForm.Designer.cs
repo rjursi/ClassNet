@@ -95,6 +95,7 @@
             this.Controls.Add(this.lblName);
             this.Name = "SimpleLoginForm";
             this.Text = "SimpleLoginForm";
+            this.Load += new System.EventHandler(this.SimpleLoginForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

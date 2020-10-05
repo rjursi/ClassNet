@@ -9,9 +9,10 @@ namespace Client
 
         public SignalObj()
         {
-            IsServerShutdown = false;
-            IsServerControlling = false;
-            IsServerInternetControlling = false;
+            IsShutdown = false;
+            IsLock = false;
+            IsInternet = false;
+            IsPower = false;
         }
 
         ~SignalObj()
@@ -26,9 +27,10 @@ namespace Client
         }
 
         // 위 서버가 꺼져있는지, 서버가 컨트롤 중인지는 서버만 제어함
-        public bool IsServerShutdown { get; set; }
-        public bool IsServerControlling { get; set; }
-        public bool IsServerInternetControlling { get; set; }
+        public bool IsShutdown { get; set; }
+        public bool IsLock { get; set; }
+        public bool IsInternet { get; set; }
+        public bool IsPower { get; set; }
 
         // 방송 관련 데이터 getter, setter
         public byte[] ServerScreenData { get; set; }

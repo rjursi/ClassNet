@@ -17,5 +17,10 @@ namespace Client
             stuInfo = $"{txtStuCode.Text}({txtName.Text})";
             this.Close();
         }
+
+        private void SimpleLoginForm_Load(object sender, EventArgs e)
+        {
+            TopMost = true;
+        }
     }
 }
