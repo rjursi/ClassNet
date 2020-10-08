@@ -37,13 +37,13 @@
             this.lblStatus.Font = new System.Drawing.Font("굴림", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.lblStatus.Location = new System.Drawing.Point(12, 9);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(308, 25);
+            this.lblStatus.Size = new System.Drawing.Size(251, 20);
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "키보드 및 마우스 제어 중";
             // 
             // KeyMouseController
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 23F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(332, 43);
@@ -60,6 +60,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.TransparencyKey = System.Drawing.SystemColors.Control;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.KeyMouseController_FormClosing);
+            
             this.Load += new System.EventHandler(this.KeyMouseController_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

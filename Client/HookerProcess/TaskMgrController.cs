@@ -29,11 +29,12 @@ namespace HookerProcess
             try
             {
                 string subKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System";
-                RegistryKey rk = Registry.CurrentUser;
-                RegistryKey sk1 = rk.OpenSubKey(subKey, true);
+                using (RegistryKey rk = Registry.CurrentUser.OpenSubKey(subKey, true)){
 
-                if (sk1 != null)
-                    rk.DeleteSubKeyTree(subKey);
+                    if (rk != null)
+                        rk.DeleteValue("DisableTaskMgr", false);
+
+                }
             }
             catch (Exception ex)
             {

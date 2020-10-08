@@ -39,10 +39,12 @@ namespace HookerProcess
             // 제어 기능 사용 시 아래 주석 제거
             
             taskMgrController.KillTaskMgr();
+            
             hooker.SetHook();
             ctrlAltDeleteScreenMgr.StartListeningForDesktopSwitch(hooker);
             
 
+           
         }
 
         private void KeyMouseController_FormClosing(object sender, FormClosingEventArgs e)
@@ -70,9 +72,11 @@ namespace HookerProcess
                         while (!msg.StartsWith("quit"));
                     }
                 }
-
+                this.Close();
                 Application.Exit();
             }
         }
+
+       
     }
 }
