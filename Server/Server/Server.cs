@@ -10,7 +10,6 @@ using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
 using System.ComponentModel;
-using System.Collections;
 
 namespace Server
 {
@@ -27,11 +26,6 @@ namespace Server
             public string address;
         }
 
-        private static Hashtable stuInfoTable;
-
-        private static Viewer clientsViewer;
-        private static int clientsCount; // 접속 클라이언트 수
-
         private Socket listener;
         private IPEndPoint ep;
 
@@ -40,17 +34,24 @@ namespace Server
         private static ImageCodecInfo codec;
         private static EncoderParameters param;
 
+        private Viewer clientsViewer;
+
         public Server()
         {
             InitializeComponent();
         }
 
-        private static void SetLoginHashtable(string clientAddr, string clientInfo)
+        private static void LoginRecord(string clientAddr, string clientInfo)
         {
-            if (!stuInfoTable.ContainsKey(clientAddr))
+            if (!Viewer.clientsList.ContainsKey(clientAddr))
             {
                 Console.WriteLine(clientAddr + " : " + clientInfo); // 해시테이블 입력 값 확인
-                stuInfoTable.Add(clientAddr, clientInfo);
+                Viewer.Student stu = new Viewer.Student()
+                {
+                    info = clientInfo,
+                    img = null
+                };
+                Viewer.clientsList.Add(clientAddr, stu);
             }
         }
 
@@ -99,10 +100,8 @@ namespace Server
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
-            stuInfoTable = new Hashtable();
-
             clientsViewer = new Viewer();
-            clientsCount = 0;
+            clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -131,7 +130,7 @@ namespace Server
 
                 ClientObject tempClient = new ClientObject
                 {
-                    buffer = new byte[32],
+                    buffer = new Byte[32],
                     client = tempSocket,
                     address = tempSocket.RemoteEndPoint.ToString().Split(':')[0]
                 };
@@ -152,37 +151,40 @@ namespace Server
 
                     if (Encoding.UTF8.GetString(co.buffer).Contains("recv"))
                     {
+                        Console.WriteLine(co.buffer.Length);
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
                         if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;
                     }
                     else if (Encoding.UTF8.GetString(co.buffer).Contains("info"))
                     {
+                        Console.WriteLine(co.buffer.Length);
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
 
-                        SetLoginHashtable(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
+                        LoginRecord(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
 
-                        clientsCount++;
-
-                        Viewer.currentClientsCount = clientsCount;
-                        Viewer.connectedClientsList = stuInfoTable;
+                        Viewer.currentClientsCount++;
+                    }
+                    else
+                    {
+                        Console.WriteLine(co.buffer.Length);
+                        ImageOutput(co.address, co.buffer);
                     }
 
-                    byte[] signal = SignalObjToByte(standardSignalObj);
+                    Byte[] signal = SignalObjToByte(standardSignalObj);
                     co.client.BeginSend(signal, 0, signal.Length, SocketFlags.None, AsyncSendCallback, co.client);
 
                     signal = null;
                     Array.Clear(co.buffer, 0, co.buffer.Length);
 
+                    if (standardSignalObj.IsMonitoring) co.buffer = new Byte[327675];
+                    else co.buffer = new Byte[4];
+
                     co.client.BeginReceive(co.buffer, 0, co.buffer.Length, SocketFlags.None, AsyncReceiveCallback, co);
                 }
                 catch (SocketException)
                 {
-                    stuInfoTable.Remove(co.address);
-
-                    clientsCount--;
-
-                    Viewer.currentClientsCount = clientsCount;
-                    Viewer.connectedClientsList = stuInfoTable;
+                    Viewer.clientsList.Remove(co.address);
+                    Viewer.currentClientsCount--;
 
                     co.client.Close();
                     co = null;
@@ -197,10 +199,10 @@ namespace Server
             else client.Close();
         }
 
-        private static byte[] SignalObjToByte(SignalObj signalObj)
+        private static Byte[] SignalObjToByte(SignalObj signalObj)
         {
             string jsonData = JsonConvert.SerializeObject(signalObj);
-            byte[] buffer = Encoding.Default.GetBytes(jsonData);
+            Byte[] buffer = Encoding.Default.GetBytes(jsonData);
 
             return buffer;
         }
@@ -248,6 +250,33 @@ namespace Server
             }
         }
 
+        public static void ImageOutput(string clientAddr, Byte[] recvData)
+        {
+            using (MemoryStream pre_ms = new MemoryStream(recvData))
+            {
+                using (MemoryStream post_ms = new MemoryStream())
+                {
+                    using (DeflateStream ds = new DeflateStream(pre_ms, CompressionMode.Decompress))
+                    {
+                        try
+                        {
+                            ds.CopyTo(post_ms);
+                        }
+                        finally
+                        {
+                            ds.Close();
+                        }
+                    }
+                    Viewer.Student stu = Viewer.clientsList[clientAddr];
+                    stu.img = Image.FromStream(post_ms);
+                    Viewer.clientsList[clientAddr] = stu;
+
+                    post_ms.Close();
+                }
+                pre_ms.Close();
+            }
+        }
+
         private void BtnStreaming_Click(object sender, EventArgs e)
         {
             // 스위치 역할을 하도록 수정
@@ -273,6 +302,7 @@ namespace Server
 
         private void BtnMonitoring_Click(object sender, EventArgs e)
         {
+            standardSignalObj.IsMonitoring = true;            
             clientsViewer.ShowDialog();
         }
 
@@ -335,13 +365,17 @@ namespace Server
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
             standardSignalObj.IsShutdown = true;
             standardSignalObj.IsInternet = false;
             standardSignalObj.IsLock = false;
 
             if (listener != null) listener.Close();
             Dispose();
+        }
+
+        void Viewer_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            standardSignalObj.IsMonitoring = false;
         }
     }
 }

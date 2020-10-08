@@ -13,6 +13,7 @@ namespace Client
             IsLock = false;
             IsInternet = false;
             IsPower = false;
+            IsMonitoring = false;
         }
 
         ~SignalObj()
@@ -26,11 +27,12 @@ namespace Client
             GC.SuppressFinalize(this);
         }
 
-        // 위 서버가 꺼져있는지, 서버가 컨트롤 중인지는 서버만 제어함
+        // 명령 관련 데이터 getter, setter
         public bool IsShutdown { get; set; }
         public bool IsLock { get; set; }
         public bool IsInternet { get; set; }
         public bool IsPower { get; set; }
+        public bool IsMonitoring { get; set; }
 
         // 방송 관련 데이터 getter, setter
         public byte[] ServerScreenData { get; set; }

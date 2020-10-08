@@ -40,7 +40,7 @@
             this.clientsViewPanel.Size = new System.Drawing.Size(604, 433);
             this.clientsViewPanel.TabIndex = 0;
             // 
-            // ClientsView
+            // Viewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -49,9 +49,8 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximumSize = new System.Drawing.Size(622, 480);
             this.MinimumSize = new System.Drawing.Size(622, 480);
-            this.Name = "ClientsView";
+            this.Name = "Viewer";
             this.Text = "클라이언트 화면";
-            this.Load += new System.EventHandler(this.ClientsView_Load);
             this.ResumeLayout(false);
 
         }

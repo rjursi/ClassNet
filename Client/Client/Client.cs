@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using InternetControl;
+using System.Drawing.Imaging;
 
 namespace Client
 {
@@ -37,7 +38,11 @@ namespace Client
         private static Byte[] recvData;
         private static Byte[] sendData;
 
+        private static ImageCodecInfo codec;
+        private static EncoderParameters param;
+
         private static bool isFirst;
+        private static bool isCapture;
 
         public Client()
         {
@@ -94,6 +99,12 @@ namespace Client
 
             recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
             isFirst = true;
+            isCapture = false;
+
+            // JPEG 손실 압축 수준 설정
+            codec = GetEncoder(ImageFormat.Jpeg);
+            param = new EncoderParameters();
+            param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
             Opacity = 0;
 
@@ -102,6 +113,7 @@ namespace Client
             InsertAction(() => ControllingInternet());
             InsertAction(() => ControllingPower());
             InsertAction(() => ImageProcessing());
+            InsertAction(() => CaptureProcessing());
 
             Task.Run(()=> MainTask());
         }
@@ -111,7 +123,21 @@ namespace Client
             mainAction += action;
         }
 
-        public SignalObj ByteToObject(byte[] buffer)
+        // 이미지 파일 형식(포맷) 인코더
+        private ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
+        }
+
+        public SignalObj ByteToObject(Byte[] buffer)
         {
             string jsonData = Encoding.Default.GetString(buffer);
             SignalObj signal = JsonConvert.DeserializeObject<SignalObj>(jsonData);
@@ -126,6 +152,11 @@ namespace Client
                 {
                     sendData = Encoding.UTF8.GetBytes("info" + "&" + stuInfo);
                     isFirst = false;
+                }
+                else if (isCapture)
+                {
+                    sendData = CaptureImage();
+                    isCapture = false;
                 }
                 else sendData = Encoding.UTF8.GetBytes("recv");
 
@@ -197,6 +228,43 @@ namespace Client
             {
                 this.Invoke(new ScreenOffDelegate(OpacityDelegate), 0);
             }
+        }
+
+        public void CaptureProcessing()
+        {
+            if (standardSignalObj.IsMonitoring) isCapture = true;
+        }
+
+        public Byte[] CaptureImage()
+        {
+            Byte[] preData;
+            Byte[] tempData;
+
+            Bitmap bmp = new Bitmap(1920, 1080);
+            // 실제 서비스할 땐 해상도가 다른 PC들을 포괄적으로 수용하기 위해 아래 소스를 사용할 것임.
+            // Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+
+            Graphics g = Graphics.FromImage(bmp);
+            g.CopyFromScreen(0, 0, 0, 0, new Size(bmp.Width, bmp.Height));
+
+            using (MemoryStream pre_ms = new MemoryStream())
+            {
+                bmp.Save(pre_ms, codec, param);
+                preData = pre_ms.ToArray();
+
+                using (MemoryStream post_ms = new MemoryStream())
+                {
+                    using (DeflateStream ds = new DeflateStream(post_ms, CompressionMode.Compress))
+                    {
+                        ds.Write(preData, 0, preData.Length);
+                        ds.Close();
+                    }
+                    tempData = post_ms.ToArray();
+                    post_ms.Close();
+                }
+                pre_ms.Close();
+            }
+            return tempData;
         }
 
         public void OpacityDelegate(double isOpacity)
