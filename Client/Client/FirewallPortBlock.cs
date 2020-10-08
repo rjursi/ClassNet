@@ -5,8 +5,8 @@ namespace InternetControl
 {
     class FirewallPortBlock : IDisposable
     {
-        const string TCP_HTTP_HTTPS_BLOCK_RULENAME = "MOSH Internet Control_TCP_HTTP HTTPS";
-        const string UDP_HTTP_BLOCK_RULENAME = "MOSH Internet Control_UDP_HTTP";
+        const string TCP_HTTP_HTTPS_BLOCK_RULENAME = "ClassNet Internet Control_TCP_HTTP HTTPS";
+        const string UDP_HTTP_BLOCK_RULENAME = "ClassNet Internet Control_UDP_HTTP";
         private bool disposedValue;
 
 
