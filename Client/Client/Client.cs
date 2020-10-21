@@ -16,15 +16,17 @@ namespace Client
     public partial class Client : Form
     {
         private const int CLASSNETPORT = 53178;
-        private const string SERVER_IP = "127.0.0.1";
+        private string SERVER_IP = "";
 
         private Socket server;
         private bool isConnected = false;
 
+        private TransparentForm transparentForm;
         private LoginForm loginForm;
         private string stuInfo; // 로그인 데이터를 담을 변수
         private bool isLogin = false;
 
+       
         private static Action mainAction;
 
         private static SignalObj standardSignalObj;
@@ -51,17 +53,60 @@ namespace Client
 
         private void Client_Load(object sender, EventArgs e)
         {
-            while(!isLogin)
+
+           
+
+            if (ClassNetConfig.GetAppConfig("SERVER_IP").Equals(""))
+            {
+
+                MessageBox.Show("서버 IP 설정이 되어있지 않습니다. 서버 IP 설정 창으로 넘어갑니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                using (SetIPAddressForm setIPAddressForm = new SetIPAddressForm())
+                {
+                    var dialogResult = setIPAddressForm.ShowDialog();
+
+                    if (dialogResult == DialogResult.OK)
+                    {
+                        ClassNetConfig.SetAppConfig("SERVER_IP", setIPAddressForm.ServerIP);
+                    }
+
+                }
+            }
+
+            this.SERVER_IP = ClassNetConfig.GetAppConfig("SERVER_IP");
+
+            while (!isLogin)
             {
                 loginForm = new LoginForm();
                 loginForm.ShowDialog(); // ShowDialog 실행, 닫힐 때 까지 프로그램은 일시정지.
                 stuInfo = loginForm.stuInfo; // 로그인 데이터를 변수에 담음.
 
-                if(stuInfo.Length > 0)
+                if (stuInfo.Length > 0)
                 {
                     isLogin = true;
                 }
             }
+
+            
+            transparentForm = new TransparentForm();
+
+            if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
+            {
+ 
+                transparentForm.FormStatus = TransparentForm.ADMINFORM;
+                transparentForm.ShowDialog();
+                
+            }
+            else
+            {
+  
+                transparentForm.FormStatus = TransparentForm.USERFORM;
+                
+                transparentForm.Show();
+
+            }
+            
+            
 
             while (!isConnected)
             {
@@ -87,12 +132,17 @@ namespace Client
                     //TopMost = true;
 
                     isConnected = true;
+                    transparentForm.Close();
                 }
                 catch (SocketException)
                 {
                     isConnected = false; // 연결이 안 되면 대기상태 유지
                 }
             }
+
+
+
+            // NotifyIconSetting();
 
             cmdProcessController = new CmdProcessController();
             firewallPortBlocker = new FirewallPortBlock();
@@ -117,7 +167,7 @@ namespace Client
 
             Task.Run(()=> MainTask());
         }
-
+       
         public void InsertAction(Action action)
         {
             mainAction += action;
@@ -201,6 +251,18 @@ namespace Client
             }
         }
 
+        private void NotifyIconSetting()
+        {
+            switch (transparentForm.FormStatus)
+            {
+                case TransparentForm.ADMINFORM:
+                    setAdminFormTrayIcon();
+                    break;
+                case TransparentForm.USERFORM:
+                    setUserFormTrayIcon();
+                    break;
+            }
+        }
         public void ControllingLock()
         {
             cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsLock);
@@ -304,6 +366,48 @@ namespace Client
         {
             server.Close();
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
+        }
+
+
+        private void setUserFormTrayIcon()
+        {
+            ContextMenu ctx = new ContextMenu();
+            ctx.MenuItems.Add(new MenuItem("로그아웃", new EventHandler((s, ea) => BtnLogout_Click(s, ea))));
+
+            this.notifyIcon.ContextMenu = ctx;
+            this.notifyIcon.Visible = true;
+        }
+
+        private void setAdminFormTrayIcon()
+        {
+            ContextMenu ctx = new ContextMenu();
+            ctx.MenuItems.Add(new MenuItem("서버 IP 설정", new EventHandler((s, ea) => BtnSetServerIP_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("로그아웃", new EventHandler((s, ea) => BtnLogout_Click(s, ea))));
+
+            this.notifyIcon.ContextMenu = ctx;
+            this.notifyIcon.Visible = true;
+        }
+
+        private void BtnSetServerIP_Click(object sender, EventArgs ea)
+        {
+            using (SetIPAddressForm setIPAddressForm = new SetIPAddressForm())
+            {
+                var dialogResult = setIPAddressForm.ShowDialog();
+
+                if (dialogResult == DialogResult.OK)
+                {
+                    ClassNetConfig.SetAppConfig("SERVER_IP", setIPAddressForm.ServerIP);
+
+                    MessageBox.Show("서버 IP 가 수정이 되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void BtnLogout_Click(object sender, EventArgs ea)
+        {
+            this.DialogResult = DialogResult.OK;
+
+            this.Close();
         }
     }
 }

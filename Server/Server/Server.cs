@@ -65,7 +65,7 @@ namespace Server
 
             listener.BeginAccept(AcceptCallback, null);
         }
-
+            
         private void NotifyIconSetting()
         {
             ContextMenu ctx = new ContextMenu();
@@ -377,5 +377,6 @@ namespace Server
         {
             standardSignalObj.IsMonitoring = false;
         }
+
     }
 }

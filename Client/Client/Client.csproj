@@ -60,10 +60,14 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IPAddressControlLib">
+      <HintPath>.\IPAddressControlLib.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -76,12 +80,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClassNetConfig.cs" />
     <Compile Include="FirewallPortBlock.cs" />
     <Compile Include="LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LoginForm.Designer.cs">
       <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SetIPAddressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SetIPAddressForm.Designer.cs">
+      <DependentUpon>SetIPAddressForm.cs</DependentUpon>
     </Compile>
     <Compile Include="SignalObj.cs" />
     <Compile Include="Client.cs">
@@ -99,6 +110,12 @@
     <Compile Include="SimpleLoginForm.Designer.cs">
       <DependentUpon>SimpleLoginForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TransparentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TransparentForm.Designer.cs">
+      <DependentUpon>TransparentForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Client.resx">
       <DependentUpon>Client.cs</DependentUpon>
     </EmbeddedResource>
@@ -114,8 +131,14 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SetIPAddressForm.resx">
+      <DependentUpon>SetIPAddressForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SimpleLoginForm.resx">
       <DependentUpon>SimpleLoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TransparentForm.resx">
+      <DependentUpon>TransparentForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />

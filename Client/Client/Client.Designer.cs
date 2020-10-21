@@ -28,8 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.screenImage = new System.Windows.Forms.PictureBox();
             this.imageSize = new System.Windows.Forms.Label();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.screenImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,6 +54,11 @@
             this.imageSize.Size = new System.Drawing.Size(83, 19);
             this.imageSize.TabIndex = 1;
             this.imageSize.Text = "Image Size";
+            // 
+            // notifyIcon
+            // 
+            this.notifyIcon.Text = "ClassNet Client";
+            this.notifyIcon.Visible = true;
             // 
             // Client
             // 
@@ -76,6 +83,7 @@
 
         private System.Windows.Forms.PictureBox screenImage;
         private System.Windows.Forms.Label imageSize;
+        private System.Windows.Forms.NotifyIcon notifyIcon;
     }
 }
 

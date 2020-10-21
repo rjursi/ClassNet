@@ -15,9 +15,34 @@ namespace Client
         {
             InitializeComponent();
         }
+        private string AdminCheck()
+        {
+            
 
+            if (ClassNetConfig.GetAppConfig("ADMIN_ID").Equals(txtLoginID.Text))
+            {
+                if (ClassNetConfig.GetAppConfig("ADMIN_PWD").Equals(txtLoginPW.Text))
+                {
+                    
+                    return txtLoginID.Text;
+                }
+            }
+
+            return "";
+        }
         private void LoginButton_Click(object sender, EventArgs e)
         {
+
+            stuInfo = AdminCheck();
+            if (!stuInfo.Equals(""))
+            {
+                this.Close();
+
+                return;
+            }
+
+
+          
             cookie = new CookieContainer();
             HttpWebResponse res = SetLogin(txtLoginID.Text, txtLoginPW.Text);
             //string result = SetLogin(txtLoginID.Text, txtLoginPW.Text);
