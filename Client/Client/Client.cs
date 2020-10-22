@@ -247,28 +247,65 @@ namespace Client
                 // 이런식으로 구현 기능에 대한 메소드를 추가하기 위해 아래와 같이 람다식으로 작성
 
                 InsertAction(() => ImageProcessing());
+                InsertAction(() => { if (standardSignalObj.IsMonitoring) isCapture = true; });
                 //화면 찍는거 외의 행동들, 반복 텀 조절할 필요 있음 ㅇㅇ
                 assistanceAction = new Action( () =>
                 {
                     while (true)
                     {
-                        ControllingLock();
-                        ControllingInternet();
-                        ControllingPower();
-                        CaptureProcessing();
-                        ControllingTaskMgr();
+
+                        
+
+                        try
+                        {
+                            taskMgrController.CheckTaskMgrStatus(standardSignalObj.IsTaskMgrEnabled);
+                            cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsLock);
+                            firewallPortBlocker.CtrlStatusEventCheck(standardSignalObj.IsInternet);
+                            if (standardSignalObj.IsPower) System.Diagnostics.Process.Start("ShutDown.exe", "-s -f -t 00");
+                            
+                        }
+                        catch (NullReferenceException)
+                        {
+                            Console.WriteLine("NullReferenceException");
+                            break;
+                        }
+
                     }
                 });
-
+                Console.WriteLine("fasdfsdfa");
             };
+
+
+            /*ControllingLock();
+            ControllingInternet();
+            ControllingPower();
+            CaptureProcessing();
+            ControllingTaskMgr();*/
 
             afterConnect = Task.Run(beforeConnect);
 
+
+            
+
             _ = afterConnect.ContinueWith(async (a) =>
             {
-                await Task.Run(() => MainTask());
-                await Task.Run(assistanceAction);
+                Console.WriteLine("213123213");
+                await Task.Run(() => {
+                    try
+                    {
+                        MainTask();
+                    }
+                    catch (NullReferenceException)
+                    {
+                        Console.WriteLine("NRE,NRE,NRE,NRE,NRE,NRE,NRE");
+                    }
+                
+                });
+               // await Task.Run(assistanceAction);
+                
             });
+
+
 
             int n = 0;
             await Task.Run(() =>
@@ -340,6 +377,14 @@ namespace Client
 
                 return null;
             }
+            catch (NullReferenceException)
+            {
+                server.Close();
+                if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
+                taskMgrController.CheckTaskMgrStatus(true);
+                this.Invoke(new MethodInvoker(() => { Dispose(); }));
+                return null;
+            }
         }
 
         public async void MainTask()
@@ -361,6 +406,10 @@ namespace Client
                 {
                     break;
                 }
+                catch (NullReferenceException)
+                {
+                    break;
+                }
                 finally
                 {
                     Array.Clear(recvData, 0, recvData.Length);
@@ -370,7 +419,9 @@ namespace Client
 
         public void ControllingTaskMgr()
         {
+
             taskMgrController.CheckTaskMgrStatus(standardSignalObj.IsTaskMgrEnabled);
+
         }
         public void ControllingLock()
         {

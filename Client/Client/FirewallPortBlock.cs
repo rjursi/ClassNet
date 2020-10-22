@@ -19,7 +19,7 @@ namespace InternetControl
 
         }
 
-        public void CtrlStatusEventCheck(bool newCtrlStatus)
+        public void CtrlStatusEventCheck(bool newCtrlStatus) 
         {
             if (NowCtrlStatus != newCtrlStatus)
             {

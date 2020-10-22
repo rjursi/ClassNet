@@ -118,7 +118,7 @@ namespace Server
             notifyIcon.Visible = true;
         }
 
-        private async void Server_Load(object sender, EventArgs e)
+        private void Server_Load(object sender, EventArgs e)
         {
 
             standardSignalObj = new SignalObj();
@@ -151,8 +151,8 @@ namespace Server
             // 화면 이미지 객체 생성
             
 
-            await Task.Run(() => ImageCreate()).ConfigureAwait(false);
-
+            //await Task.Run(() => ImageCreate());
+            ThreadPool.QueueUserWorkItem(ImageCreate);
 
         }
 
@@ -259,7 +259,7 @@ namespace Server
             return buffer;
         }
 
-        public static void ImageCreate()
+        public static void ImageCreate(object obj)
         {
             Byte[] preData;
 
