@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using InternetControl;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Client
 {
@@ -48,9 +49,34 @@ namespace Client
             InitializeComponent();
         }
 
+        // DPI 설정 부분 시작
+        private enum ProcessDPIAwareness
+        {
+            ProcessDPIUnaware = 0,
+            ProcessSystemDPIAware = 1,
+            ProcessPerMonitorDPIAware = 2
+        }
+
+        [DllImport("shcore.dll")]
+        private static extern int SetProcessDpiAwareness(ProcessDPIAwareness value);
+
+        private static void SetDpiAwareness()
+        {
+            try
+            {
+                if (Environment.OSVersion.Version.Major >= 6)
+                    SetProcessDpiAwareness(ProcessDPIAwareness.ProcessPerMonitorDPIAware);
+            }
+            catch (EntryPointNotFoundException) { } // OS가 해당 API를 구현하지 않을 경우 예외가 발생하지만 무시
+        }
+        // DPI 설정 부분 끝
+
         private void Client_Load(object sender, EventArgs e)
         {
-            while(!isLogin)
+            // DPI 설정 메소드 호출
+            SetDpiAwareness();
+
+            while (!isLogin)
             {
                 loginForm = new LoginForm();
                 loginForm.ShowDialog(); // ShowDialog 실행, 닫힐 때 까지 프로그램은 일시정지.

@@ -1,6 +1,6 @@
 ﻿namespace Server
 {
-    partial class Test
+    partial class FullViewer
     {
         /// <summary>
         /// Required designer variable.
@@ -42,14 +42,14 @@
             this.picFocusView.TabIndex = 0;
             this.picFocusView.TabStop = false;
             // 
-            // Test
+            // FullViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 729);
             this.Controls.Add(this.picFocusView);
-            this.Name = "Test";
-            this.Load += new System.EventHandler(this.Test_Load);
+            this.Name = "FullViewer";
+            this.Load += new System.EventHandler(this.FullViewer_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picFocusView)).EndInit();
             this.ResumeLayout(false);
 

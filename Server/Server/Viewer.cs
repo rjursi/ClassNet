@@ -13,7 +13,7 @@ namespace Server
         public static int pastClientsCount;
         public static int currentClientsCount; // 현재 접속 클라이언트 수
 
-        public static Test test;
+        public static FullViewer fullViewer;
 
         public static Dictionary<string, Student> clientsList;
         public static Dictionary<string, PictureBox> clientsPicture;
@@ -44,9 +44,8 @@ namespace Server
             renderingTimer.Start();
 
             focusingTimer = new Timer();
-           
-
         }
+
         public Button allSaveBtnCreate()
         {
             Button btn = new Button
@@ -85,8 +84,8 @@ namespace Server
             focusingTimer.Interval = 500;
             focusingTimer.Start();
 
-            test = new Test(sendStu);
-            test.ShowDialog();
+            fullViewer = new FullViewer(sendStu);
+            fullViewer.ShowDialog();
 
             renderingTimer.Interval = 700;
         }
@@ -174,39 +173,36 @@ namespace Server
 
         private void InterateFocusView(Image sendImg)
         {
-            //어떻게 처리하지?
-            Test.focusStudent.img = sendImg;
+            FullViewer.focusStudent.img = sendImg;
         }
 
         private void btnAllSave_Click(object sender, EventArgs e)
         {
-           
-                var filePath = string.Empty;
-                if (pastClientsCount == 0)
+            var filePath = string.Empty;
+            if (pastClientsCount == 0)
+            {
+                MessageBox.Show("접속한 학생이 없습니다!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                using (FolderBrowserDialog fileDialog = new FolderBrowserDialog())
                 {
-                    MessageBox.Show("접속한 학습자가 없습니다!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    using (FolderBrowserDialog fileDialog = new FolderBrowserDialog())
-                    {
-                        fileDialog.SelectedPath = "C:\\";
+                    fileDialog.SelectedPath = "C:\\";
 
-                        if (fileDialog.ShowDialog() == DialogResult.OK)
-                        {
-                            filePath = fileDialog.SelectedPath;
-                        }
-                    }
-                    dir = filePath;
-
-                    foreach (string key in clientsPicture.Keys)
+                    if (fileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        String str = clientsPicture[key].Name;
-                        Bitmap bmp = new Bitmap(clientsPicture[key].Image);
-                        bmp.Save($"{filePath}{str}" + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                        filePath = fileDialog.SelectedPath;
                     }
                 }
+                dir = filePath;
 
+                foreach (string key in clientsPicture.Keys)
+                {
+                    String str = clientsPicture[key].Name;
+                    Bitmap bmp = new Bitmap(clientsPicture[key].Image);
+                    bmp.Save($"{filePath}{str}" + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                }
+            }
         }
     }
 }
