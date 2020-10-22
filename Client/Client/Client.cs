@@ -185,35 +185,7 @@ namespace Client
                 param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
                 InsertAction(() => ImageProcessing());
-<<<<<<< HEAD
-                InsertAction(() => { if (standardSignalObj.IsMonitoring) isCapture = true; });
-                //화면 찍는거 외의 행동들, 반복 텀 조절할 필요 있음 ㅇㅇ
-                assistanceAction = new Action( () =>
-                {
-                    while (true)
-                    {
 
-                        
-
-                        try
-                        {
-                            taskMgrController.CheckTaskMgrStatus(standardSignalObj.IsTaskMgrEnabled);
-                            cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsLock);
-                            firewallPortBlocker.CtrlStatusEventCheck(standardSignalObj.IsInternet);
-                            if (standardSignalObj.IsPower) System.Diagnostics.Process.Start("ShutDown.exe", "-s -f -t 00");
-                            
-                        }
-                        catch (NullReferenceException)
-                        {
-                            Console.WriteLine("NullReferenceException");
-                            break;
-                        }
-
-                    }
-                });
-                Console.WriteLine("fasdfsdfa");
-            };
-=======
 
                 //화면 찍는거 외의 행동들, 반복 텀 조절할 필요 있음 ㅇㅇ
                 assistanceAction = new Action(() =>
@@ -230,7 +202,6 @@ namespace Client
                    }
                });
             }
->>>>>>> b8a6cee612769f96753c59a2b0b969da3b686e1c
 
 
             /*ControllingLock();
@@ -261,22 +232,7 @@ namespace Client
                // await Task.Run(assistanceAction);
                 
             });
-<<<<<<< HEAD
 
-
-
-            int n = 0;
-            await Task.Run(() =>
-            {
-                while (true)
-                {
-                    Console.WriteLine("Task 2: " + n);
-                    n++;
-                    Thread.Sleep(1000);
-                }
-            });
-=======
->>>>>>> b8a6cee612769f96753c59a2b0b969da3b686e1c
         }
 
         public void InsertAction(Action action)

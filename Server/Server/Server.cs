@@ -147,15 +147,10 @@ namespace Server
             g = null;
 
             // 화면 이미지 객체 생성
-<<<<<<< HEAD
-            
 
             //await Task.Run(() => ImageCreate());
             ThreadPool.QueueUserWorkItem(ImageCreate);
 
-=======
-            ThreadPool.QueueUserWorkItem(ImageCreate);
->>>>>>> b8a6cee612769f96753c59a2b0b969da3b686e1c
         }
 
         // 이미지 파일 형식(포맷) 인코더
