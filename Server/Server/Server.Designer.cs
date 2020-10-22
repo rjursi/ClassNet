@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Server));
             this.btnStreaming = new System.Windows.Forms.Button();
-            this.btnShutdown = new System.Windows.Forms.Button();
+            this.btnCtrlTaskMgr = new System.Windows.Forms.Button();
             this.btnLock = new System.Windows.Forms.Button();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.btnViewer = new System.Windows.Forms.Button();
@@ -50,16 +50,16 @@
             this.btnStreaming.UseVisualStyleBackColor = true;
             this.btnStreaming.Click += new System.EventHandler(this.BtnStreaming_Click);
             // 
-            // btnShutdown
+            // btnCtrlTaskMgr
             // 
-            this.btnShutdown.Location = new System.Drawing.Point(12, 291);
-            this.btnShutdown.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnShutdown.Name = "btnShutdown";
-            this.btnShutdown.Size = new System.Drawing.Size(221, 35);
-            this.btnShutdown.TabIndex = 1;
-            this.btnShutdown.Text = "클래스넷 종료";
-            this.btnShutdown.UseVisualStyleBackColor = true;
-            this.btnShutdown.Click += new System.EventHandler(this.BtnShutdown_Click);
+            this.btnCtrlTaskMgr.Location = new System.Drawing.Point(12, 291);
+            this.btnCtrlTaskMgr.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnCtrlTaskMgr.Name = "btnCtrlTaskMgr";
+            this.btnCtrlTaskMgr.Size = new System.Drawing.Size(221, 35);
+            this.btnCtrlTaskMgr.TabIndex = 1;
+            this.btnCtrlTaskMgr.Text = "작업관리자 활성화";
+            this.btnCtrlTaskMgr.UseVisualStyleBackColor = true;
+            this.btnCtrlTaskMgr.Click += new System.EventHandler(this.BtnCtrlTaskMgr_Click);
             // 
             // btnLock
             // 
@@ -77,7 +77,6 @@
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "MOSH";
             this.notifyIcon.Visible = true;
-            
             // 
             // btnViewer
             // 
@@ -121,7 +120,7 @@
             this.Controls.Add(this.btnViewer);
             this.Controls.Add(this.btnLock);
             this.Controls.Add(this.btnPower);
-            this.Controls.Add(this.btnShutdown);
+            this.Controls.Add(this.btnCtrlTaskMgr);
             this.Controls.Add(this.btnStreaming);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -136,7 +135,7 @@
         #endregion
 
         private System.Windows.Forms.Button btnStreaming;
-        private System.Windows.Forms.Button btnShutdown;
+        private System.Windows.Forms.Button btnCtrlTaskMgr;
         private System.Windows.Forms.Button btnLock;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.Button btnViewer;

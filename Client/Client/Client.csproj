@@ -110,6 +110,7 @@
     <Compile Include="SimpleLoginForm.Designer.cs">
       <DependentUpon>SimpleLoginForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TaskMgrController.cs" />
     <Compile Include="TransparentForm.cs">
       <SubType>Form</SubType>
     </Compile>

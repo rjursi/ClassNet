@@ -14,6 +14,7 @@ namespace Client
             IsInternet = false;
             IsPower = false;
             IsMonitoring = false;
+            IsTaskMgrEnabled = false;
         }
 
         ~SignalObj()
@@ -33,6 +34,7 @@ namespace Client
         public bool IsInternet { get; set; }
         public bool IsPower { get; set; }
         public bool IsMonitoring { get; set; }
+        public bool IsTaskMgrEnabled { get; set; }
 
         // 방송 관련 데이터 getter, setter
         public byte[] ServerScreenData { get; set; }

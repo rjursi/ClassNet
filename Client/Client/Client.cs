@@ -31,6 +31,7 @@ namespace Client
 
         private static SignalObj standardSignalObj;
 
+        private TaskMgrController taskMgrController;
         private CmdProcessController cmdProcessController;
         private FirewallPortBlock firewallPortBlocker;
 
@@ -55,7 +56,6 @@ namespace Client
         {
 
            
-
             if (ClassNetConfig.GetAppConfig("SERVER_IP").Equals(""))
             {
 
@@ -91,7 +91,7 @@ namespace Client
             transparentForm = new TransparentForm();
 
             if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
-            {
+            {   
  
                 transparentForm.FormStatus = TransparentForm.ADMINFORM;
                 transparentForm.ShowDialog();
@@ -103,6 +103,8 @@ namespace Client
                 transparentForm.FormStatus = TransparentForm.USERFORM;
                 
                 transparentForm.Show();
+                transparentForm.Hide();
+       
 
             }
             
@@ -132,7 +134,7 @@ namespace Client
                     //TopMost = true;
 
                     isConnected = true;
-                    transparentForm.Close();
+                    
                 }
                 catch (SocketException)
                 {
@@ -142,11 +144,13 @@ namespace Client
 
 
 
-            // NotifyIconSetting();
-
+            NotifyIconSetting();
+            taskMgrController = new TaskMgrController();
             cmdProcessController = new CmdProcessController();
             firewallPortBlocker = new FirewallPortBlock();
 
+
+            taskMgrController.KillTaskMgr();
             recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
             isFirst = true;
             isCapture = false;
@@ -164,7 +168,7 @@ namespace Client
             InsertAction(() => ControllingPower());
             InsertAction(() => ImageProcessing());
             InsertAction(() => CaptureProcessing());
-
+            InsertAction(() => ControllingTaskMgr());
             Task.Run(()=> MainTask());
         }
        
@@ -219,6 +223,7 @@ namespace Client
             {
                 server.Close();
                 if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
+                taskMgrController.CheckTaskMgrStatus(true);
                 this.Invoke(new MethodInvoker(() => { Dispose(); }));
 
                 return null;
@@ -262,6 +267,11 @@ namespace Client
                     setUserFormTrayIcon();
                     break;
             }
+        }
+
+        public void ControllingTaskMgr()
+        {
+            taskMgrController.CheckTaskMgrStatus(standardSignalObj.IsTaskMgrEnabled);
         }
         public void ControllingLock()
         {
@@ -364,6 +374,7 @@ namespace Client
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
+            taskMgrController.CheckTaskMgrStatus(true);
             server.Close();
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
         }

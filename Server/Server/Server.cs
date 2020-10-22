@@ -75,7 +75,7 @@ namespace Server
             ctx.MenuItems.Add(new MenuItem("인터넷 차단", new EventHandler((s, ea) => BtnInternet_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("강의실 PC 전원 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
             ctx.MenuItems.Add("-");
-            ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => BtnShutdown_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("작업관리자 활성화", new EventHandler((s, ea) => BtnCtrlTaskMgr_Click(s, ea))));
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
         }
@@ -353,14 +353,25 @@ namespace Server
             standardSignalObj.IsPower = false;
         }
 
-        private void BtnShutdown_Click(object sender, EventArgs e)
+        private void BtnCtrlTaskMgr_Click(object sender, EventArgs e)
         {
-            standardSignalObj.IsShutdown = true;
-            standardSignalObj.IsInternet = false;
-            standardSignalObj.IsLock = false;
 
-            if (listener != null) listener.Close();
-            Dispose();
+            if (!standardSignalObj.IsTaskMgrEnabled)
+            {
+
+
+                standardSignalObj.IsTaskMgrEnabled = true;
+                btnCtrlTaskMgr.Text = "작업관리자 비활성화";
+                notifyIcon.ContextMenu.MenuItems[6].Text = "작업관리자 비활성화";
+                
+            }
+            else
+            {
+                standardSignalObj.IsTaskMgrEnabled = false;
+                btnCtrlTaskMgr.Text = "작업관리자 활성화";
+                notifyIcon.ContextMenu.MenuItems[6].Text = "작업관리자 활성화";
+            }
+  
         }
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
@@ -368,6 +379,7 @@ namespace Server
             standardSignalObj.IsShutdown = true;
             standardSignalObj.IsInternet = false;
             standardSignalObj.IsLock = false;
+            standardSignalObj.IsTaskMgrEnabled = true;
 
             if (listener != null) listener.Close();
             Dispose();

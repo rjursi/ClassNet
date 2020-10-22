@@ -74,7 +74,7 @@ namespace Client
 
         private void TransparentForm_Load(object sender, EventArgs e)
         {
-            this.Hide();
+            
 
             switch (FormStatus)
             {
