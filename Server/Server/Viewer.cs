@@ -47,28 +47,28 @@ namespace Server
 
         public void GetPicture(PictureBox box, MouseEventArgs e)
         {
-                var filePath = string.Empty;
-                if (e.Button == MouseButtons.Right)
+            var filePath = string.Empty;
+            if (e.Button == MouseButtons.Right)
+            {
+                using (FolderBrowserDialog fileDialog = new FolderBrowserDialog())
                 {
-                    using (FolderBrowserDialog fileDialog = new FolderBrowserDialog())
+                    fileDialog.SelectedPath = "C:\\";
+
+                    if (fileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        fileDialog.SelectedPath = "C:\\";
-
-                        if (fileDialog.ShowDialog() == DialogResult.OK)
-                        {
-                            filePath = fileDialog.SelectedPath;
-                        }
+                        filePath = fileDialog.SelectedPath;
                     }
-
-                    Bitmap bmp = new Bitmap(box.Image);
-                    String str = box.Name.ToString().Trim('\0');
-                    Console.WriteLine($"{filePath}{str}.png");
-                    bmp.Save($"{filePath}{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                 }
+
+                Bitmap bmp = new Bitmap(box.Image);
+                String str = box.Name.ToString().Trim('\0');
+                Console.WriteLine($"{filePath}{str}.png");
+                bmp.Save($"{filePath}{str}.png", System.Drawing.Imaging.ImageFormat.Png);
+            }
         }
 
-        public void FullPicture(Student sendStu) { 
-
+        public void FullPicture(Student sendStu)
+        { 
             focusingTimer.Tick += new EventHandler((sender, e) => InterateFocusView(sendStu.img));
             focusingTimer.Interval = 500;
             focusingTimer.Start();
@@ -167,7 +167,7 @@ namespace Server
             FullViewer.focusStudent.img = sendImg;
         }
 
-        private void btnAllSave_Click(object sender, EventArgs e)
+        private void BtnAllSave_Click(object sender, EventArgs e)
         {
             var filePath = string.Empty;
             if (pastClientsCount == 0)
@@ -183,16 +183,15 @@ namespace Server
                     if (fileDialog.ShowDialog() == DialogResult.OK)
                     {
                         filePath = fileDialog.SelectedPath;
-                    }
-                }
-                dir = filePath;
 
-                foreach (string key in clientsPicture.Keys)
-                {
-                    String str = clientsPicture[key].Name;
-                    Bitmap bmp = new Bitmap(clientsPicture[key].Image);
-                    bmp.Save($"{filePath}{str}" + ".png", System.Drawing.Imaging.ImageFormat.Png);
-                }
+                        foreach (string key in clientsPicture.Keys)
+                        {
+                            String str = clientsPicture[key].Name;
+                            Bitmap bmp = new Bitmap(clientsPicture[key].Image);
+                            bmp.Save($"{filePath}{str}" + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                        }
+                    }
+                }                
             }
         }
     }

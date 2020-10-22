@@ -118,15 +118,20 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-
-  <data name="monitoring" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\monitoring.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="capture" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\capture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="04imgLock-on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\04imgLock-on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="03imgInternet-on" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\03imgInternet-on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="04imgLock-on" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\04imgLock-on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="06imgPower" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\06imgPower.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="01imgStreaming-on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\01imgStreaming-on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="02imgViewer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\02imgViewer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -134,10 +139,7 @@
   <data name="05imgCtrlTaskMgr-off" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\05imgCtrlTaskMgr-off.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="01imgStreaming-on" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\01imgStreaming-on.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="06imgPower" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\06imgPower.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="capture1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\capture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

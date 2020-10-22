@@ -151,7 +151,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(367, 638);
+            this.ClientSize = new System.Drawing.Size(367, 648);
             this.Controls.Add(this.cbMonitor);
             this.Controls.Add(this.btnCtrlTaskMgr);
             this.Controls.Add(this.btnInternet);

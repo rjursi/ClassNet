@@ -115,23 +115,18 @@ namespace Client
 
             transparentForm = new TransparentForm();
             if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
-
             {
                 transparentForm.FormStatus = TransparentForm.ADMINFORM;
                 transparentForm.Show();
                 transparentForm.Hide();
-
             }
             else
             {
                 transparentForm.FormStatus = TransparentForm.USERFORM;
-
-                ClassNetConfig.FinishProtection();
-
                 transparentForm.Show();
                 transparentForm.Hide();
             }
-
+            ClassNetConfig.FinishProtection();
 
             void beforeConnect()
             {
@@ -160,15 +155,6 @@ namespace Client
                         IPEndPoint ep = new IPEndPoint(IPAddress.Parse(SERVER_IP), CLASSNETPORT);
                         server.Connect(ep);
 
-                        taskMgrController = new TaskMgrController();
-                        cmdProcessController = new CmdProcessController();
-                        firewallPortBlocker = new FirewallPortBlock();
-
-                        taskMgrController.KillTaskMgr();
-                        recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
-                        isFirst = true;
-                        isCapture = false;
-
                         isConnected = true;
                     }
                     catch (SocketException)
@@ -194,7 +180,7 @@ namespace Client
 
                 InsertAction(() => ImageProcessing());
 
-                //화면 찍는거 외의 행동들, 반복 텀 조절할 필요 있음 ㅇㅇ
+                // ImageProcessing 외의 수행 메소드
                 assistanceAction = new Action(() =>
                 {
                    while (true)
@@ -213,7 +199,7 @@ namespace Client
 
             afterConnect = Task.Run(beforeConnect);
 
-            _ = afterConnect.ContinueWith(async (a) =>
+            afterConnect.ContinueWith(async (a) =>
             {
                 await Task.Run(() => MainTask());
                 await Task.Run(assistanceAction);
@@ -392,9 +378,7 @@ namespace Client
                                 ds.Close();
                             }
                         }
-
                         screenImage.Image = Image.FromStream(post_ms);
-
                         post_ms.Close();
                     }
                     pre_ms.Close();
