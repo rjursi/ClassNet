@@ -47,10 +47,10 @@ namespace Client
 
         private static bool isFirst;
         private static bool isCapture;
-
-        // 서버에서 보내는 이미지 찍는거 외의 활동들
+        
+        //서버에서 보내는 이미지 찍는거 외의 활동들
         Action assistanceAction;
-        // 서버와 연결 이후에 실행될 Task
+        //서버와 연결 이후에 실행될 Task
         public Task afterConnect;
 
         public Client()
@@ -99,7 +99,9 @@ namespace Client
 
             this.SERVER_IP = ClassNetConfig.GetAppConfig("SERVER_IP");
 
+            
             // DPI 설정 메소드 호출
+
             SetDpiAwareness();
 
             while (!isLogin)
@@ -124,6 +126,7 @@ namespace Client
                 transparentForm.Show();
                 transparentForm.Hide();
             }
+            ClassNetConfig.FinishProtection();
 
             void beforeConnect()
             {
@@ -152,15 +155,6 @@ namespace Client
                         IPEndPoint ep = new IPEndPoint(IPAddress.Parse(SERVER_IP), CLASSNETPORT);
                         server.Connect(ep);
 
-                        taskMgrController = new TaskMgrController();
-                        cmdProcessController = new CmdProcessController();
-                        firewallPortBlocker = new FirewallPortBlock();
-
-                        taskMgrController.KillTaskMgr();
-                        recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
-                        isFirst = true;
-                        isCapture = false;
-
                         isConnected = true;
                     }
                     catch (SocketException)
@@ -186,10 +180,8 @@ namespace Client
 
                 InsertAction(() => ImageProcessing());
 
-
-                //화면 찍는거 외의 행동들, 반복 텀 조절할 필요 있음 ㅇㅇ
                 assistanceAction = new Action(() =>
-               {
+                {
                    while (true)
                    {
                        ControllingLock();
@@ -201,6 +193,7 @@ namespace Client
                        Thread.Sleep(0);
                    }
                });
+
             }
 
 
@@ -212,26 +205,30 @@ namespace Client
 
             afterConnect = Task.Run(beforeConnect);
 
+            CancellationTokenSource tokenSource = new CancellationTokenSource();
 
-            
-
-            _ = afterConnect.ContinueWith(async (a) =>
+            afterConnect.ContinueWith(async (a) =>
             {
-                Console.WriteLine("213123213");
                 await Task.Run(() => {
-                    try
-                    {
-                        MainTask();
-                    }
-                    catch (NullReferenceException)
-                    {
-                        Console.WriteLine("NRE,NRE,NRE,NRE,NRE,NRE,NRE");
-                    }
-                
+                    MainTask(tokenSource.Token);
+                    
                 });
-               // await Task.Run(assistanceAction);
+                //await Task.Run(assistanceAction);
                 
             });
+
+            int i = 0;
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    i++;
+                    Console.WriteLine("Task : " + i);
+                    Thread.Sleep(1000);
+                }
+
+            });
+                
 
         }
 
@@ -301,16 +298,23 @@ namespace Client
             }
         }
 
-        public async void MainTask()
+        public async void MainTask(CancellationToken token)
         {
             while (true)
             {
                 try
                 {
+                    //if (token.IsCancellationRequested == true) break;
                     using (standardSignalObj = ReceiveObject())
                     {
                         await Task.Run(mainAction);
+                        //Action[] ac = new Action[2];
+                        //ac[0] = mainAction;
+                        //ac[1] = assistanceAction;
+                        //Parallel.Invoke(ac);
                     }
+                    
+                   
                 }
                 catch (ObjectDisposedException)
                 {
@@ -422,7 +426,6 @@ namespace Client
                             }
                         }
                         screenImage.Image = Image.FromStream(post_ms);
-
                         post_ms.Close();
                     }
                     pre_ms.Close();

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Server.Properties {
+namespace Server {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace Server.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    internal class Resource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Resource() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Server.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Server.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Server.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,9 +63,19 @@ namespace Server.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        internal static System.Drawing.Bitmap _01imgStreaming_off {
+            get {
+                object obj = ResourceManager.GetObject("_01imgStreaming_off", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         internal static System.Drawing.Bitmap _01imgStreaming_on {
             get {
-                object obj = ResourceManager.GetObject("01imgStreaming-on", resourceCulture);
+                object obj = ResourceManager.GetObject("_01imgStreaming_on", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -75,7 +85,17 @@ namespace Server.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap _02imgViewer {
             get {
-                object obj = ResourceManager.GetObject("02imgViewer", resourceCulture);
+                object obj = ResourceManager.GetObject("_02imgViewer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap _03imgInternet_off {
+            get {
+                object obj = ResourceManager.GetObject("_03imgInternet_off", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -85,7 +105,17 @@ namespace Server.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap _03imgInternet_on {
             get {
-                object obj = ResourceManager.GetObject("03imgInternet-on", resourceCulture);
+                object obj = ResourceManager.GetObject("_03imgInternet_on", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap _04imgLock_off {
+            get {
+                object obj = ResourceManager.GetObject("_04imgLock_off", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -95,7 +125,7 @@ namespace Server.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap _04imgLock_on {
             get {
-                object obj = ResourceManager.GetObject("04imgLock-on", resourceCulture);
+                object obj = ResourceManager.GetObject("_04imgLock_on", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -105,7 +135,17 @@ namespace Server.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap _05imgCtrlTaskMgr_off {
             get {
-                object obj = ResourceManager.GetObject("05imgCtrlTaskMgr-off", resourceCulture);
+                object obj = ResourceManager.GetObject("_05imgCtrlTaskMgr_off", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap _05imgCtrlTaskMgr_on {
+            get {
+                object obj = ResourceManager.GetObject("_05imgCtrlTaskMgr_on", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -115,27 +155,7 @@ namespace Server.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap _06imgPower {
             get {
-                object obj = ResourceManager.GetObject("06imgPower", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static System.Drawing.Bitmap capture {
-            get {
-                object obj = ResourceManager.GetObject("capture", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
-        /// </summary>
-        internal static System.Drawing.Bitmap capture1 {
-            get {
-                object obj = ResourceManager.GetObject("capture1", resourceCulture);
+                object obj = ResourceManager.GetObject("_06imgPower", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

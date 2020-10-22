@@ -22,7 +22,9 @@ namespace Client
             InitializeComponent();
         }
 
+
         private void SetUserFormTrayIcon()
+
         {
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("로그아웃", new EventHandler((s, ea) => BtnLogout_Click(s, ea))));
@@ -50,13 +52,18 @@ namespace Client
                 if (dialogResult == DialogResult.OK)
                 {
                     ClassNetConfig.SetAppConfig("SERVER_IP", setIPAddressForm.ServerIP);
+
                     MessageBox.Show("서버 IP가 수정되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 }
             }
         }
         
         private void BtnLogout_Click(object sender, EventArgs ea)
         {
+
+            this.DialogResult = DialogResult.OK;
+
             this.Close();
         }
 
@@ -65,7 +72,10 @@ namespace Client
             switch (FormStatus)
             {
                 case ADMINFORM:
+
                     SetAdminFormTrayIcon();
+
+
                     break;
                 case USERFORM:
                     SetUserFormTrayIcon();

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Server
@@ -45,27 +47,28 @@ namespace Server
 
         public void GetPicture(PictureBox box, MouseEventArgs e)
         {
-                var filePath = string.Empty;
-                if (e.Button == MouseButtons.Right)
+            var filePath = string.Empty;
+            if (e.Button == MouseButtons.Right)
+            {
+                using (FolderBrowserDialog fileDialog = new FolderBrowserDialog())
                 {
-                    using (FolderBrowserDialog fileDialog = new FolderBrowserDialog())
+                    fileDialog.SelectedPath = "C:\\";
+
+                    if (fileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        fileDialog.SelectedPath = "C:\\";
-
-                        if (fileDialog.ShowDialog() == DialogResult.OK)
-                        {
-                            filePath = fileDialog.SelectedPath;
-                        }
+                        filePath = fileDialog.SelectedPath;
                     }
-
-                    Bitmap bmp = new Bitmap(box.Image);
-                    String str = box.Name.ToString().Trim('\0');
-                    Console.WriteLine($"{filePath}{str}.png");
-                    bmp.Save($"{filePath}{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                 }
+
+                Bitmap bmp = new Bitmap(box.Image);
+                String str = box.Name.ToString().Trim('\0');
+                Console.WriteLine($"{filePath}{str}.png");
+                bmp.Save($"{filePath}{str}.png", System.Drawing.Imaging.ImageFormat.Png);
+            }
         }
+
         public void FullPicture(Student sendStu)
-        {
+        { 
             focusingTimer.Tick += new EventHandler((sender, e) => InterateFocusView(sendStu.img));
             focusingTimer.Interval = 500;
             focusingTimer.Start();
@@ -75,6 +78,8 @@ namespace Server
 
             renderingTimer.Interval = 700;
         }
+
+
         public Panel AddClientPanel(string key)
         {
             Student stu = clientsList[key] as Student;
@@ -99,12 +104,12 @@ namespace Server
                 SizeMode = PictureBoxSizeMode.StretchImage,
                 Image = stu.img // 캡처 이미지
             };
-
             void customMouseEvent(object sender, MouseEventArgs e) => GetPicture(pbClient, e);
             void customEvent(object sender, EventArgs e) => FullPicture(stu);
 
             pbClient.MouseDown += customMouseEvent;
             pbClient.DoubleClick += customEvent;
+
 
             if (clientsPicture.ContainsKey(key))
             {
@@ -162,7 +167,7 @@ namespace Server
             FullViewer.focusStudent.img = sendImg;
         }
 
-        private void btnAllSave_Click(object sender, EventArgs e)
+        private void BtnAllSave_Click(object sender, EventArgs e)
         {
             var filePath = string.Empty;
             if (pastClientsCount == 0)
@@ -178,16 +183,15 @@ namespace Server
                     if (fileDialog.ShowDialog() == DialogResult.OK)
                     {
                         filePath = fileDialog.SelectedPath;
-                    }
-                }
-                dir = filePath;
 
-                foreach (string key in clientsPicture.Keys)
-                {
-                    String str = clientsPicture[key].Name;
-                    Bitmap bmp = new Bitmap(clientsPicture[key].Image);
-                    bmp.Save($"{filePath}{str}" + ".png", System.Drawing.Imaging.ImageFormat.Png);
-                }
+                        foreach (string key in clientsPicture.Keys)
+                        {
+                            String str = clientsPicture[key].Name;
+                            Bitmap bmp = new Bitmap(clientsPicture[key].Image);
+                            bmp.Save($"{filePath}{str}" + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                        }
+                    }
+                }                
             }
         }
     }

@@ -60,13 +60,13 @@
             // 
             this.btnAllSave.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.btnAllSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnAllSave.Image = global::Server.Properties.Resources.monitoring;
+            this.btnAllSave.Image = global::Server.Properties.Resources.capture1;
             this.btnAllSave.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnAllSave.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
             this.btnAllSave.Name = "btnAllSave";
             this.btnAllSave.Size = new System.Drawing.Size(29, 28);
             this.btnAllSave.Text = "전체 화면 캡처";
-            this.btnAllSave.Click += new System.EventHandler(this.btnAllSave_Click);
+            this.btnAllSave.Click += new System.EventHandler(this.BtnAllSave_Click);
             // 
             // lblAllSave
             // 
@@ -87,7 +87,7 @@
             this.MaximumSize = new System.Drawing.Size(621, 478);
             this.MinimumSize = new System.Drawing.Size(621, 478);
             this.Name = "Viewer";
-            this.Text = "클라이언트 화면";
+            this.Text = "모니터링 목록";
             this.viewerToolStrip.ResumeLayout(false);
             this.viewerToolStrip.PerformLayout();
             this.ResumeLayout(false);

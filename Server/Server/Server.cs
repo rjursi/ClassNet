@@ -75,7 +75,6 @@ namespace Server
         {
             if (!Viewer.clientsList.ContainsKey(clientAddr))
             {
-                Console.WriteLine(clientAddr + " : " + clientInfo); // 해시테이블 입력 값 확인
                 Viewer.Student stu = new Viewer.Student()
                 {
                     info = clientInfo,
@@ -136,7 +135,7 @@ namespace Server
             clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
 
             sc = Screen.AllScreens;
-            foreach (var mon in sc)
+            foreach(var mon in sc)
             {
                 cbMonitor.Items.Add(Regex.Replace(mon.DeviceName, @"[^0-9a-zA-Z가-힣]", "").Trim());
             }
@@ -146,9 +145,6 @@ namespace Server
             bmp = null;
             g = null;
 
-            // 화면 이미지 객체 생성
-
-            //await Task.Run(() => ImageCreate());
             ThreadPool.QueueUserWorkItem(ImageCreate);
 
         }
@@ -200,17 +196,13 @@ namespace Server
 
                     if (Encoding.UTF8.GetString(co.buffer).Contains("recv"))
                     {
-                        Console.WriteLine(co.buffer.Length);
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
                         if (standardSignalObj.ServerScreenData != null) standardSignalObj.ServerScreenData = imageData;
                     }
                     else if (Encoding.UTF8.GetString(co.buffer).Contains("info"))
                     {
-                        Console.WriteLine(co.buffer.Length);
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
-
                         LoginRecord(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
-
                         Viewer.currentClientsCount++;
                     }
                     else
@@ -307,6 +299,10 @@ namespace Server
                         {
                             ds.CopyTo(post_ms);
                         }
+                        catch
+                        {
+                            ds.Write(new byte[0], 0, 0);
+                        }
                         finally
                         {
                             ds.Close();
@@ -330,7 +326,7 @@ namespace Server
                 standardSignalObj.ServerScreenData = imageData;
 
                 // 폼 버튼 변경
-                btnStreaming.Text = "실시간 방송 중지";
+                btnStreaming.Image = Resource._01imgStreaming_off;
 
                 // 트레이 아이콘 공유 버튼 상태 변경
                 notifyIcon.ContextMenu.MenuItems[0].Checked = true;
@@ -339,7 +335,7 @@ namespace Server
             {
                 standardSignalObj.ServerScreenData = null;
 
-                btnStreaming.Text = "실시간 방송";
+                btnStreaming.Image = Resource._01imgStreaming_on;
 
                 notifyIcon.ContextMenu.MenuItems[0].Checked = false;
             }
@@ -350,7 +346,7 @@ namespace Server
             if (notifyIcon.ContextMenu.MenuItems[0].Checked)
             {
                 standardSignalObj.ServerScreenData = null;
-                btnStreaming.Text = "실시간 방송";
+                btnStreaming.Image = Resource._01imgStreaming_on;
                 notifyIcon.ContextMenu.MenuItems[0].Checked = false;
             }
 
@@ -363,16 +359,18 @@ namespace Server
             if (standardSignalObj.IsInternet)
             {
                 standardSignalObj.IsInternet = false;
-                btnInternet.Text = "인터넷 차단";
                 notifyIcon.ContextMenu.MenuItems[2].Checked = false;
+
+                btnInternet.Image = Resource._03imgInternet_on;
 
                 MessageBox.Show("인터넷 차단을 해제하였습니다.", "인터넷 차단 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 standardSignalObj.IsInternet = true;
-                btnInternet.Text = "인터넷 차단 해제";
                 notifyIcon.ContextMenu.MenuItems[2].Checked = true;
+
+                btnInternet.Image = Resource._03imgInternet_off;
 
                 MessageBox.Show("인터넷 차단을 설정하였습니다.", "인터넷 차단", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -383,16 +381,18 @@ namespace Server
             if (standardSignalObj.IsLock)
             {
                 standardSignalObj.IsLock = false;
-                btnLock.Text = "입력 잠금";
                 notifyIcon.ContextMenu.MenuItems[3].Checked = false;
+
+                btnLock.Image = Resource._04imgLock_off;
 
                 MessageBox.Show("입력 잠금을 해제하였습니다.", "입력 잠금 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 standardSignalObj.IsLock = true;
-                btnLock.Text = "입력 잠금 해제";
                 notifyIcon.ContextMenu.MenuItems[3].Checked = true;
+
+                btnLock.Image = Resource._04imgLock_on;
 
                 MessageBox.Show("입력 잠금을 설정하였습니다.", "입력 잠금", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -403,16 +403,18 @@ namespace Server
             if (standardSignalObj.IsTaskMgrEnabled)
             {
                 standardSignalObj.IsTaskMgrEnabled = false;
-                btnCtrlTaskMgr.Text = "작업관리자 잠금 해제";
                 notifyIcon.ContextMenu.MenuItems[4].Checked = false;
+
+                btnCtrlTaskMgr.Image = Resource._05imgCtrlTaskMgr_off;
 
                 MessageBox.Show("작업관리자 잠금을 해제하였습니다.", "작업관리자 잠금 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 standardSignalObj.IsTaskMgrEnabled = true;
-                btnCtrlTaskMgr.Text = "작업관리자 잠금";
                 notifyIcon.ContextMenu.MenuItems[4].Checked = true;
+
+                btnCtrlTaskMgr.Image = Resource._05imgCtrlTaskMgr_on;
 
                 MessageBox.Show("작업관리자 잠금을 설정하였습니다.", "작업관리자 잠금", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -432,26 +434,23 @@ namespace Server
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
             standardSignalObj.IsShutdown = true;
+            standardSignalObj.IsMonitoring = false;
             standardSignalObj.IsInternet = false;
             standardSignalObj.IsLock = false;
             standardSignalObj.IsTaskMgrEnabled = true;
 
             if (listener != null) listener.Close();
             Dispose();
-
-            standardSignalObj.IsMonitoring = false;
         }
 
         private void Viewer_FormClosed(object sender, FormClosedEventArgs e)
         {
             standardSignalObj.IsMonitoring = false;
-            clientsViewer.Close();
         }
 
         private void CbMonitor_SelectedIndexChanged(object sender, EventArgs e)
         {
             selectedScreen = cbMonitor.SelectedIndex;
         }
-
     }
 }
