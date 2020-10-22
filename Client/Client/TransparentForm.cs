@@ -15,22 +15,13 @@ namespace Client
         public const int ADMINFORM = 0;
         public const int USERFORM = 1;
 
-        private int formStatus;
-        public int FormStatus {
-            set
-            {
-                formStatus = value;
-            }
-            get
-            {
-                return formStatus;
-            }
-        }
+        public int FormStatus { set; get; }
 
         public TransparentForm()
         {
             InitializeComponent();
         }
+
         private void setUserFormTrayIcon()
         {
             ContextMenu ctx = new ContextMenu();
@@ -59,7 +50,6 @@ namespace Client
                 if (dialogResult == DialogResult.OK)
                 {
                     ClassNetConfig.SetAppConfig("SERVER_IP", setIPAddressForm.ServerIP);
-
                     MessageBox.Show("서버 IP 가 수정이 되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
@@ -68,18 +58,14 @@ namespace Client
         private void BtnLogout_Click(object sender, EventArgs ea)
         {
             this.DialogResult = DialogResult.OK;
-
             this.Close();
         }
 
         private void TransparentForm_Load(object sender, EventArgs e)
         {
-            
-
             switch (FormStatus)
             {
                 case ADMINFORM:
-                    
                     setAdminFormTrayIcon();
                     break;
                 case USERFORM:
