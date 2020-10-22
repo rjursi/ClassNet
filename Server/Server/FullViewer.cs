@@ -1,28 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Server.Viewer;
 
 namespace Server
 {
-    public partial class Test : Form
+    public partial class FullViewer : Form
     {
         public static Student focusStudent;
         Timer focusingTimer;
         EventHandler focusHandler;
-        public Test()
+        public FullViewer()
         {
             InitializeComponent();
         }
 
-        public Test(Student stu)
+        public FullViewer(Student stu)
         {
             InitializeComponent();
             focusStudent = stu;
@@ -33,7 +25,7 @@ namespace Server
             focusingTimer.Start();
         }
 
-        private void Test_Load(object sender, EventArgs e)
+        private void FullViewer_Load(object sender, EventArgs e)
         {
             picFocusView.Image = focusStudent.img;
             Text = focusStudent.info;
@@ -41,6 +33,7 @@ namespace Server
 
         void InterateFocusing(Student stu)
         {
+
             picFocusView.Image = stu.img;
         }
     }
