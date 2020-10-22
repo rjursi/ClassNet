@@ -328,7 +328,9 @@ namespace Server
                 standardSignalObj.ServerScreenData = imageData;
 
                 // 폼 버튼 변경
-                btnStreaming.Text = "실시간 방송 중지";
+
+                //btnStreaming.Text = "방송 중지";
+                btnStreaming.Image = Resource._01imgStreaming_off;
 
                 // 트레이 아이콘 공유 버튼 상태 변경
                 notifyIcon.ContextMenu.MenuItems[0].Checked = true;
@@ -337,7 +339,8 @@ namespace Server
             {
                 standardSignalObj.ServerScreenData = null;
 
-                btnStreaming.Text = "실시간 방송";
+                //btnStreaming.Text = "실시간 방송";
+                btnStreaming.Image = Resource._01imgStreaming_on;
 
                 notifyIcon.ContextMenu.MenuItems[0].Checked = false;
             }
@@ -345,15 +348,11 @@ namespace Server
 
         private void BtnMonitoring_Click(object sender, EventArgs e)
         {
-            if (notifyIcon.ContextMenu.MenuItems[0].Checked)
-            {
-                standardSignalObj.ServerScreenData = null;
-                btnStreaming.Text = "실시간 방송";
-                notifyIcon.ContextMenu.MenuItems[0].Checked = false;
-            }
+
 
             standardSignalObj.IsMonitoring = true;
             clientsViewer.ShowDialog();
+
         }
 
         private void BtnInternet_Click(object sender, EventArgs e)
@@ -365,6 +364,9 @@ namespace Server
                 notifyIcon.ContextMenu.MenuItems[2].Checked = false;
 
                 MessageBox.Show("인터넷 차단을 해제하였습니다.", "인터넷 차단 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                btnInternet.Image = Resource._03imgInternet_on;
+
             }
             else
             {
@@ -372,7 +374,11 @@ namespace Server
                 btnInternet.Text = "인터넷 차단 해제";
                 notifyIcon.ContextMenu.MenuItems[2].Checked = true;
 
+
                 MessageBox.Show("인터넷 차단을 설정하였습니다.", "인터넷 차단", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                btnInternet.Image = Resource._03imgInternet_off;
+
             }
         }
 
@@ -409,8 +415,13 @@ namespace Server
             else
             {
                 standardSignalObj.IsTaskMgrEnabled = true;
+
                 btnCtrlTaskMgr.Text = "작업관리자 잠금";
                 notifyIcon.ContextMenu.MenuItems[4].Checked = true;
+
+                btnCtrlTaskMgr.Image = Resource._05imgCtrlTaskMgr_on;
+                notifyIcon.ContextMenu.MenuItems[4].Text = "작업관리자 비활성화";
+
 
                 MessageBox.Show("작업관리자 잠금을 설정하였습니다.", "작업관리자 잠금", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -421,9 +432,11 @@ namespace Server
             if (MessageBox.Show("연결된 학생 PC 전체를 종료하시겠습니까?", "학생 PC 전체 종료",
                 MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
             {
+
                 standardSignalObj.IsPower = true;
                 Thread.Sleep(500);
                 standardSignalObj.IsPower = false;
+
             }
         }
 

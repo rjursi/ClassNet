@@ -99,7 +99,9 @@ namespace Client
 
             this.SERVER_IP = ClassNetConfig.GetAppConfig("SERVER_IP");
 
+            
             // DPI 설정 메소드 호출
+
             SetDpiAwareness();
 
             while (!isLogin)
@@ -113,17 +115,23 @@ namespace Client
 
             transparentForm = new TransparentForm();
             if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
+
             {
                 transparentForm.FormStatus = TransparentForm.ADMINFORM;
                 transparentForm.Show();
                 transparentForm.Hide();
+
             }
             else
             {
                 transparentForm.FormStatus = TransparentForm.USERFORM;
+
+                ClassNetConfig.FinishProtection();
+
                 transparentForm.Show();
                 transparentForm.Hide();
             }
+
 
             void beforeConnect()
             {
