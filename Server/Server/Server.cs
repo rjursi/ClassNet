@@ -13,6 +13,8 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
+using System.Threading.Tasks;
+
 namespace Server
 {
     public partial class Server : Form
@@ -40,7 +42,7 @@ namespace Server
 
         private static Screen[] sc;
         private static int selectedScreen;
-       
+
         private static Bitmap bmp;
         private static Graphics g;
 
@@ -94,11 +96,11 @@ namespace Server
             listener.Listen(50);
 
             listener.BeginAccept(AcceptCallback, null);
-            
+
             // DPI 설정 메소드 호출
             SetDpiAwareness();
         }
-            
+
         private void NotifyIconSetting()
         {
             ContextMenu ctx = new ContextMenu();
@@ -116,9 +118,8 @@ namespace Server
             notifyIcon.Visible = true;
         }
 
-        private void Server_Load(object sender, EventArgs e)
+        private async void Server_Load(object sender, EventArgs e)
         {
-            ThreadPool.SetMaxThreads(50, 50);
 
             standardSignalObj = new SignalObj();
 
@@ -135,9 +136,9 @@ namespace Server
 
             clientsViewer = new Viewer();
             clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
-            
+
             sc = Screen.AllScreens;
-            foreach(var mon in sc)
+            foreach (var mon in sc)
             {
                 cbMonitor.Items.Add(Regex.Replace(mon.DeviceName, @"[^0-9a-zA-Z가-힣]", "").Trim());
             }
@@ -148,7 +149,7 @@ namespace Server
             g = null;
 
             // 화면 이미지 객체 생성
-            ThreadPool.QueueUserWorkItem(ImageCreate);
+            await Task.Run(() => ImageCreate()).ConfigureAwait(false);
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -254,7 +255,7 @@ namespace Server
             return buffer;
         }
 
-        public static void ImageCreate(Object obj)
+        public static void ImageCreate()
         {
             Byte[] preData;
 
@@ -346,7 +347,7 @@ namespace Server
 
         private void BtnMonitoring_Click(object sender, EventArgs e)
         {
-            standardSignalObj.IsMonitoring = true;            
+            standardSignalObj.IsMonitoring = true;
             clientsViewer.ShowDialog();
         }
 

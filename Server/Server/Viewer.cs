@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Server
@@ -46,18 +43,7 @@ namespace Server
             focusingTimer = new Timer();
         }
 
-        public Button allSaveBtnCreate()
-        {
-            Button btn = new Button
-            {
-                Name = "btnAllSave",
-                Text = "전체 저장",
-            }; 
-            btn.Click += new EventHandler(btnAllSave_Click);
-
-            return btn;
-        }
-        public void getPicture(PictureBox box, MouseEventArgs e)
+        public void GetPicture(PictureBox box, MouseEventArgs e)
         {
                 var filePath = string.Empty;
                 if (e.Button == MouseButtons.Right)
@@ -78,7 +64,7 @@ namespace Server
                     bmp.Save($"{filePath}{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                 }
         }
-        public void fullPicture(Student sendStu)
+        public void FullPicture(Student sendStu)
         {
             focusingTimer.Tick += new EventHandler((sender, e) => InterateFocusView(sendStu.img));
             focusingTimer.Interval = 500;
@@ -113,8 +99,10 @@ namespace Server
                 SizeMode = PictureBoxSizeMode.StretchImage,
                 Image = stu.img // 캡처 이미지
             };
-            MouseEventHandler customMouseEvent = (sender, e) => getPicture(pbClient, e);
-            EventHandler customEvent = (sender, e) => fullPicture(stu);
+
+            void customMouseEvent(object sender, MouseEventArgs e) => GetPicture(pbClient, e);
+            void customEvent(object sender, EventArgs e) => FullPicture(stu);
+
             pbClient.MouseDown += customMouseEvent;
             pbClient.DoubleClick += customEvent;
 
@@ -152,7 +140,6 @@ namespace Server
                 pastClientsCount++;
 
                 clientsViewPanel.Controls.Clear();
-                clientsViewPanel.Controls.Add(allSaveBtnCreate()); //위치를 어떻게 할 것인지 생각해보자!
                 foreach (string key in clientsList.Keys)
                 {
                     clientsViewPanel.Controls.Add(AddClientPanel(key));
@@ -163,7 +150,6 @@ namespace Server
                 pastClientsCount--;
 
                 clientsViewPanel.Controls.Clear();
-                clientsViewPanel.Controls.Add(allSaveBtnCreate());
                 foreach (string key in clientsList.Keys)
                 {
                    clientsViewPanel.Controls.Add(AddClientPanel(key));

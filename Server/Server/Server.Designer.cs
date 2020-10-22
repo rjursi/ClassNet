@@ -161,4 +161,3 @@
         private System.Windows.Forms.ComboBox cbMonitor;
     }
 }
-
