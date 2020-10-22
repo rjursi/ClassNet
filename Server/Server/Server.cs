@@ -10,6 +10,8 @@ using System.Net.Sockets;
 using System.Threading;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace Server
 {
@@ -36,10 +38,38 @@ namespace Server
 
         private Viewer clientsViewer;
 
+        private static Screen[] sc;
+        private static int selectedScreen;
+       
+        private static Bitmap bmp;
+        private static Graphics g;
+
         public Server()
         {
             InitializeComponent();
         }
+
+        // DPI 설정 부분 시작
+        private enum ProcessDPIAwareness
+        {
+            ProcessDPIUnaware = 0,
+            ProcessSystemDPIAware = 1,
+            ProcessPerMonitorDPIAware = 2
+        }
+
+        [DllImport("shcore.dll")]
+        private static extern int SetProcessDpiAwareness(ProcessDPIAwareness value);
+
+        private static void SetDpiAwareness()
+        {
+            try
+            {
+                if (Environment.OSVersion.Version.Major >= 6)
+                    SetProcessDpiAwareness(ProcessDPIAwareness.ProcessPerMonitorDPIAware);
+            }
+            catch (EntryPointNotFoundException) { } // OS가 해당 API를 구현하지 않을 경우 예외가 발생하지만 무시
+        }
+        // DPI 설정 부분 끝
 
         private static void LoginRecord(string clientAddr, string clientInfo)
         {
@@ -64,18 +94,24 @@ namespace Server
             listener.Listen(50);
 
             listener.BeginAccept(AcceptCallback, null);
+            
+            // DPI 설정 메소드 호출
+            SetDpiAwareness();
         }
             
         private void NotifyIconSetting()
         {
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("실시간 방송", new EventHandler((s, ea) => BtnStreaming_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("학습자 PC 모니터링", new EventHandler((s, ea) => BtnMonitoring_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("키보드 및 마우스 잠금", new EventHandler((s, ea) => BtnLock_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("화면 모니터링", new EventHandler((s, ea) => BtnMonitoring_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("키보드 마우스 잠금", new EventHandler((s, ea) => BtnLock_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("인터넷 차단", new EventHandler((s, ea) => BtnInternet_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("강의실 PC 전원 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
-            ctx.MenuItems.Add("-");
             ctx.MenuItems.Add(new MenuItem("작업관리자 활성화", new EventHandler((s, ea) => BtnCtrlTaskMgr_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("학생 PC 전원 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
+            ctx.MenuItems.Add("-");
+
+            ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => { })));
+
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
         }
@@ -92,9 +128,6 @@ namespace Server
             // NotifyIcon에 메뉴 추가
             NotifyIconSetting();
 
-            // 화면 이미지 객체 생성
-            ThreadPool.QueueUserWorkItem(ImageCreate);
-
             // JPEG 손실 압축 수준 설정
             codec = GetEncoder(ImageFormat.Jpeg);
             param = new EncoderParameters();
@@ -102,6 +135,20 @@ namespace Server
 
             clientsViewer = new Viewer();
             clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
+            
+            sc = Screen.AllScreens;
+            foreach(var mon in sc)
+            {
+                cbMonitor.Items.Add(Regex.Replace(mon.DeviceName, @"[^0-9a-zA-Z가-힣]", "").Trim());
+            }
+            cbMonitor.SelectedIndex = 0;
+            selectedScreen = cbMonitor.SelectedIndex;
+
+            bmp = null;
+            g = null;
+
+            // 화면 이미지 객체 생성
+            ThreadPool.QueueUserWorkItem(ImageCreate);
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -211,17 +258,14 @@ namespace Server
         {
             Byte[] preData;
 
-            Bitmap bmp = new Bitmap(1920, 1080);
-            // 실제 서비스할 땐 해상도가 다른 PC들을 포괄적으로 수용하기 위해 아래 소스를 사용할 것임.
-            // Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-
-            Graphics g = Graphics.FromImage(bmp);
-
             while (!standardSignalObj.IsShutdown)
             {
+                bmp = new Bitmap(sc[selectedScreen].Bounds.Width, sc[selectedScreen].Bounds.Height);
+                g = Graphics.FromImage(bmp);
+
                 try
                 {
-                    g.CopyFromScreen(0, 0, 0, 0, new Size(bmp.Width, bmp.Height));
+                    g.CopyFromScreen(new Point(sc[selectedScreen].Bounds.X, sc[selectedScreen].Bounds.Y), new Point(0, 0), new Size(bmp.Width, bmp.Height));
                 }
                 catch (Win32Exception)
                 {
@@ -353,17 +397,16 @@ namespace Server
             standardSignalObj.IsPower = false;
         }
 
+
         private void BtnCtrlTaskMgr_Click(object sender, EventArgs e)
         {
-
             if (!standardSignalObj.IsTaskMgrEnabled)
             {
-
 
                 standardSignalObj.IsTaskMgrEnabled = true;
                 btnCtrlTaskMgr.Text = "작업관리자 비활성화";
                 notifyIcon.ContextMenu.MenuItems[6].Text = "작업관리자 비활성화";
-                
+
             }
             else
             {
@@ -371,11 +414,12 @@ namespace Server
                 btnCtrlTaskMgr.Text = "작업관리자 활성화";
                 notifyIcon.ContextMenu.MenuItems[6].Text = "작업관리자 활성화";
             }
-  
         }
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
+
         {
+
             standardSignalObj.IsShutdown = true;
             standardSignalObj.IsInternet = false;
             standardSignalObj.IsLock = false;
@@ -383,11 +427,21 @@ namespace Server
 
             if (listener != null) listener.Close();
             Dispose();
+
+            standardSignalObj.IsMonitoring = false;
+
         }
 
-        void Viewer_FormClosed(object sender, FormClosedEventArgs e)
+        private void Viewer_FormClosed(object sender, FormClosedEventArgs e)
         {
+
             standardSignalObj.IsMonitoring = false;
+
+        }
+
+        private void CbMonitor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedScreen = cbMonitor.SelectedIndex;
         }
 
     }

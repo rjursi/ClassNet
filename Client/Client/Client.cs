@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using InternetControl;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Client
 {
@@ -35,8 +36,7 @@ namespace Client
         private CmdProcessController cmdProcessController;
         private FirewallPortBlock firewallPortBlocker;
 
-        private delegate void ScreenOnDelegate(int imgSize, Byte[] recvData, double isOpacity);
-        private delegate void ScreenOffDelegate(double isOpacity);
+        private delegate void ScreenOnDelegate(int imgSize, Byte[] recvData, bool isShow);
 
         private static Byte[] recvData;
         private static Byte[] sendData;
@@ -51,6 +51,28 @@ namespace Client
         {
             InitializeComponent();
         }
+
+        // DPI 설정 부분 시작
+        private enum ProcessDPIAwareness
+        {
+            ProcessDPIUnaware = 0,
+            ProcessSystemDPIAware = 1,
+            ProcessPerMonitorDPIAware = 2
+        }
+
+        [DllImport("shcore.dll")]
+        private static extern int SetProcessDpiAwareness(ProcessDPIAwareness value);
+
+        private static void SetDpiAwareness()
+        {
+            try
+            {
+                if (Environment.OSVersion.Version.Major >= 6)
+                    SetProcessDpiAwareness(ProcessDPIAwareness.ProcessPerMonitorDPIAware);
+            }
+            catch (EntryPointNotFoundException) { } // OS가 해당 API를 구현하지 않을 경우 예외가 발생하지만 무시
+        }
+        // DPI 설정 부분 끝
 
         private void Client_Load(object sender, EventArgs e)
         {
@@ -75,16 +97,22 @@ namespace Client
 
             this.SERVER_IP = ClassNetConfig.GetAppConfig("SERVER_IP");
 
+            // DPI 설정 메소드 호출
+            SetDpiAwareness();
+
+
             while (!isLogin)
             {
                 loginForm = new LoginForm();
                 loginForm.ShowDialog(); // ShowDialog 실행, 닫힐 때 까지 프로그램은 일시정지.
                 stuInfo = loginForm.stuInfo; // 로그인 데이터를 변수에 담음.
 
+
                 if (stuInfo.Length > 0)
                 {
                     isLogin = true;
                 }
+
             }
 
             
@@ -119,19 +147,16 @@ namespace Client
                     server.Connect(ep);
 
                     // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
-                    // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
-                    //this.ShowInTaskbar = false;
+                    this.ShowInTaskbar = false;
 
                     // 받은 이미지를 풀스크린으로 띄우는 설정
-                    // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
                     /*FormBorderStyle = FormBorderStyle.None;
                     WindowState = FormWindowState.Maximized;
                     screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
                     screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
                     // 화면 폼을 가장 맨 위로
-                    // 개인 테스트 과정에서 불편하므로 커밋할 때는 주석처리 해주세요.
-                    //TopMost = true;
+                    TopMost = true;
 
                     isConnected = true;
                     
@@ -160,7 +185,7 @@ namespace Client
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
-            Opacity = 0;
+            this.Hide();
 
             // 이런식으로 구현 기능에 대한 메소드를 추가하기 위해 아래와 같이 람다식으로 작성
             InsertAction(() => ControllingLock());
@@ -168,8 +193,12 @@ namespace Client
             InsertAction(() => ControllingPower());
             InsertAction(() => ImageProcessing());
             InsertAction(() => CaptureProcessing());
+
             InsertAction(() => ControllingTaskMgr());
-            Task.Run(()=> MainTask());
+
+
+            Task.Run(() => MainTask());
+
         }
        
         public void InsertAction(Action action)
@@ -290,16 +319,14 @@ namespace Client
 
         public void ImageProcessing()
         {
-            if (standardSignalObj.ServerScreenData != null)
+            if(standardSignalObj.ServerScreenData != null)
             {
                 // 이미지를 받아서 여기서 버퍼를 설정하는 부분
                 this.Invoke(new ScreenOnDelegate(OutputDelegate),
-                    standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, 1);
+                    standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, true);
             }
-            else
-            {
-                this.Invoke(new ScreenOffDelegate(OpacityDelegate), 0);
-            }
+            else this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
+            
         }
 
         public void CaptureProcessing()
@@ -312,9 +339,7 @@ namespace Client
             Byte[] preData;
             Byte[] tempData;
 
-            Bitmap bmp = new Bitmap(1920, 1080);
-            // 실제 서비스할 땐 해상도가 다른 PC들을 포괄적으로 수용하기 위해 아래 소스를 사용할 것임.
-            // Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
             Graphics g = Graphics.FromImage(bmp);
             g.CopyFromScreen(0, 0, 0, 0, new Size(bmp.Width, bmp.Height));
@@ -339,36 +364,35 @@ namespace Client
             return tempData;
         }
 
-        public void OpacityDelegate(double isOpacity)
+        public void OutputDelegate(int imgSize, Byte[] recvData, bool isShow)
         {
-            Opacity = isOpacity;
-        }
-
-        public void OutputDelegate(int imgSize, Byte[] recvData, double isOpacity)
-        {
-            Opacity = isOpacity;
-
-            using (MemoryStream pre_ms = new MemoryStream(recvData))
+            if (!isShow) this.Hide();
+            else
             {
-                using (MemoryStream post_ms = new MemoryStream())
-                {
-                    using (DeflateStream ds = new DeflateStream(pre_ms, CompressionMode.Decompress))
-                    {
-                        try
-                        {
-                            ds.CopyTo(post_ms);
-                        }
-                        finally
-                        {
-                            ds.Close();
-                        }
-                    }
-                    imageSize.Text = imgSize.ToString();
-                    screenImage.Image = Image.FromStream(post_ms);
+                this.Show();
 
-                    post_ms.Close();
+                using (MemoryStream pre_ms = new MemoryStream(recvData))
+                {
+                    using (MemoryStream post_ms = new MemoryStream())
+                    {
+                        using (DeflateStream ds = new DeflateStream(pre_ms, CompressionMode.Decompress))
+                        {
+                            try
+                            {
+                                ds.CopyTo(post_ms);
+                            }
+                            finally
+                            {
+                                ds.Close();
+                            }
+                        }
+                        imageSize.Text = imgSize.ToString();
+                        screenImage.Image = Image.FromStream(post_ms);
+
+                        post_ms.Close();
+                    }
+                    pre_ms.Close();
                 }
-                pre_ms.Close();
             }
         }
 
