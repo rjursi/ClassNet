@@ -103,12 +103,14 @@ namespace Server
         {
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("실시간 방송", new EventHandler((s, ea) => BtnStreaming_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("학습자 PC 모니터링", new EventHandler((s, ea) => BtnMonitoring_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("키보드 및 마우스 잠금", new EventHandler((s, ea) => BtnLock_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("화면 모니터링", new EventHandler((s, ea) => BtnMonitoring_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("키보드 마우스 잠금", new EventHandler((s, ea) => BtnLock_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("인터넷 차단", new EventHandler((s, ea) => BtnInternet_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("강의실 PC 전원 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("작업관리자 활성화", new EventHandler((s, ea) => { })));
+            ctx.MenuItems.Add(new MenuItem("학생 PC 전원 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
             ctx.MenuItems.Add("-");
-            ctx.MenuItems.Add(new MenuItem("작업관리자 활성화", new EventHandler((s, ea) => BtnCtrlTaskMgr_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => { })));
+
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
         }
@@ -396,15 +398,11 @@ namespace Server
 
         private void BtnCtrlTaskMgr_Click(object sender, EventArgs e)
         {
-
             if (!standardSignalObj.IsTaskMgrEnabled)
             {
-
-
                 standardSignalObj.IsTaskMgrEnabled = true;
                 btnCtrlTaskMgr.Text = "작업관리자 비활성화";
                 notifyIcon.ContextMenu.MenuItems[6].Text = "작업관리자 비활성화";
-                
             }
             else
             {
@@ -412,7 +410,6 @@ namespace Server
                 btnCtrlTaskMgr.Text = "작업관리자 활성화";
                 notifyIcon.ContextMenu.MenuItems[6].Text = "작업관리자 활성화";
             }
-  
         }
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
