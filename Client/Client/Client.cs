@@ -8,11 +8,11 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
-using InternetControl;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-
 using System.Threading;
+
+using InternetControl;
 
 namespace Client
 {
@@ -115,12 +115,12 @@ namespace Client
             if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
             {
                 transparentForm.FormStatus = TransparentForm.ADMINFORM;
-                transparentForm.ShowDialog();
+                transparentForm.Show();
+                transparentForm.Hide();
             }
             else
             {
                 transparentForm.FormStatus = TransparentForm.USERFORM;
-
                 transparentForm.Show();
                 transparentForm.Hide();
             }
@@ -177,7 +177,7 @@ namespace Client
 
                 //화면 찍는거 외의 행동들, 반복 텀 조절할 필요 있음 ㅇㅇ
                 assistanceAction = new Action(() =>
-               {
+                {
                    while (true)
                    {
                        ControllingLock();
@@ -185,6 +185,8 @@ namespace Client
                        ControllingPower();
                        CaptureProcessing();
                        ControllingTaskMgr();
+
+                       Thread.Sleep(0);
                    }
                });
 
