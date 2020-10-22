@@ -12,6 +12,8 @@ using InternetControl;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
+using System.Threading;
+
 namespace Client
 {
     public partial class Client : Form
@@ -45,6 +47,11 @@ namespace Client
 
         private static bool isFirst;
         private static bool isCapture;
+        
+        //서버에서 보내는 이미지 찍는거 외의 활동들
+        Action assistanceAction;
+        //서버와 연결 이후에 실행될 Task
+        public Task afterConnect;
 
         public Client()
         {
@@ -104,29 +111,25 @@ namespace Client
                 if (stuInfo.Length > 0) isLogin = true;
             }
 
-            
             transparentForm = new TransparentForm();
-
             if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
-            {   
+            {
                 transparentForm.FormStatus = TransparentForm.ADMINFORM;
                 transparentForm.ShowDialog();
             }
             else
             {
                 transparentForm.FormStatus = TransparentForm.USERFORM;
-                
+
                 transparentForm.Show();
                 transparentForm.Hide();
             }
-            
-            while (!isConnected)
+
+            void beforeConnect()
             {
-                try
+                this.Invoke(new Action(delegate ()
                 {
-                    server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    IPEndPoint ep = new IPEndPoint(IPAddress.Parse(SERVER_IP), CLASSNETPORT);
-                    server.Connect(ep);
+                    this.Hide();
 
                     // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
                     this.ShowInTaskbar = false;
@@ -139,43 +142,63 @@ namespace Client
 
                     // 화면 폼을 가장 맨 위로
                     TopMost = true;
+                }));
 
-                    isConnected = true;
-                }
-                catch (SocketException)
+                while (!isConnected)
                 {
-                    isConnected = false; // 연결이 안 되면 대기상태 유지
+                    try
+                    {
+                        server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                        IPEndPoint ep = new IPEndPoint(IPAddress.Parse(SERVER_IP), CLASSNETPORT);
+                        server.Connect(ep);
+
+                        isConnected = true;
+                    }
+                    catch (SocketException)
+                    {
+                        isConnected = false; // 연결이 안 되면 대기상태 유지
+                    }
+
                 }
+
+                taskMgrController = new TaskMgrController();
+                cmdProcessController = new CmdProcessController();
+                firewallPortBlocker = new FirewallPortBlock();
+
+                taskMgrController.KillTaskMgr();
+                recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
+                isFirst = true;
+                isCapture = false;
+
+                // JPEG 손실 압축 수준 설정
+                codec = GetEncoder(ImageFormat.Jpeg);
+                param = new EncoderParameters();
+                param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
+
+                //화면 찍는거 외의 행동들, 반복 텀 조절할 필요 있음 ㅇㅇ
+                assistanceAction = new Action(() =>
+               {
+                   while (true)
+                   {
+                       ControllingLock();
+                       ControllingInternet();
+                       ControllingPower();
+                       CaptureProcessing();
+                       ControllingTaskMgr();
+                   }
+               });
+
             }
 
-            NotifyIconSetting();
-            taskMgrController = new TaskMgrController();
-            cmdProcessController = new CmdProcessController();
-            firewallPortBlocker = new FirewallPortBlock();
+            afterConnect = Task.Run(beforeConnect);
 
-            taskMgrController.KillTaskMgr();
-            recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
-            isFirst = true;
-            isCapture = false;
-
-            // JPEG 손실 압축 수준 설정
-            codec = GetEncoder(ImageFormat.Jpeg);
-            param = new EncoderParameters();
-            param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
-
-            this.Hide();
-
-            // 이런식으로 구현 기능에 대한 메소드를 추가하기 위해 아래와 같이 람다식으로 작성
-            InsertAction(() => ControllingLock());
-            InsertAction(() => ControllingInternet());
-            InsertAction(() => ControllingPower());
-            InsertAction(() => ImageProcessing());
-            InsertAction(() => CaptureProcessing());
-            InsertAction(() => ControllingTaskMgr());
-
-            Task.Run(()=> MainTask());
+            _ = afterConnect.ContinueWith(async (a) =>
+            {
+                await Task.Run(() => MainTask());
+                await Task.Run(assistanceAction);
+            });
         }
-       
+
         public void InsertAction(Action action)
         {
             mainAction += action;
@@ -234,7 +257,7 @@ namespace Client
             }
         }
 
-        public void MainTask()
+        public async void MainTask()
         {
             while (true)
             {
@@ -242,7 +265,7 @@ namespace Client
                 {
                     using (standardSignalObj = ReceiveObject())
                     {
-                        if (standardSignalObj != null) mainAction();
+                        await Task.Run(mainAction);
                     }
                 }
                 catch (ObjectDisposedException)
@@ -257,19 +280,6 @@ namespace Client
                 {
                     Array.Clear(recvData, 0, recvData.Length);
                 }
-            }
-        }
-
-        private void NotifyIconSetting()
-        {
-            switch (transparentForm.FormStatus)
-            {
-                case TransparentForm.ADMINFORM:
-                    setAdminFormTrayIcon();
-                    break;
-                case TransparentForm.USERFORM:
-                    setUserFormTrayIcon();
-                    break;
             }
         }
 
@@ -375,25 +385,6 @@ namespace Client
             taskMgrController.CheckTaskMgrStatus(true);
             server.Close();
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
-        }
-
-        private void setUserFormTrayIcon()
-        {
-            ContextMenu ctx = new ContextMenu();
-            ctx.MenuItems.Add(new MenuItem("로그아웃", new EventHandler((s, ea) => BtnLogout_Click(s, ea))));
-
-            this.notifyIcon.ContextMenu = ctx;
-            this.notifyIcon.Visible = true;
-        }
-
-        private void setAdminFormTrayIcon()
-        {
-            ContextMenu ctx = new ContextMenu();
-            ctx.MenuItems.Add(new MenuItem("설정", new EventHandler((s, ea) => BtnSetServerIP_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("로그아웃", new EventHandler((s, ea) => BtnLogout_Click(s, ea))));
-
-            this.notifyIcon.ContextMenu = ctx;
-            this.notifyIcon.Visible = true;
         }
 
         private void BtnSetServerIP_Click(object sender, EventArgs ea)
