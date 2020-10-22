@@ -35,20 +35,18 @@
             // 
             this.clientsViewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.clientsViewPanel.Location = new System.Drawing.Point(0, 0);
-            this.clientsViewPanel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.clientsViewPanel.Name = "clientsViewPanel";
-            this.clientsViewPanel.Size = new System.Drawing.Size(604, 433);
+            this.clientsViewPanel.Size = new System.Drawing.Size(530, 353);
             this.clientsViewPanel.TabIndex = 0;
             // 
             // Viewer
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(604, 433);
+            this.ClientSize = new System.Drawing.Size(530, 353);
             this.Controls.Add(this.clientsViewPanel);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.MaximumSize = new System.Drawing.Size(622, 480);
-            this.MinimumSize = new System.Drawing.Size(622, 480);
+            this.MaximumSize = new System.Drawing.Size(546, 392);
+            this.MinimumSize = new System.Drawing.Size(546, 392);
             this.Name = "Viewer";
             this.Text = "클라이언트 화면";
             this.ResumeLayout(false);
