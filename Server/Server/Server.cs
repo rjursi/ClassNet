@@ -13,6 +13,8 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
+using System.Threading.Tasks;
+
 namespace Server
 {
     public partial class Server : Form
@@ -116,9 +118,8 @@ namespace Server
             notifyIcon.Visible = true;
         }
 
-        private void Server_Load(object sender, EventArgs e)
+        private async void Server_Load(object sender, EventArgs e)
         {
-            ThreadPool.SetMaxThreads(50, 50);
 
             standardSignalObj = new SignalObj();
 
@@ -148,7 +149,11 @@ namespace Server
             g = null;
 
             // 화면 이미지 객체 생성
-            ThreadPool.QueueUserWorkItem(ImageCreate);
+            
+
+            await Task.Run(() => ImageCreate()).ConfigureAwait(false);
+
+
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -254,7 +259,7 @@ namespace Server
             return buffer;
         }
 
-        public static void ImageCreate(Object obj)
+        public static void ImageCreate()
         {
             Byte[] preData;
 
