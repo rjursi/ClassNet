@@ -103,12 +103,13 @@ namespace Server
         {
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("실시간 방송", new EventHandler((s, ea) => BtnStreaming_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("학습자 PC 모니터링", new EventHandler((s, ea) => BtnMonitoring_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("키보드 및 마우스 잠금", new EventHandler((s, ea) => BtnLock_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("화면 모니터링", new EventHandler((s, ea) => BtnMonitoring_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("키보드 마우스 잠금", new EventHandler((s, ea) => BtnLock_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("인터넷 차단", new EventHandler((s, ea) => BtnInternet_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("강의실 PC 전원 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("작업관리자 활성화", new EventHandler((s, ea) => { })));
+            ctx.MenuItems.Add(new MenuItem("학생 PC 전원 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
             ctx.MenuItems.Add("-");
-            ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => BtnShutdown_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => { })));
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
         }
@@ -392,16 +393,6 @@ namespace Server
             standardSignalObj.IsPower = true;
             Thread.Sleep(500);
             standardSignalObj.IsPower = false;
-        }
-
-        private void BtnShutdown_Click(object sender, EventArgs e)
-        {
-            standardSignalObj.IsShutdown = true;
-            standardSignalObj.IsInternet = false;
-            standardSignalObj.IsLock = false;
-
-            if (listener != null) listener.Close();
-            Dispose();
         }
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
