@@ -47,6 +47,7 @@ namespace Server
         public Server()
         {
             InitializeComponent();
+
         }
 
         // DPI 설정 부분 시작
