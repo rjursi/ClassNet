@@ -329,8 +329,8 @@ namespace Server
                 standardSignalObj.ServerScreenData = imageData;
 
                 // 폼 버튼 변경
-                btnStreaming.Text = "방송 중지";
-
+                //btnStreaming.Text = "방송 중지";
+                btnStreaming.Image = Resource._01imgStreaming_off;
                 // 트레이 아이콘 공유 버튼 상태 변경
                 notifyIcon.ContextMenu.MenuItems[0].Checked = true;
             }
@@ -338,7 +338,8 @@ namespace Server
             {
                 standardSignalObj.ServerScreenData = null;
 
-                btnStreaming.Text = "실시간 방송";
+                //btnStreaming.Text = "실시간 방송";
+                btnStreaming.Image = Resource._01imgStreaming_on;
 
                 notifyIcon.ContextMenu.MenuItems[0].Checked = false;
             }
@@ -358,7 +359,8 @@ namespace Server
                 notifyIcon.ContextMenu.MenuItems[1].Checked = false;
 
                 MessageBox.Show("키보드 및 마우스 잠금을 해제하였습니다.", "잠금 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnLock.Text = "키보드 및 마우스 잠금";
+                // btnLock.Text = "키보드 및 마우스 잠금";
+                btnLock.Image = Resource._04imgLock_off;
             }
             else
             {
@@ -366,7 +368,8 @@ namespace Server
                 notifyIcon.ContextMenu.MenuItems[1].Checked = true;
 
                 MessageBox.Show("키보드와 마우스 잠금을 설정하였습니다.", "잠금 설정", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnLock.Text = "잠금 해제";
+                //btnLock.Text = "잠금 해제";
+                btnLock.Image = Resource._04imgLock_on;
             }
         }
 
@@ -378,7 +381,8 @@ namespace Server
                 notifyIcon.ContextMenu.MenuItems[2].Checked = false;
 
                 MessageBox.Show("인터넷 차단을 해제하였습니다.", "차단 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnInternet.Text = "인터넷 차단";
+                // btnInternet.Text = "인터넷 차단";
+                btnInternet.Image = Resource._03imgInternet_on;
             }
             else
             {
@@ -386,7 +390,8 @@ namespace Server
                 notifyIcon.ContextMenu.MenuItems[2].Checked = true;
 
                 MessageBox.Show("인터넷 차단을 설정하였습니다.", "차단 설정", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnInternet.Text = "차단 해제";
+                // btnInternet.Text = "차단 해제";
+                btnInternet.Image = Resource._03imgInternet_off;
             }
         }
 
@@ -404,14 +409,16 @@ namespace Server
             {
 
                 standardSignalObj.IsTaskMgrEnabled = true;
-                btnCtrlTaskMgr.Text = "작업관리자 비활성화";
+                // btnCtrlTaskMgr.Text = "작업관리자 비활성화";
+                btnCtrlTaskMgr.Image = Resource._05imgCtrlTaskMgr_on;
                 notifyIcon.ContextMenu.MenuItems[6].Text = "작업관리자 비활성화";
 
             }
             else
             {
                 standardSignalObj.IsTaskMgrEnabled = false;
-                btnCtrlTaskMgr.Text = "작업관리자 활성화";
+                //btnCtrlTaskMgr.Text = "작업관리자 활성화";
+                btnCtrlTaskMgr.Image = Resource._05imgCtrlTaskMgr_off;
                 notifyIcon.ContextMenu.MenuItems[6].Text = "작업관리자 활성화";
             }
         }

@@ -30,92 +30,21 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Server));
-            this.btnStreaming = new System.Windows.Forms.Button();
-            this.btnLock = new System.Windows.Forms.Button();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.btnViewer = new System.Windows.Forms.Button();
-            this.btnInternet = new System.Windows.Forms.Button();
-            this.btnPower = new System.Windows.Forms.Button();
-            this.btnCtrlTaskMgr = new System.Windows.Forms.Button();
             this.cbMonitor = new System.Windows.Forms.ComboBox();
+            this.btnCtrlTaskMgr = new System.Windows.Forms.Button();
+            this.btnInternet = new System.Windows.Forms.Button();
+            this.btnViewer = new System.Windows.Forms.Button();
+            this.btnLock = new System.Windows.Forms.Button();
+            this.btnPower = new System.Windows.Forms.Button();
+            this.btnStreaming = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // btnStreaming
-            // 
-            this.btnStreaming.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.btnStreaming.Location = new System.Drawing.Point(12, 54);
-            this.btnStreaming.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnStreaming.Name = "btnStreaming";
-            this.btnStreaming.Size = new System.Drawing.Size(288, 50);
-            this.btnStreaming.TabIndex = 0;
-            this.btnStreaming.Text = "실시간 방송";
-            this.btnStreaming.UseVisualStyleBackColor = true;
-            this.btnStreaming.Click += new System.EventHandler(this.BtnStreaming_Click);
-            // 
-            // btnLock
-            // 
-            this.btnLock.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.btnLock.Location = new System.Drawing.Point(12, 184);
-            this.btnLock.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btnLock.Name = "btnLock";
-            this.btnLock.Size = new System.Drawing.Size(288, 50);
-            this.btnLock.TabIndex = 2;
-            this.btnLock.Text = "키보드 마우스 잠금";
-            this.btnLock.UseVisualStyleBackColor = true;
-            this.btnLock.Click += new System.EventHandler(this.BtnLock_Click);
             // 
             // notifyIcon
             // 
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "ClassNet";
             this.notifyIcon.Visible = true;
-            // 
-            // btnViewer
-            // 
-            this.btnViewer.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.btnViewer.Location = new System.Drawing.Point(12, 119);
-            this.btnViewer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btnViewer.Name = "btnViewer";
-            this.btnViewer.Size = new System.Drawing.Size(288, 50);
-            this.btnViewer.TabIndex = 3;
-            this.btnViewer.Text = "화면 모니터링";
-            this.btnViewer.UseVisualStyleBackColor = true;
-            this.btnViewer.Click += new System.EventHandler(this.BtnMonitoring_Click);
-            // 
-            // btnInternet
-            // 
-            this.btnInternet.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.btnInternet.Location = new System.Drawing.Point(12, 249);
-            this.btnInternet.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btnInternet.Name = "btnInternet";
-            this.btnInternet.Size = new System.Drawing.Size(288, 50);
-            this.btnInternet.TabIndex = 3;
-            this.btnInternet.Text = "인터넷 차단";
-            this.btnInternet.UseVisualStyleBackColor = true;
-            this.btnInternet.Click += new System.EventHandler(this.BtnInternet_Click);
-            // 
-            // btnPower
-            // 
-            this.btnPower.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.btnPower.Location = new System.Drawing.Point(12, 382);
-            this.btnPower.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnPower.Name = "btnPower";
-            this.btnPower.Size = new System.Drawing.Size(288, 50);
-            this.btnPower.TabIndex = 1;
-            this.btnPower.Text = "학생 PC 전원 종료";
-            this.btnPower.UseVisualStyleBackColor = true;
-            this.btnPower.Click += new System.EventHandler(this.BtnPower_Click);
-            // 
-            // btnCtrlTaskMgr
-            // 
-            this.btnCtrlTaskMgr.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.btnCtrlTaskMgr.Location = new System.Drawing.Point(12, 314);
-            this.btnCtrlTaskMgr.Name = "btnCtrlTaskMgr";
-            this.btnCtrlTaskMgr.Size = new System.Drawing.Size(288, 53);
-            this.btnCtrlTaskMgr.TabIndex = 4;
-            this.btnCtrlTaskMgr.Text = "작업관리자 활성화";
-            this.btnCtrlTaskMgr.UseVisualStyleBackColor = true;
-            this.btnCtrlTaskMgr.Click += new System.EventHandler(this.BtnCtrlTaskMgr_Click);
             // 
             // cbMonitor
             // 
@@ -126,11 +55,103 @@
             this.cbMonitor.TabIndex = 5;
             this.cbMonitor.SelectedIndexChanged += new System.EventHandler(this.CbMonitor_SelectedIndexChanged);
             // 
+            // btnCtrlTaskMgr
+            // 
+            this.btnCtrlTaskMgr.FlatAppearance.BorderSize = 0;
+            this.btnCtrlTaskMgr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCtrlTaskMgr.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnCtrlTaskMgr.Image = global::Server.Properties.Resources._05imgCtrlTaskMgr_off;
+            this.btnCtrlTaskMgr.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnCtrlTaskMgr.Location = new System.Drawing.Point(0, 460);
+            this.btnCtrlTaskMgr.Margin = new System.Windows.Forms.Padding(0);
+            this.btnCtrlTaskMgr.Name = "btnCtrlTaskMgr";
+            this.btnCtrlTaskMgr.Size = new System.Drawing.Size(370, 90);
+            this.btnCtrlTaskMgr.TabIndex = 1;
+            this.btnCtrlTaskMgr.UseVisualStyleBackColor = true;
+            this.btnCtrlTaskMgr.Click += new System.EventHandler(this.BtnCtrlTaskMgr_Click);
+            // 
+            // btnInternet
+            // 
+            this.btnInternet.FlatAppearance.BorderSize = 0;
+            this.btnInternet.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnInternet.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnInternet.Image = global::Server.Properties.Resources._03imgInternet_on;
+            this.btnInternet.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnInternet.Location = new System.Drawing.Point(0, 280);
+            this.btnInternet.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnInternet.Name = "btnInternet";
+            this.btnInternet.Size = new System.Drawing.Size(370, 90);
+            this.btnInternet.TabIndex = 3;
+            this.btnInternet.UseVisualStyleBackColor = true;
+            this.btnInternet.Click += new System.EventHandler(this.BtnInternet_Click);
+            // 
+            // btnViewer
+            // 
+            this.btnViewer.FlatAppearance.BorderSize = 0;
+            this.btnViewer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnViewer.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnViewer.Image = global::Server.Properties.Resources._02imgViewer;
+            this.btnViewer.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnViewer.Location = new System.Drawing.Point(0, 190);
+            this.btnViewer.Margin = new System.Windows.Forms.Padding(0);
+            this.btnViewer.Name = "btnViewer";
+            this.btnViewer.Size = new System.Drawing.Size(370, 90);
+            this.btnViewer.TabIndex = 3;
+            this.btnViewer.UseVisualStyleBackColor = true;
+            this.btnViewer.Click += new System.EventHandler(this.BtnMonitoring_Click);
+            // 
+            // btnLock
+            // 
+            this.btnLock.FlatAppearance.BorderSize = 0;
+            this.btnLock.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLock.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnLock.Image = global::Server.Properties.Resources._04imgLock_on;
+            this.btnLock.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnLock.Location = new System.Drawing.Point(0, 370);
+            this.btnLock.Margin = new System.Windows.Forms.Padding(0);
+            this.btnLock.Name = "btnLock";
+            this.btnLock.Size = new System.Drawing.Size(370, 90);
+            this.btnLock.TabIndex = 2;
+            this.btnLock.UseVisualStyleBackColor = true;
+            this.btnLock.Click += new System.EventHandler(this.BtnLock_Click);
+            // 
+            // btnPower
+            // 
+            this.btnPower.FlatAppearance.BorderSize = 0;
+            this.btnPower.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPower.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnPower.Image = global::Server.Properties.Resources._06imgPower;
+            this.btnPower.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnPower.Location = new System.Drawing.Point(0, 550);
+            this.btnPower.Margin = new System.Windows.Forms.Padding(0);
+            this.btnPower.Name = "btnPower";
+            this.btnPower.Size = new System.Drawing.Size(370, 90);
+            this.btnPower.TabIndex = 1;
+            this.btnPower.UseVisualStyleBackColor = true;
+            this.btnPower.Click += new System.EventHandler(this.BtnPower_Click);
+            // 
+            // btnStreaming
+            // 
+            this.btnStreaming.FlatAppearance.BorderSize = 0;
+            this.btnStreaming.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStreaming.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnStreaming.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnStreaming.Image = global::Server.Properties.Resources._01imgStreaming_on;
+            this.btnStreaming.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnStreaming.Location = new System.Drawing.Point(0, 100);
+            this.btnStreaming.Margin = new System.Windows.Forms.Padding(0);
+            this.btnStreaming.Name = "btnStreaming";
+            this.btnStreaming.Size = new System.Drawing.Size(370, 90);
+            this.btnStreaming.TabIndex = 0;
+            this.btnStreaming.UseVisualStyleBackColor = true;
+            this.btnStreaming.Click += new System.EventHandler(this.BtnStreaming_Click);
+            // 
             // Server
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(312, 447);
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(367, 638);
             this.Controls.Add(this.cbMonitor);
             this.Controls.Add(this.btnCtrlTaskMgr);
             this.Controls.Add(this.btnInternet);
@@ -138,7 +159,7 @@
             this.Controls.Add(this.btnLock);
             this.Controls.Add(this.btnPower);
             this.Controls.Add(this.btnStreaming);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Server";
             this.Text = "ClassNet";
@@ -152,13 +173,17 @@
 
         private System.Windows.Forms.Button btnStreaming;
 
+
+        private System.Windows.Forms.Button btnCtrlTaskMgr;
+
         private System.Windows.Forms.Button btnLock;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.Button btnViewer;
         private System.Windows.Forms.Button btnInternet;
         private System.Windows.Forms.Button btnPower;
-        private System.Windows.Forms.Button btnCtrlTaskMgr;
+
         private System.Windows.Forms.ComboBox cbMonitor;
+
     }
 }
 
