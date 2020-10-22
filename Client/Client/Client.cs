@@ -47,10 +47,10 @@ namespace Client
 
         private static bool isFirst;
         private static bool isCapture;
-
-        // 서버에서 보내는 이미지 찍는거 외의 활동들
+        
+        //서버에서 보내는 이미지 찍는거 외의 활동들
         Action assistanceAction;
-        // 서버와 연결 이후에 실행될 Task
+        //서버와 연결 이후에 실행될 Task
         public Task afterConnect;
 
         public Client()
@@ -188,7 +188,7 @@ namespace Client
 
                 //화면 찍는거 외의 행동들, 반복 텀 조절할 필요 있음 ㅇㅇ
                 assistanceAction = new Action(() =>
-               {
+                {
                    while (true)
                    {
                        ControllingLock();
@@ -200,6 +200,7 @@ namespace Client
                        Thread.Sleep(0);
                    }
                });
+
             }
 
             afterConnect = Task.Run(beforeConnect);
@@ -383,6 +384,7 @@ namespace Client
                                 ds.Close();
                             }
                         }
+
                         screenImage.Image = Image.FromStream(post_ms);
 
                         post_ms.Close();

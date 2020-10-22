@@ -135,8 +135,9 @@ namespace Server
             clientsViewer = new Viewer();
             clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
 
+            
             sc = Screen.AllScreens;
-            foreach (var mon in sc)
+            foreach(var mon in sc)
             {
                 cbMonitor.Items.Add(Regex.Replace(mon.DeviceName, @"[^0-9a-zA-Z가-힣]", "").Trim());
             }
@@ -146,7 +147,7 @@ namespace Server
             bmp = null;
             g = null;
 
-            // 화면 이미지 객체 생성
+
             ThreadPool.QueueUserWorkItem(ImageCreate);
         }
 
@@ -429,6 +430,7 @@ namespace Server
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
             standardSignalObj.IsShutdown = true;
+            standardSignalObj.IsMonitoring = false;
             standardSignalObj.IsInternet = false;
             standardSignalObj.IsLock = false;
             standardSignalObj.IsTaskMgrEnabled = true;
@@ -449,6 +451,5 @@ namespace Server
         {
             selectedScreen = cbMonitor.SelectedIndex;
         }
-
     }
 }

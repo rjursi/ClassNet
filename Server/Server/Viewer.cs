@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Server
@@ -64,8 +66,9 @@ namespace Server
                     bmp.Save($"{filePath}{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                 }
         }
-        public void FullPicture(Student sendStu)
-        {
+
+        public void FullPicture(Student sendStu) { 
+
             focusingTimer.Tick += new EventHandler((sender, e) => InterateFocusView(sendStu.img));
             focusingTimer.Interval = 500;
             focusingTimer.Start();
@@ -75,6 +78,8 @@ namespace Server
 
             renderingTimer.Interval = 700;
         }
+
+
         public Panel AddClientPanel(string key)
         {
             Student stu = clientsList[key] as Student;
@@ -99,12 +104,12 @@ namespace Server
                 SizeMode = PictureBoxSizeMode.StretchImage,
                 Image = stu.img // 캡처 이미지
             };
-
             void customMouseEvent(object sender, MouseEventArgs e) => GetPicture(pbClient, e);
             void customEvent(object sender, EventArgs e) => FullPicture(stu);
 
             pbClient.MouseDown += customMouseEvent;
             pbClient.DoubleClick += customEvent;
+
 
             if (clientsPicture.ContainsKey(key))
             {
