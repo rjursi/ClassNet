@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csp
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{C81B6D78-A317-4C71-9657-05D3D6B04C4D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedularAdder", "SchedularAdder\SchedularAdder.csproj", "{8048EF13-86B2-4EF4-9C43-2A0267C28864}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{7E13E15C-FC98-4002-8393-DB8DDFE1EF0D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C81B6D78-A317-4C71-9657-05D3D6B04C4D}.Debug|Any CPU.ActiveCfg = Debug
 		{C81B6D78-A317-4C71-9657-05D3D6B04C4D}.Release|Any CPU.ActiveCfg = Release
+		{8048EF13-86B2-4EF4-9C43-2A0267C28864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8048EF13-86B2-4EF4-9C43-2A0267C28864}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8048EF13-86B2-4EF4-9C43-2A0267C28864}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8048EF13-86B2-4EF4-9C43-2A0267C28864}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

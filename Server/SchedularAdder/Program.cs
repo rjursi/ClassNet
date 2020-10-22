@@ -20,10 +20,10 @@ namespace SchedularAdder
                 string currentExePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 try
                 {
-                    ts.RootFolder.CreateFolder("MOSH Client");
+                    ts.RootFolder.CreateFolder("ClassNet Server");
                     TaskDefinition td = ts.NewTask();
 
-                    td.RegistrationInfo.Description = "MOSH Client 프로그램 윈도우 시작시 자동시작";
+                    td.RegistrationInfo.Description = "ClassNet Server 프로그램 윈도우 시작시 자동시작";
                     td.Principal.RunLevel = TaskRunLevel.Highest; // 시스템 최고 권한으로 시작
 
 
@@ -36,17 +36,17 @@ namespace SchedularAdder
 
 
 
-                    td.Actions.Add(new ExecAction(currentExePath + "\\Client.exe")); //프로그램, 인자등록.
+                    td.Actions.Add(new ExecAction(currentExePath + "\\Server.exe")); //프로그램, 인자등록.
 
 
-                    ts.RootFolder.RegisterTaskDefinition("MOSH Client\\Run When Logon", td);
+                    ts.RootFolder.RegisterTaskDefinition("ClassNet Server\\Run When Logon", td);
                     Console.WriteLine("Schedular Adder : 작업 등록이 성공적으로 완료되었습니다...");
                     Thread.Sleep(1500);
                 }
                 catch (Exception e)
                 {
 
-                    MessageBox.Show($"{e.Message} : {e.StackTrace}");
+                    MessageBox.Show($"{e.Message} : {e.StackTrace}");   
                 }
             }
         }
