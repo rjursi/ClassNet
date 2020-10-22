@@ -13,8 +13,6 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-using System.Threading.Tasks;
-
 namespace Server
 {
     public partial class Server : Form
@@ -106,12 +104,11 @@ namespace Server
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("실시간 방송", new EventHandler((s, ea) => BtnStreaming_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("화면 모니터링", new EventHandler((s, ea) => BtnMonitoring_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("키보드 마우스 잠금", new EventHandler((s, ea) => BtnLock_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("인터넷 차단", new EventHandler((s, ea) => BtnInternet_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("작업관리자 활성화", new EventHandler((s, ea) => BtnCtrlTaskMgr_Click(s, ea))));
-            ctx.MenuItems.Add(new MenuItem("학생 PC 전원 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("입력 잠금", new EventHandler((s, ea) => BtnLock_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("작업관리자 잠금 해제", new EventHandler((s, ea) => BtnCtrlTaskMgr_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("학생 PC 전체 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
             ctx.MenuItems.Add("-");
-
             ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => { })));
 
             notifyIcon.ContextMenu = ctx;
@@ -120,6 +117,7 @@ namespace Server
 
         private void Server_Load(object sender, EventArgs e)
         {
+            ThreadPool.SetMaxThreads(50, 50);
 
             standardSignalObj = new SignalObj();
 
@@ -149,11 +147,15 @@ namespace Server
             g = null;
 
             // 화면 이미지 객체 생성
+<<<<<<< HEAD
             
 
             //await Task.Run(() => ImageCreate());
             ThreadPool.QueueUserWorkItem(ImageCreate);
 
+=======
+            ThreadPool.QueueUserWorkItem(ImageCreate);
+>>>>>>> b8a6cee612769f96753c59a2b0b969da3b686e1c
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -218,8 +220,7 @@ namespace Server
                     }
                     else
                     {
-                        Console.WriteLine(co.buffer.Length);
-                        ImageOutput(co.address, co.buffer);
+                        if(co.buffer.Length > 4) ImageOutput(co.address, co.buffer);
                     }
 
                     Byte[] signal = SignalObjToByte(standardSignalObj);
@@ -334,7 +335,7 @@ namespace Server
                 standardSignalObj.ServerScreenData = imageData;
 
                 // 폼 버튼 변경
-                btnStreaming.Text = "방송 중지";
+                btnStreaming.Text = "실시간 방송 중지";
 
                 // 트레이 아이콘 공유 버튼 상태 변경
                 notifyIcon.ContextMenu.MenuItems[0].Checked = true;
@@ -351,28 +352,15 @@ namespace Server
 
         private void BtnMonitoring_Click(object sender, EventArgs e)
         {
+            if (notifyIcon.ContextMenu.MenuItems[0].Checked)
+            {
+                standardSignalObj.ServerScreenData = null;
+                btnStreaming.Text = "실시간 방송";
+                notifyIcon.ContextMenu.MenuItems[0].Checked = false;
+            }
+
             standardSignalObj.IsMonitoring = true;
             clientsViewer.ShowDialog();
-        }
-
-        private void BtnLock_Click(object sender, EventArgs e)
-        {
-            if (standardSignalObj.IsLock)
-            {
-                standardSignalObj.IsLock = false;
-                notifyIcon.ContextMenu.MenuItems[1].Checked = false;
-
-                MessageBox.Show("키보드 및 마우스 잠금을 해제하였습니다.", "잠금 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnLock.Text = "키보드 및 마우스 잠금";
-            }
-            else
-            {
-                standardSignalObj.IsLock = true;
-                notifyIcon.ContextMenu.MenuItems[1].Checked = true;
-
-                MessageBox.Show("키보드와 마우스 잠금을 설정하였습니다.", "잠금 설정", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnLock.Text = "잠금 해제";
-            }
         }
 
         private void BtnInternet_Click(object sender, EventArgs e)
@@ -380,51 +368,74 @@ namespace Server
             if (standardSignalObj.IsInternet)
             {
                 standardSignalObj.IsInternet = false;
+                btnInternet.Text = "인터넷 차단";
                 notifyIcon.ContextMenu.MenuItems[2].Checked = false;
 
-                MessageBox.Show("인터넷 차단을 해제하였습니다.", "차단 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnInternet.Text = "인터넷 차단";
+                MessageBox.Show("인터넷 차단을 해제하였습니다.", "인터넷 차단 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
                 standardSignalObj.IsInternet = true;
+                btnInternet.Text = "인터넷 차단 해제";
                 notifyIcon.ContextMenu.MenuItems[2].Checked = true;
 
-                MessageBox.Show("인터넷 차단을 설정하였습니다.", "차단 설정", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                btnInternet.Text = "차단 해제";
+                MessageBox.Show("인터넷 차단을 설정하였습니다.", "인터넷 차단", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void BtnLock_Click(object sender, EventArgs e)
+        {
+            if (standardSignalObj.IsLock)
+            {
+                standardSignalObj.IsLock = false;
+                btnLock.Text = "입력 잠금";
+                notifyIcon.ContextMenu.MenuItems[3].Checked = false;
+
+                MessageBox.Show("입력 잠금을 해제하였습니다.", "입력 잠금 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                standardSignalObj.IsLock = true;
+                btnLock.Text = "입력 잠금 해제";
+                notifyIcon.ContextMenu.MenuItems[3].Checked = true;
+
+                MessageBox.Show("입력 잠금을 설정하였습니다.", "입력 잠금", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void BtnCtrlTaskMgr_Click(object sender, EventArgs e)
+        {
+            if (standardSignalObj.IsTaskMgrEnabled)
+            {
+                standardSignalObj.IsTaskMgrEnabled = false;
+                btnCtrlTaskMgr.Text = "작업관리자 잠금 해제";
+                notifyIcon.ContextMenu.MenuItems[4].Checked = false;
+
+                MessageBox.Show("작업관리자 잠금을 해제하였습니다.", "작업관리자 잠금 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                standardSignalObj.IsTaskMgrEnabled = true;
+                btnCtrlTaskMgr.Text = "작업관리자 잠금";
+                notifyIcon.ContextMenu.MenuItems[4].Checked = true;
+
+                MessageBox.Show("작업관리자 잠금을 설정하였습니다.", "작업관리자 잠금", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
         private void BtnPower_Click(object sender, EventArgs e)
         {
-            standardSignalObj.IsPower = true;
-            Thread.Sleep(500);
-            standardSignalObj.IsPower = false;
-        }
-
-
-        private void BtnCtrlTaskMgr_Click(object sender, EventArgs e)
-        {
-            if (!standardSignalObj.IsTaskMgrEnabled)
+            if (MessageBox.Show("연결된 학생 PC 전체를 종료하시겠습니까?", "학생 PC 전체 종료",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
             {
-
-                standardSignalObj.IsTaskMgrEnabled = true;
-                btnCtrlTaskMgr.Text = "작업관리자 비활성화";
-                notifyIcon.ContextMenu.MenuItems[6].Text = "작업관리자 비활성화";
-
-            }
-            else
-            {
-                standardSignalObj.IsTaskMgrEnabled = false;
-                btnCtrlTaskMgr.Text = "작업관리자 활성화";
-                notifyIcon.ContextMenu.MenuItems[6].Text = "작업관리자 활성화";
+                standardSignalObj.IsPower = true;
+                Thread.Sleep(500);
+                standardSignalObj.IsPower = false;
             }
         }
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
-
         {
-
             standardSignalObj.IsShutdown = true;
             standardSignalObj.IsInternet = false;
             standardSignalObj.IsLock = false;
@@ -434,14 +445,12 @@ namespace Server
             Dispose();
 
             standardSignalObj.IsMonitoring = false;
-
         }
 
         private void Viewer_FormClosed(object sender, FormClosedEventArgs e)
         {
-
             standardSignalObj.IsMonitoring = false;
-
+            clientsViewer.Close();
         }
 
         private void CbMonitor_SelectedIndexChanged(object sender, EventArgs e)

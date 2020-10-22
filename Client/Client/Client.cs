@@ -8,11 +8,11 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
-using InternetControl;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-
 using System.Threading;
+
+using InternetControl;
 
 namespace Client
 {
@@ -29,7 +29,6 @@ namespace Client
         private string stuInfo; // 로그인 데이터를 담을 변수
         private bool isLogin = false;
 
-       
         private static Action mainAction;
 
         private static SignalObj standardSignalObj;
@@ -49,11 +48,10 @@ namespace Client
         private static bool isFirst;
         private static bool isCapture;
 
-        //서버에서 보내는 이미지 찍는거 외의 활동들
+        // 서버에서 보내는 이미지 찍는거 외의 활동들
         Action assistanceAction;
-        //서버와 연결 이후에 실행될 Task
+        // 서버와 연결 이후에 실행될 Task
         public Task afterConnect;
-
 
         public Client()
         {
@@ -82,14 +80,11 @@ namespace Client
         }
         // DPI 설정 부분 끝
 
-        private async void Client_Load(object sender, EventArgs e)
+        private void Client_Load(object sender, EventArgs e)
         {
-
-           
             if (ClassNetConfig.GetAppConfig("SERVER_IP").Equals(""))
             {
-
-                MessageBox.Show("서버 IP 설정이 되어있지 않습니다. 서버 IP 설정 창으로 넘어갑니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("서버 IP 설정이 필요합니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 using (SetIPAddressForm setIPAddressForm = new SetIPAddressForm())
                 {
@@ -99,7 +94,6 @@ namespace Client
                     {
                         ClassNetConfig.SetAppConfig("SERVER_IP", setIPAddressForm.ServerIP);
                     }
-
                 }
             }
 
@@ -108,90 +102,46 @@ namespace Client
             // DPI 설정 메소드 호출
             SetDpiAwareness();
 
-
             while (!isLogin)
             {
                 loginForm = new LoginForm();
                 loginForm.ShowDialog(); // ShowDialog 실행, 닫힐 때 까지 프로그램은 일시정지.
                 stuInfo = loginForm.stuInfo; // 로그인 데이터를 변수에 담음.
 
-
-                if (stuInfo.Length > 0)
-                {
-                    isLogin = true;
-                }
-
+                if (stuInfo.Length > 0) isLogin = true;
             }
-
 
             transparentForm = new TransparentForm();
             if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
             {
-
                 transparentForm.FormStatus = TransparentForm.ADMINFORM;
-                transparentForm.ShowDialog();
+                transparentForm.Show();
+                transparentForm.Hide();
             }
             else
             {
                 transparentForm.FormStatus = TransparentForm.USERFORM;
-
                 transparentForm.Show();
                 transparentForm.Hide();
             }
 
-
-
-            //while (!isConnected)
-            //{
-            //    try
-            //    {
-
-            //        server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            //        IPEndPoint ep = new IPEndPoint(IPAddress.Parse(SERVER_IP), CLASSNETPORT);
-            //        server.Connect(ep);
-
-            //        // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
-            //        this.ShowInTaskbar = false;
-
-            //        // 받은 이미지를 풀스크린으로 띄우는 설정
-            //        /*FormBorderStyle = FormBorderStyle.None;
-            //        WindowState = FormWindowState.Maximized;
-            //        screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-            //        screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
-
-            //        // 화면 폼을 가장 맨 위로
-            //        TopMost = true;
-
-            //        isConnected = true;
-
-            //    }
-            //    catch (SocketException)
-            //    {
-            //        isConnected = false; // 연결이 안 되면 대기상태 유지
-            //    }
-            //}
-
-
-
-            Action beforeConnect =  () =>
+            void beforeConnect()
             {
                 this.Invoke(new Action(delegate ()
                 {
                     this.Hide();
 
-                    Console.WriteLine("sex");
+                   // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
+                   this.ShowInTaskbar = false;
 
-                    // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
-                    this.ShowInTaskbar = false;
+                   // 받은 이미지를 풀스크린으로 띄우는 설정
+                   /*FormBorderStyle = FormBorderStyle.None;
+                   WindowState = FormWindowState.Maximized;
+                   screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
+                   screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
-                    // 받은 이미지를 풀스크린으로 띄우는 설정
-                    /*FormBorderStyle = FormBorderStyle.None;
-                    WindowState = FormWindowState.Maximized;
-                    screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-                    screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
-
-                    // 화면 폼을 가장 맨 위로
-                    TopMost = true;
+                   // 화면 폼을 가장 맨 위로
+                   TopMost = true;
                 }));
 
                 while (!isConnected)
@@ -202,36 +152,29 @@ namespace Client
                         IPEndPoint ep = new IPEndPoint(IPAddress.Parse(SERVER_IP), CLASSNETPORT);
                         server.Connect(ep);
 
-                        //// 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
-                        //this.ShowInTaskbar = false;
+                        taskMgrController = new TaskMgrController();
+                        cmdProcessController = new CmdProcessController();
+                        firewallPortBlocker = new FirewallPortBlock();
 
-                        //// 받은 이미지를 풀스크린으로 띄우는 설정
-                        ///*FormBorderStyle = FormBorderStyle.None;
-                        //WindowState = FormWindowState.Maximized;
-                        //screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-                        //screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
+                        taskMgrController.KillTaskMgr();
+                        recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
+                        isFirst = true;
+                        isCapture = false;
 
-                        //// 화면 폼을 가장 맨 위로
-                        //TopMost = true;
-
-                        //this.BeginInvoke(new safvvvv(ssssss));
-
-                        //Action action2 = new Action(ssssss);
                         isConnected = true;
                     }
                     catch (SocketException)
                     {
                         isConnected = false; // 연결이 안 되면 대기상태 유지
-                        
                     }
-
                 }
 
-                taskMgrController = new TaskMgrController();
-                cmdProcessController = new CmdProcessController();
                 firewallPortBlocker = new FirewallPortBlock();
+                cmdProcessController = new CmdProcessController();
+                taskMgrController = new TaskMgrController();
 
                 taskMgrController.KillTaskMgr();
+
                 recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
                 isFirst = true;
                 isCapture = false;
@@ -241,12 +184,8 @@ namespace Client
                 param = new EncoderParameters();
                 param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
-                //this.Invoke(new SetOpacityDelegate(SetOpacityToZero));
-                //this.Invoke(new ScreenOffDelegate(OpacityDelegate), 0);
-
-                // 이런식으로 구현 기능에 대한 메소드를 추가하기 위해 아래와 같이 람다식으로 작성
-
                 InsertAction(() => ImageProcessing());
+<<<<<<< HEAD
                 InsertAction(() => { if (standardSignalObj.IsMonitoring) isCapture = true; });
                 //화면 찍는거 외의 행동들, 반복 텀 조절할 필요 있음 ㅇㅇ
                 assistanceAction = new Action( () =>
@@ -274,6 +213,24 @@ namespace Client
                 });
                 Console.WriteLine("fasdfsdfa");
             };
+=======
+
+                //화면 찍는거 외의 행동들, 반복 텀 조절할 필요 있음 ㅇㅇ
+                assistanceAction = new Action(() =>
+               {
+                   while (true)
+                   {
+                       ControllingLock();
+                       ControllingInternet();
+                       ControllingPower();
+                       CaptureProcessing();
+                       ControllingTaskMgr();
+
+                       Thread.Sleep(0);
+                   }
+               });
+            }
+>>>>>>> b8a6cee612769f96753c59a2b0b969da3b686e1c
 
 
             /*ControllingLock();
@@ -304,6 +261,7 @@ namespace Client
                // await Task.Run(assistanceAction);
                 
             });
+<<<<<<< HEAD
 
 
 
@@ -317,9 +275,9 @@ namespace Client
                     Thread.Sleep(1000);
                 }
             });
+=======
+>>>>>>> b8a6cee612769f96753c59a2b0b969da3b686e1c
         }
-
-        public delegate void safvvvv();
 
         public void InsertAction(Action action)
         {
@@ -423,6 +381,7 @@ namespace Client
             taskMgrController.CheckTaskMgrStatus(standardSignalObj.IsTaskMgrEnabled);
 
         }
+
         public void ControllingLock()
         {
             cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsLock);
@@ -447,7 +406,6 @@ namespace Client
                     standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, true);
             }
             else this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
-            
         }
 
         public void CaptureProcessing()
@@ -507,7 +465,6 @@ namespace Client
                                 ds.Close();
                             }
                         }
-                        imageSize.Text = imgSize.ToString();
                         screenImage.Image = Image.FromStream(post_ms);
 
                         post_ms.Close();
@@ -524,7 +481,6 @@ namespace Client
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
         }
 
-
         private void BtnSetServerIP_Click(object sender, EventArgs ea)
         {
             using (SetIPAddressForm setIPAddressForm = new SetIPAddressForm())
@@ -535,16 +491,9 @@ namespace Client
                 {
                     ClassNetConfig.SetAppConfig("SERVER_IP", setIPAddressForm.ServerIP);
 
-                    MessageBox.Show("서버 IP 가 수정이 되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("서버 IP가 수정되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
-        }
-
-        private void BtnLogout_Click(object sender, EventArgs ea)
-        {
-            this.DialogResult = DialogResult.OK;
-
-            this.Close();
         }
     }
 }
