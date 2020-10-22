@@ -22,7 +22,6 @@ namespace Client
             cfgCollection.Remove(key);
             cfgCollection.Add(key, value);
 
-
             config.Save(ConfigurationSaveMode.Modified);
 
             ConfigurationManager.RefreshSection(config.AppSettings.SectionInformation.Name);
@@ -38,16 +37,13 @@ namespace Client
 
             config.Save(ConfigurationSaveMode.Modified);
             ConfigurationManager.RefreshSection(config.AppSettings.SectionInformation.Name);
-
         }
-
 
         public static void RemoveAppConfig(string key)
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             KeyValueConfigurationCollection cfgCollection = config.AppSettings.Settings;
-
 
             try
             {
@@ -59,7 +55,7 @@ namespace Client
             catch (Exception e){
                 Console.WriteLine(e.StackTrace);
             }
-
         }
+
     }
 }
