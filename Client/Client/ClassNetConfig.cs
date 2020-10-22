@@ -68,8 +68,6 @@ namespace Client
 
             config.Save(ConfigurationSaveMode.Modified);
 
-            
-
             section.SectionInformation.ProtectSection("DataProtectionConfigurationProvider");
             section.SectionInformation.ForceSave = true;
             config.Save(ConfigurationSaveMode.Full);
@@ -92,9 +90,7 @@ namespace Client
         public static void RemoveAppConfig(string key)
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
             KeyValueConfigurationCollection cfgCollection = config.AppSettings.Settings;
-
             try
             {
                 cfgCollection.Remove(key);
@@ -106,6 +102,5 @@ namespace Client
                 Console.WriteLine(e.StackTrace);
             }
         }
-
     }
 }

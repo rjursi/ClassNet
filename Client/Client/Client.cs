@@ -56,6 +56,10 @@ namespace Client
         public Client()
         {
             InitializeComponent();
+
+            firewallPortBlocker = new FirewallPortBlock();
+            cmdProcessController = new CmdProcessController();
+            taskMgrController = new TaskMgrController();
         }
 
         // DPI 설정 부분 시작
@@ -99,9 +103,7 @@ namespace Client
 
             this.SERVER_IP = ClassNetConfig.GetAppConfig("SERVER_IP");
 
-            
             // DPI 설정 메소드 호출
-
             SetDpiAwareness();
 
             while (!isLogin)
@@ -162,10 +164,6 @@ namespace Client
                         isConnected = false; // 연결이 안 되면 대기상태 유지
                     }
                 }
-
-                firewallPortBlocker = new FirewallPortBlock();
-                cmdProcessController = new CmdProcessController();
-                taskMgrController = new TaskMgrController();
 
                 taskMgrController.KillTaskMgr();
 
@@ -406,6 +404,12 @@ namespace Client
                     MessageBox.Show("서버 IP가 수정되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
+        }
+
+        public void BtnLogout_Click()
+        {
+            this.Show();
+            this.BeginInvoke(new MethodInvoker(this.Close));
         }
     }
 }

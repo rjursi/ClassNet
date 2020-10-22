@@ -22,9 +22,7 @@ namespace Client
             InitializeComponent();
         }
 
-
         private void SetUserFormTrayIcon()
-
         {
             ContextMenu ctx = new ContextMenu();
             ctx.MenuItems.Add(new MenuItem("로그아웃", new EventHandler((s, ea) => BtnLogout_Click(s, ea))));
@@ -61,9 +59,7 @@ namespace Client
         
         private void BtnLogout_Click(object sender, EventArgs ea)
         {
-
-            this.DialogResult = DialogResult.OK;
-
+            new Client().BtnLogout_Click();
             this.Close();
         }
 
@@ -72,10 +68,7 @@ namespace Client
             switch (FormStatus)
             {
                 case ADMINFORM:
-
                     SetAdminFormTrayIcon();
-
-
                     break;
                 case USERFORM:
                     SetUserFormTrayIcon();
