@@ -27,7 +27,6 @@ namespace Client
         private string stuInfo; // 로그인 데이터를 담을 변수
         private bool isLogin = false;
 
-       
         private static Action mainAction;
 
         private static SignalObj standardSignalObj;
@@ -75,10 +74,9 @@ namespace Client
         // DPI 설정 부분 끝
 
         private void Client_Load(object sender, EventArgs e)
-        {           
+        {
             if (ClassNetConfig.GetAppConfig("SERVER_IP").Equals(""))
             {
-
                 MessageBox.Show("서버 IP 설정이 되어있지 않습니다. 서버 IP 설정 창으로 넘어갑니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 using (SetIPAddressForm setIPAddressForm = new SetIPAddressForm())
@@ -89,7 +87,6 @@ namespace Client
                     {
                         ClassNetConfig.SetAppConfig("SERVER_IP", setIPAddressForm.ServerIP);
                     }
-
                 }
             }
 
@@ -104,7 +101,7 @@ namespace Client
                 loginForm.ShowDialog(); // ShowDialog 실행, 닫힐 때 까지 프로그램은 일시정지.
                 stuInfo = loginForm.stuInfo; // 로그인 데이터를 변수에 담음.
 
-                if(stuInfo.Length > 0) isLogin = true;
+                if (stuInfo.Length > 0) isLogin = true;
             }
 
             
@@ -112,24 +109,17 @@ namespace Client
 
             if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
             {   
- 
                 transparentForm.FormStatus = TransparentForm.ADMINFORM;
                 transparentForm.ShowDialog();
-                
             }
             else
             {
-  
                 transparentForm.FormStatus = TransparentForm.USERFORM;
                 
                 transparentForm.Show();
                 transparentForm.Hide();
-       
-
             }
             
-            
-
             while (!isConnected)
             {
                 try
@@ -151,7 +141,6 @@ namespace Client
                     TopMost = true;
 
                     isConnected = true;
-                    
                 }
                 catch (SocketException)
                 {
@@ -159,13 +148,10 @@ namespace Client
                 }
             }
 
-
-
             NotifyIconSetting();
             taskMgrController = new TaskMgrController();
             cmdProcessController = new CmdProcessController();
             firewallPortBlocker = new FirewallPortBlock();
-
 
             taskMgrController.KillTaskMgr();
             recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
@@ -186,6 +172,7 @@ namespace Client
             InsertAction(() => ImageProcessing());
             InsertAction(() => CaptureProcessing());
             InsertAction(() => ControllingTaskMgr());
+
             Task.Run(()=> MainTask());
         }
        
@@ -314,7 +301,6 @@ namespace Client
                     standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, true);
             }
             else this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
-            
         }
 
         public void CaptureProcessing()
@@ -391,7 +377,6 @@ namespace Client
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
         }
 
-
         private void setUserFormTrayIcon()
         {
             ContextMenu ctx = new ContextMenu();
@@ -404,7 +389,7 @@ namespace Client
         private void setAdminFormTrayIcon()
         {
             ContextMenu ctx = new ContextMenu();
-            ctx.MenuItems.Add(new MenuItem("서버 IP 설정", new EventHandler((s, ea) => BtnSetServerIP_Click(s, ea))));
+            ctx.MenuItems.Add(new MenuItem("설정", new EventHandler((s, ea) => BtnSetServerIP_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("로그아웃", new EventHandler((s, ea) => BtnLogout_Click(s, ea))));
 
             this.notifyIcon.ContextMenu = ctx;
@@ -421,7 +406,7 @@ namespace Client
                 {
                     ClassNetConfig.SetAppConfig("SERVER_IP", setIPAddressForm.ServerIP);
 
-                    MessageBox.Show("서버 IP 가 수정이 되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("서버 IP가 수정되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
