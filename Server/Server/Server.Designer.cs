@@ -30,47 +30,14 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Server));
-            this.btnStreaming = new System.Windows.Forms.Button();
-            this.btnCtrlTaskMgr = new System.Windows.Forms.Button();
-            this.btnLock = new System.Windows.Forms.Button();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.btnViewer = new System.Windows.Forms.Button();
             this.btnInternet = new System.Windows.Forms.Button();
+            this.btnViewer = new System.Windows.Forms.Button();
+            this.btnLock = new System.Windows.Forms.Button();
             this.btnPower = new System.Windows.Forms.Button();
+            this.btnCtrlTaskMgr = new System.Windows.Forms.Button();
+            this.btnStreaming = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // btnStreaming
-            // 
-            this.btnStreaming.Location = new System.Drawing.Point(12, 11);
-            this.btnStreaming.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnStreaming.Name = "btnStreaming";
-            this.btnStreaming.Size = new System.Drawing.Size(221, 35);
-            this.btnStreaming.TabIndex = 0;
-            this.btnStreaming.Text = "실시간 방송";
-            this.btnStreaming.UseVisualStyleBackColor = true;
-            this.btnStreaming.Click += new System.EventHandler(this.BtnStreaming_Click);
-            // 
-            // btnCtrlTaskMgr
-            // 
-            this.btnCtrlTaskMgr.Location = new System.Drawing.Point(12, 291);
-            this.btnCtrlTaskMgr.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btnCtrlTaskMgr.Name = "btnCtrlTaskMgr";
-            this.btnCtrlTaskMgr.Size = new System.Drawing.Size(221, 35);
-            this.btnCtrlTaskMgr.TabIndex = 1;
-            this.btnCtrlTaskMgr.Text = "작업관리자 활성화";
-            this.btnCtrlTaskMgr.UseVisualStyleBackColor = true;
-            this.btnCtrlTaskMgr.Click += new System.EventHandler(this.BtnCtrlTaskMgr_Click);
-            // 
-            // btnLock
-            // 
-            this.btnLock.Location = new System.Drawing.Point(12, 123);
-            this.btnLock.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btnLock.Name = "btnLock";
-            this.btnLock.Size = new System.Drawing.Size(221, 35);
-            this.btnLock.TabIndex = 2;
-            this.btnLock.Text = "키보드 및 마우스 잠금";
-            this.btnLock.UseVisualStyleBackColor = true;
-            this.btnLock.Click += new System.EventHandler(this.BtnLock_Click);
             // 
             // notifyIcon
             // 
@@ -78,51 +45,104 @@
             this.notifyIcon.Text = "MOSH";
             this.notifyIcon.Visible = true;
             // 
-            // btnViewer
-            // 
-            this.btnViewer.Location = new System.Drawing.Point(12, 67);
-            this.btnViewer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.btnViewer.Name = "btnViewer";
-            this.btnViewer.Size = new System.Drawing.Size(221, 35);
-            this.btnViewer.TabIndex = 3;
-            this.btnViewer.Text = "학생 PC 모니터링";
-            this.btnViewer.UseVisualStyleBackColor = true;
-            this.btnViewer.Click += new System.EventHandler(this.BtnMonitoring_Click);
-            // 
             // btnInternet
             // 
-            this.btnInternet.Location = new System.Drawing.Point(12, 179);
-            this.btnInternet.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnInternet.FlatAppearance.BorderSize = 0;
+            this.btnInternet.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnInternet.Image = global::Server.Properties.Resources._03imgInternet_on;
+            this.btnInternet.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnInternet.Location = new System.Drawing.Point(0, 280);
+            this.btnInternet.Margin = new System.Windows.Forms.Padding(0);
             this.btnInternet.Name = "btnInternet";
-            this.btnInternet.Size = new System.Drawing.Size(221, 35);
+            this.btnInternet.Size = new System.Drawing.Size(370, 90);
             this.btnInternet.TabIndex = 3;
-            this.btnInternet.Text = "인터넷 차단";
             this.btnInternet.UseVisualStyleBackColor = true;
             this.btnInternet.Click += new System.EventHandler(this.BtnInternet_Click);
             // 
+            // btnViewer
+            // 
+            this.btnViewer.FlatAppearance.BorderSize = 0;
+            this.btnViewer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnViewer.Image = global::Server.Properties.Resources._02imgViewer;
+            this.btnViewer.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnViewer.Location = new System.Drawing.Point(0, 190);
+            this.btnViewer.Margin = new System.Windows.Forms.Padding(0);
+            this.btnViewer.Name = "btnViewer";
+            this.btnViewer.Size = new System.Drawing.Size(370, 90);
+            this.btnViewer.TabIndex = 3;
+            this.btnViewer.UseVisualStyleBackColor = true;
+            this.btnViewer.Click += new System.EventHandler(this.BtnMonitoring_Click);
+            // 
+            // btnLock
+            // 
+            this.btnLock.FlatAppearance.BorderSize = 0;
+            this.btnLock.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLock.Image = global::Server.Properties.Resources._04imgLock_on;
+            this.btnLock.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnLock.Location = new System.Drawing.Point(0, 370);
+            this.btnLock.Margin = new System.Windows.Forms.Padding(0);
+            this.btnLock.Name = "btnLock";
+            this.btnLock.Size = new System.Drawing.Size(370, 90);
+            this.btnLock.TabIndex = 2;
+            this.btnLock.UseVisualStyleBackColor = true;
+            this.btnLock.Click += new System.EventHandler(this.BtnLock_Click);
+            // 
             // btnPower
             // 
-            this.btnPower.Location = new System.Drawing.Point(12, 235);
-            this.btnPower.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnPower.FlatAppearance.BorderSize = 0;
+            this.btnPower.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPower.Image = global::Server.Properties.Resources._06imgPower;
+            this.btnPower.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnPower.Location = new System.Drawing.Point(0, 550);
+            this.btnPower.Margin = new System.Windows.Forms.Padding(0);
             this.btnPower.Name = "btnPower";
-            this.btnPower.Size = new System.Drawing.Size(221, 35);
+            this.btnPower.Size = new System.Drawing.Size(370, 90);
             this.btnPower.TabIndex = 1;
-            this.btnPower.Text = "강의실 PC 전원 종료";
             this.btnPower.UseVisualStyleBackColor = true;
             this.btnPower.Click += new System.EventHandler(this.BtnPower_Click);
+            // 
+            // btnCtrlTaskMgr
+            // 
+            this.btnCtrlTaskMgr.FlatAppearance.BorderSize = 0;
+            this.btnCtrlTaskMgr.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCtrlTaskMgr.Image = global::Server.Properties.Resources._05imgCtrlTaskMgr_off;
+            this.btnCtrlTaskMgr.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnCtrlTaskMgr.Location = new System.Drawing.Point(0, 460);
+            this.btnCtrlTaskMgr.Margin = new System.Windows.Forms.Padding(0);
+            this.btnCtrlTaskMgr.Name = "btnCtrlTaskMgr";
+            this.btnCtrlTaskMgr.Size = new System.Drawing.Size(370, 90);
+            this.btnCtrlTaskMgr.TabIndex = 1;
+            this.btnCtrlTaskMgr.UseVisualStyleBackColor = true;
+            this.btnCtrlTaskMgr.Click += new System.EventHandler(this.BtnCtrlTaskMgr_Click);
+            // 
+            // btnStreaming
+            // 
+            this.btnStreaming.FlatAppearance.BorderSize = 0;
+            this.btnStreaming.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStreaming.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnStreaming.Image = global::Server.Properties.Resources._01imgStreaming_on;
+            this.btnStreaming.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnStreaming.Location = new System.Drawing.Point(0, 100);
+            this.btnStreaming.Margin = new System.Windows.Forms.Padding(0);
+            this.btnStreaming.Name = "btnStreaming";
+            this.btnStreaming.Size = new System.Drawing.Size(370, 90);
+            this.btnStreaming.TabIndex = 0;
+            this.btnStreaming.UseVisualStyleBackColor = true;
+            this.btnStreaming.Click += new System.EventHandler(this.BtnStreaming_Click);
             // 
             // Server
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(245, 340);
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(367, 638);
             this.Controls.Add(this.btnInternet);
             this.Controls.Add(this.btnViewer);
             this.Controls.Add(this.btnLock);
             this.Controls.Add(this.btnPower);
             this.Controls.Add(this.btnCtrlTaskMgr);
             this.Controls.Add(this.btnStreaming);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Server";
             this.Text = "Server";
@@ -133,14 +153,13 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button btnStreaming;
         private System.Windows.Forms.Button btnCtrlTaskMgr;
         private System.Windows.Forms.Button btnLock;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.Button btnViewer;
         private System.Windows.Forms.Button btnInternet;
         private System.Windows.Forms.Button btnPower;
+        private System.Windows.Forms.Button btnStreaming;
     }
 }
 
