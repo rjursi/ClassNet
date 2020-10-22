@@ -36,19 +36,19 @@ namespace HookerProcess
             childProcessQuitThread = new Thread(ChildProcessQuit);
             childProcessQuitThread.Start(this.parentQuitMsg);
 
-            // 제어 기능 사용 시 아래 주석 제거
-            /*
-            taskMgrController.KillTaskMgr();
+
+       
             hooker.SetHook();
             ctrlAltDeleteScreenMgr.StartListeningForDesktopSwitch(hooker);
-            */
+            
 
+           
         }
 
         private void KeyMouseController_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //taskMgrController.EnableTaskMgr();
-            //hooker.UnHook();
+            
+            hooker.UnHook();
         }
 
         private void ChildProcessQuit(object parentQuitMsg)
@@ -70,9 +70,11 @@ namespace HookerProcess
                         while (!msg.StartsWith("quit"));
                     }
                 }
-
+                this.Close();
                 Application.Exit();
             }
         }
+
+       
     }
 }

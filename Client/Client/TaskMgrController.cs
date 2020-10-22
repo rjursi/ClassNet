@@ -2,10 +2,31 @@
 using System;
 using System.Windows.Forms;
 
-namespace HookerProcess
+namespace Client
 {
     class TaskMgrController
     {
+        private bool nowStatus = false;
+        public void CheckTaskMgrStatus(bool nowStatus)
+        {
+            if (this.nowStatus != nowStatus)
+            {
+                this.nowStatus = nowStatus;
+                this.TaskMgrControl();
+            }
+        }
+
+        private void TaskMgrControl()
+        {
+            if (this.nowStatus)
+            {
+                EnableTaskMgr();
+            }
+            else
+            {
+                KillTaskMgr();
+            }
+        }
         public void KillTaskMgr()
         {
             RegistryKey regkey;
