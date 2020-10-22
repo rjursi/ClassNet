@@ -8,9 +8,11 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
-using InternetControl;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Threading;
+
+using InternetControl;
 
 namespace Client
 {
@@ -194,6 +196,8 @@ namespace Client
                        ControllingPower();
                        CaptureProcessing();
                        ControllingTaskMgr();
+
+                       Thread.Sleep(0);
                    }
                });
             }

@@ -13,8 +13,6 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-using System.Threading.Tasks;
-
 namespace Server
 {
     public partial class Server : Form
@@ -111,15 +109,15 @@ namespace Server
             ctx.MenuItems.Add(new MenuItem("작업관리자 잠금 해제", new EventHandler((s, ea) => BtnCtrlTaskMgr_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("학생 PC 전체 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
             ctx.MenuItems.Add("-");
-
             ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => { })));
 
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
         }
 
-        private async void Server_Load(object sender, EventArgs e)
+        private void Server_Load(object sender, EventArgs e)
         {
+            ThreadPool.SetMaxThreads(50, 50);
 
             standardSignalObj = new SignalObj();
 
@@ -149,7 +147,7 @@ namespace Server
             g = null;
 
             // 화면 이미지 객체 생성
-            await Task.Run(() => ImageCreate()).ConfigureAwait(false);
+            ThreadPool.QueueUserWorkItem(ImageCreate);
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -214,8 +212,7 @@ namespace Server
                     }
                     else
                     {
-                        Console.WriteLine(co.buffer.Length);
-                        ImageOutput(co.address, co.buffer);
+                        if(co.buffer.Length > 4) ImageOutput(co.address, co.buffer);
                     }
 
                     Byte[] signal = SignalObjToByte(standardSignalObj);
@@ -255,7 +252,7 @@ namespace Server
             return buffer;
         }
 
-        public static void ImageCreate()
+        public static void ImageCreate(object obj)
         {
             Byte[] preData;
 
@@ -347,6 +344,13 @@ namespace Server
 
         private void BtnMonitoring_Click(object sender, EventArgs e)
         {
+            if (notifyIcon.ContextMenu.MenuItems[0].Checked)
+            {
+                standardSignalObj.ServerScreenData = null;
+                btnStreaming.Text = "실시간 방송";
+                notifyIcon.ContextMenu.MenuItems[0].Checked = false;
+            }
+
             standardSignalObj.IsMonitoring = true;
             clientsViewer.ShowDialog();
         }
@@ -438,6 +442,7 @@ namespace Server
         private void Viewer_FormClosed(object sender, FormClosedEventArgs e)
         {
             standardSignalObj.IsMonitoring = false;
+            clientsViewer.Close();
         }
 
         private void CbMonitor_SelectedIndexChanged(object sender, EventArgs e)
