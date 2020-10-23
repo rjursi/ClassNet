@@ -52,6 +52,7 @@ namespace Client
         Action assistanceAction;
         //서버와 연결 이후에 실행될 Task
         public Task afterConnect;
+        public Action beforeConnect;
 
         public Client()
         {
@@ -128,73 +129,8 @@ namespace Client
             }
             ClassNetConfig.FinishProtection();
 
-            void beforeConnect()
-            {
-                this.Invoke(new Action(delegate ()
-                {
-                    this.Hide();
+            beforeConnect = () => MethodBeforeConnect();
 
-                   // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
-                   this.ShowInTaskbar = false;
-
-                   // 받은 이미지를 풀스크린으로 띄우는 설정
-                   /*FormBorderStyle = FormBorderStyle.None;
-                   WindowState = FormWindowState.Maximized;
-                   screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-                   screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
-
-                   // 화면 폼을 가장 맨 위로
-                   TopMost = true;
-                }));
-
-                while (!isConnected)
-                {
-                    try
-                    {
-                        server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                        IPEndPoint ep = new IPEndPoint(IPAddress.Parse(SERVER_IP), CLASSNETPORT);
-                        server.Connect(ep);
-
-                        isConnected = true;
-                    }
-                    catch (SocketException)
-                    {
-                        isConnected = false; // 연결이 안 되면 대기상태 유지
-                    }
-                }
-
-                firewallPortBlocker = new FirewallPortBlock();
-                cmdProcessController = new CmdProcessController();
-                taskMgrController = new TaskMgrController();
-
-                taskMgrController.KillTaskMgr();
-
-                recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
-                isFirst = true;
-                isCapture = false;
-
-                // JPEG 손실 압축 수준 설정
-                codec = GetEncoder(ImageFormat.Jpeg);
-                param = new EncoderParameters();
-                param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
-
-                InsertAction(() => ImageProcessing());
-
-                assistanceAction = new Action(() =>
-                {
-                   while (true)
-                   {
-                       ControllingLock();
-                       ControllingInternet();
-                       ControllingPower();
-                       CaptureProcessing();
-                       ControllingTaskMgr();
-
-                       Thread.Sleep(0);
-                   }
-               });
-
-            }
 
 
             /*ControllingLock();
@@ -205,32 +141,88 @@ namespace Client
 
             afterConnect = Task.Run(beforeConnect);
 
-            CancellationTokenSource tokenSource = new CancellationTokenSource();
-
             afterConnect.ContinueWith(async (a) =>
             {
                 await Task.Run(() => {
-                    MainTask(tokenSource.Token);
-                    
+                    MainTask();     
                 });
-                //await Task.Run(assistanceAction);
+                await Task.Run(assistanceAction);
                 
             });
 
-            int i = 0;
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    i++;
-                    Console.WriteLine("Task : " + i);
-                    Thread.Sleep(1000);
-                }
-
-            });
                 
 
         }
+
+
+        public void MethodBeforeConnect()
+        {
+            this.Invoke(new Action(delegate ()
+            {
+                this.Hide();
+
+                // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
+                this.ShowInTaskbar = false;
+
+                // 받은 이미지를 풀스크린으로 띄우는 설정
+                /*FormBorderStyle = FormBorderStyle.None;
+                WindowState = FormWindowState.Maximized;
+                screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
+                screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
+
+                // 화면 폼을 가장 맨 위로
+                TopMost = true;
+            }));
+            while (!isConnected)
+            {
+                try
+                {
+                    server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    IPEndPoint ep = new IPEndPoint(IPAddress.Parse(SERVER_IP), CLASSNETPORT);
+                    server.Connect(ep);
+
+                    isConnected = true;
+                }
+                catch (SocketException)
+                {
+                    isConnected = false; // 연결이 안 되면 대기상태 유지
+                }
+            }
+
+            firewallPortBlocker = new FirewallPortBlock();
+            cmdProcessController = new CmdProcessController();
+            taskMgrController = new TaskMgrController();
+
+            taskMgrController.KillTaskMgr();
+
+            recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
+            isFirst = true;
+            isCapture = false;
+
+            // JPEG 손실 압축 수준 설정
+            codec = GetEncoder(ImageFormat.Jpeg);
+            param = new EncoderParameters();
+            param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
+
+            InsertAction(() => ImageProcessing());
+
+            assistanceAction = new Action(() =>
+            {
+                while (true)
+                {
+                    ControllingLock();
+                    ControllingInternet();
+                    ControllingPower();
+                    CaptureProcessing();
+                    ControllingTaskMgr();
+
+                    Thread.Sleep(0);
+                }
+            });
+
+        }
+
+
 
         public void InsertAction(Action action)
         {
@@ -281,12 +273,24 @@ namespace Client
             }
             catch (SocketException)
             {
+                isConnected = false;
                 server.Close();
                 if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
                 taskMgrController.CheckTaskMgrStatus(true);
-                this.Invoke(new MethodInvoker(() => { Dispose(); }));
+                //this.Invoke(new MethodInvoker(() => { Dispose(); }));
 
-                return null;
+                afterConnect = Task.Run(() => MethodBeforeConnect());
+                afterConnect.ContinueWith(async (a) =>
+                {
+                   await Task.Run(() =>
+                   {
+                       MainTask();
+                   });
+                   await Task.Run(assistanceAction);
+
+                });
+
+                return new SignalObj();
             }
             catch (NullReferenceException)
             {
@@ -294,24 +298,19 @@ namespace Client
                 if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
                 taskMgrController.CheckTaskMgrStatus(true);
                 this.Invoke(new MethodInvoker(() => { Dispose(); }));
-                return null;
+                return new SignalObj();
             }
         }
 
-        public async void MainTask(CancellationToken token)
+        public async void MainTask()
         {
             while (true)
             {
                 try
                 {
-                    //if (token.IsCancellationRequested == true) break;
                     using (standardSignalObj = ReceiveObject())
                     {
                         await Task.Run(mainAction);
-                        //Action[] ac = new Action[2];
-                        //ac[0] = mainAction;
-                        //ac[1] = assistanceAction;
-                        //Parallel.Invoke(ac);
                     }
                     
                    
@@ -359,13 +358,15 @@ namespace Client
 
         public void ImageProcessing()
         {
-            if(standardSignalObj.ServerScreenData != null)
+
+            if (standardSignalObj.ServerScreenData != null)
             {
                 // 이미지를 받아서 여기서 버퍼를 설정하는 부분
                 this.Invoke(new ScreenOnDelegate(OutputDelegate),
                     standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, true);
             }
             else this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
+
         }
 
         public void CaptureProcessing()
