@@ -16,7 +16,13 @@
         "Entry"
         {
         "MsmKey" = "8:_23526F85C8FE2C324C63909B5ED3053C"
-        "OwnerKey" = "8:_7B18A5C0CB9DB5FCE2A6FB0933E04498"
+        "OwnerKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_39E0E086024047C2A752D02A896698EF"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -27,14 +33,20 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
+        "OwnerKey" = "8:_8F43F3C126C54F4EACF507EFF5155349"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_75DC1555CF474202B0A4AF50EC8953A8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_7B18A5C0CB9DB5FCE2A6FB0933E04498"
-        "OwnerKey" = "8:_BEE06C91BE65429DA9ED7A021F217BAF"
+        "MsmKey" = "8:_8F43F3C126C54F4EACF507EFF5155349"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -46,13 +58,13 @@
         "Entry"
         {
         "MsmKey" = "8:_A6C68DEC3A1D1E0CF978E161F2FE7FC3"
-        "OwnerKey" = "8:_7B18A5C0CB9DB5FCE2A6FB0933E04498"
+        "OwnerKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_BEE06C91BE65429DA9ED7A021F217BAF"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_D38CF4AC3DC8EB93AE3B790091BCF015"
+        "OwnerKey" = "8:_DAEAEE4BB1F147B29211840F13C92649"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -64,25 +76,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BEE06C91BE65429DA9ED7A021F217BAF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_DAEAEE4BB1F147B29211840F13C92649"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_5DB63E0B2E3ECC3FD080CE269D60C33F"
+        "OwnerKey" = "8:_8F43F3C126C54F4EACF507EFF5155349"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7B18A5C0CB9DB5FCE2A6FB0933E04498"
+        "OwnerKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -95,6 +101,18 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_A6C68DEC3A1D1E0CF978E161F2FE7FC3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_5DB63E0B2E3ECC3FD080CE269D60C33F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_D38CF4AC3DC8EB93AE3B790091BCF015"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -225,8 +243,28 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:TRUE"
+            "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_39E0E086024047C2A752D02A896698EF"
+            {
+            "SourcePath" = "8:..\\Client\\bin\\Release\\Client.exe.config"
+            "TargetName" = "8:Client.exe.config"
+            "Tag" = "8:"
+            "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5DB63E0B2E3ECC3FD080CE269D60C33F"
@@ -243,6 +281,37 @@
                     }
                 }
             "SourcePath" = "8:Newtonsoft.Json.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5F399C5CF538247D0E78A9C74D2906E3"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Microsoft.Win32.TaskScheduler, Version=2.8.20.0, Culture=neutral, PublicKeyToken=c416bc1b32d97233, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_5F399C5CF538247D0E78A9C74D2906E3"
+                    {
+                    "Name" = "8:Microsoft.Win32.TaskScheduler.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Microsoft.Win32.TaskScheduler.DLL"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
@@ -291,20 +360,20 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7B18A5C0CB9DB5FCE2A6FB0933E04498"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8F43F3C126C54F4EACF507EFF5155349"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Microsoft.Win32.TaskScheduler, Version=2.8.20.0, Culture=neutral, PublicKeyToken=c416bc1b32d97233, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:SchedularAdder, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_7B18A5C0CB9DB5FCE2A6FB0933E04498"
+                    "_8F43F3C126C54F4EACF507EFF5155349"
                     {
-                    "Name" = "8:Microsoft.Win32.TaskScheduler.DLL"
+                    "Name" = "8:SchedularAdder.exe"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:Microsoft.Win32.TaskScheduler.DLL"
+            "SourcePath" = "8:..\\SchedularAdder\\bin\\Release\\SchedularAdder.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
@@ -319,7 +388,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A6C68DEC3A1D1E0CF978E161F2FE7FC3"
@@ -349,24 +418,24 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:TRUE"
+            "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BEE06C91BE65429DA9ED7A021F217BAF"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D38CF4AC3DC8EB93AE3B790091BCF015"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SchedularAdder, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:IPAddressControlLib, Version=1.0.3039.20052, Culture=neutral, PublicKeyToken=9695e912950a5d9b"
                 "ScatterAssemblies"
                 {
-                    "_BEE06C91BE65429DA9ED7A021F217BAF"
+                    "_D38CF4AC3DC8EB93AE3B790091BCF015"
                     {
-                    "Name" = "8:SchedularAdder.exe"
+                    "Name" = "8:IPAddressControlLib.DLL"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:..\\SchedularAdder\\bin\\Debug\\SchedularAdder.exe"
+            "SourcePath" = "8:IPAddressControlLib.DLL"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
@@ -381,7 +450,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_DAEAEE4BB1F147B29211840F13C92649"
@@ -470,9 +539,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Setup_Client"
+        "ProductName" = "8:ClassNet Client"
         "ProductCode" = "8:{A7D975B9-9C96-4DAB-A0E1-67C1FDF30B5D}"
-        "PackageCode" = "8:{DCCC7E64-C421-4227-B9B4-685C5531615B}"
+        "PackageCode" = "8:{8E11ABB0-6DA8-456E-ACC2-BB58481C7C6B}"
         "UpgradeCode" = "8:{7E194BAE-52B6-4C85-8137-7E30EAADB0BA}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -480,12 +549,12 @@
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:MOSH"
+        "Manufacturer" = "8:ClassNet"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Setup_Client"
+        "Title" = "8:ClassNet Client Setup"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:MOSH"
+        "ARPCONTACT" = "8:YuhanIT"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
