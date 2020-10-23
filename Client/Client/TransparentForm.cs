@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Client
@@ -59,8 +52,8 @@ namespace Client
         
         private void BtnLogout_Click(object sender, EventArgs ea)
         {
-            new Client().BtnLogout_Click();
             this.Close();
+            new Client().BtnLogout_Click();
         }
 
         private void TransparentForm_Load(object sender, EventArgs e)

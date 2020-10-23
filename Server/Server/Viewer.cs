@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Server
@@ -79,7 +77,6 @@ namespace Server
             renderingTimer.Interval = 700;
         }
 
-
         public Panel AddClientPanel(string key)
         {
             Student stu = clientsList[key] as Student;
@@ -104,21 +101,15 @@ namespace Server
                 SizeMode = PictureBoxSizeMode.StretchImage,
                 Image = stu.img // 캡처 이미지
             };
+
             void customMouseEvent(object sender, MouseEventArgs e) => GetPicture(pbClient, e);
             void customEvent(object sender, EventArgs e) => FullPicture(stu);
 
             pbClient.MouseDown += customMouseEvent;
             pbClient.DoubleClick += customEvent;
 
-
-            if (clientsPicture.ContainsKey(key))
-            {
-                clientsPicture[key] = pbClient;
-            }
-            else
-            {
-               clientsPicture.Add(key, pbClient);
-            }
+            if (clientsPicture.ContainsKey(key)) clientsPicture[key] = pbClient;
+            else clientsPicture.Add(key, pbClient);
 
             panClient.Controls.Add(lblClient);
             panClient.Controls.Add(pbClient);
@@ -134,7 +125,7 @@ namespace Server
 
             if (pastClientsCount == currentClientsCount)
             {
-                foreach (string key in clientsPicture.Keys)
+                foreach (string key in clientsList.Keys)
                 {
                     Student stu = clientsList[key] as Student;
                     clientsPicture[key].Image = stu.img;

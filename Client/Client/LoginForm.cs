@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Client.Properties;
+using System;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -41,8 +43,6 @@ namespace Client
                 return;
             }
 
-
-          
             cookie = new CookieContainer();
             HttpWebResponse res = SetLogin(txtLoginID.Text, txtLoginPW.Text);
             //string result = SetLogin(txtLoginID.Text, txtLoginPW.Text);
@@ -54,14 +54,13 @@ namespace Client
             else
             {
                 stuInfo = GetInfo(res);
-                //stuInfo = result;
                 this.Close();
             }
 
             cookie = null;
         }
 
-        public HttpWebResponse /*string*/ SetLogin(string id, string password)
+        public HttpWebResponse SetLogin(string id, string password)
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://portal.yuhan.ac.kr/user/loginProcess.face");
             string info = "userId=" + id + "&password=" + password;
@@ -78,22 +77,6 @@ namespace Client
             w.Close();
 
             HttpWebResponse res = (HttpWebResponse)req.GetResponse();
-
-            /*TextReader r = (TextReader)new StreamReader(res.GetResponseStream(), Encoding.GetEncoding("UTF-8"));
-
-            string full = r.ReadToEnd();
-            int start_idx = full.IndexOf("<span class=\"name\"><strong>");
-
-            if (start_idx > 0)
-            {
-                int last_idx = full.IndexOf("</strong>님</span>");
-                string result = full.Substring(start_idx, last_idx - start_idx);
-                return result.Substring(27);
-            }
-            else
-            {
-                return "fail";
-            }*/
 
             return res;
         }
@@ -136,9 +119,29 @@ namespace Client
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
-            /*FormBorderStyle = FormBorderStyle.None;
+            FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
-            TopMost = true;*/
+            TopMost = true;
+
+            this.BackColor = Color.White;
+
+            PictureBox pic = new PictureBox
+            {
+                Image = Resource.yuhan,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Width = 950,
+                Height = 950
+            };
+
+            int logoX = (this.Width / 2) - (pic.Width / 2);
+            int logoY = (this.Height / 2) - (pic.Height / 2);
+            pic.Location = new Point(logoX, logoY);
+
+            this.Controls.Add(pic);
+
+            int w = this.Width - (panelInput.Width + 130);
+            int h = this.Height - (panelInput.Height + 100);
+            panelInput.Location = new Point(w, h);
         }
     }
 }
