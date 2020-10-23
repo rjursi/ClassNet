@@ -179,7 +179,6 @@ namespace Client
                 transparentForm.Hide();
             }
 
-            ClassNetConfig.FinishProtection();
 
             this.Invoke(new Action(delegate ()
             {
