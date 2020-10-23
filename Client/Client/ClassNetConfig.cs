@@ -8,7 +8,7 @@ namespace Client
 {
     class ClassNetConfig
     {
-        public static void FinishProtection()
+        public static void DoProtection()
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             ConfigurationSection section = config.AppSettings;
@@ -29,19 +29,48 @@ namespace Client
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             ConfigurationSection section = config.AppSettings;
+            string result = "";
 
-            if (section != null)
+            try
             {
-                if (section.SectionInformation.IsProtected)
-                {
-                    section.SectionInformation.UnprotectSection();
-                    section.SectionInformation.ForceDeclaration(true);
-                    section.SectionInformation.ForceSave = true;
-                    config.Save(ConfigurationSaveMode.Full);
-                }
-            }
 
-            return ConfigurationManager.AppSettings[key];
+
+                if (section != null)
+                {
+                    if (section.SectionInformation.IsProtected)
+                    {
+                        section.SectionInformation.UnprotectSection();
+                        section.SectionInformation.ForceDeclaration(true);
+                        section.SectionInformation.ForceSave = true;
+                        config.Save(ConfigurationSaveMode.Full);
+                    }
+
+                }
+
+                result = ConfigurationManager.AppSettings[key];
+            }
+            catch (ConfigurationErrorsException)
+            {
+
+                DoProtection();
+
+                if (section != null)
+                {
+                    if (section.SectionInformation.IsProtected)
+                    {
+                        section.SectionInformation.UnprotectSection();
+                        section.SectionInformation.ForceDeclaration(true);
+                        section.SectionInformation.ForceSave = true;
+                        config.Save(ConfigurationSaveMode.Full);
+                    }
+                    result = ConfigurationManager.AppSettings[key];
+                }
+
+            }
+            DoProtection();
+
+            return result;
+
         }
 
         public static void SetAppConfig(string key, string value)
@@ -66,9 +95,8 @@ namespace Client
             cfgCollection.Remove(key);
             cfgCollection.Add(key, value);
 
-            config.Save(ConfigurationSaveMode.Modified);
 
-            
+            config.Save(ConfigurationSaveMode.Modified);
 
             section.SectionInformation.ProtectSection("DataProtectionConfigurationProvider");
             section.SectionInformation.ForceSave = true;
@@ -76,36 +104,5 @@ namespace Client
 
             ConfigurationManager.RefreshSection(config.AppSettings.SectionInformation.Name);
         }
-
-        public static void AddAppConfig(string key, string value)
-        {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
-            KeyValueConfigurationCollection cfgCollection = config.AppSettings.Settings;
-
-            cfgCollection.Add(key, value);
-
-            config.Save(ConfigurationSaveMode.Modified);
-            ConfigurationManager.RefreshSection(config.AppSettings.SectionInformation.Name);
-        }
-
-        public static void RemoveAppConfig(string key)
-        {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
-            KeyValueConfigurationCollection cfgCollection = config.AppSettings.Settings;
-
-            try
-            {
-                cfgCollection.Remove(key);
-
-                config.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection(config.AppSettings.SectionInformation.Name);
-            }
-            catch (Exception e) {
-                Console.WriteLine(e.StackTrace);
-            }
-        }
-
     }
 }

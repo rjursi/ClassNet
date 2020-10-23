@@ -126,7 +126,7 @@ namespace Client
                 transparentForm.Show();
                 transparentForm.Hide();
             }
-            ClassNetConfig.FinishProtection();
+            
 
             void beforeConnect()
             {
