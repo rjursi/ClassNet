@@ -15,18 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_04D7D3179E3E089411A9A6608B7335A5"
-        "OwnerKey" = "8:_C4B818943F4042BF89CFCC36428D1506"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_04D7D3179E3E089411A9A6608B7335A5"
-        "OwnerKey" = "8:_4AFABFA3609C467795591320B47578A8"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_0DAB2EF0A7DA4A159F411F747C9CE0D4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -40,13 +28,25 @@
         "Entry"
         {
         "MsmKey" = "8:_23526F85C8FE2C324C63909B5ED3053C"
-        "OwnerKey" = "8:_04D7D3179E3E089411A9A6608B7335A5"
+        "OwnerKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_4AFABFA3609C467795591320B47578A8"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
+        "OwnerKey" = "8:_4AFABFA3609C467795591320B47578A8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
+        "OwnerKey" = "8:_C4B818943F4042BF89CFCC36428D1506"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -64,7 +64,7 @@
         "Entry"
         {
         "MsmKey" = "8:_A6C68DEC3A1D1E0CF978E161F2FE7FC3"
-        "OwnerKey" = "8:_04D7D3179E3E089411A9A6608B7335A5"
+        "OwnerKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -81,6 +81,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F6CB3542E50C4B40BB7E0E2A2ABBD301"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F913B495C89F0234B0E54B50D399010D"
         "OwnerKey" = "8:_17CE34B8B62D47128908EA0B0848A869"
         "MsmSig" = "8:_UNDEFINED"
@@ -88,13 +94,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_CC446287EDCAFC90E4A4E3BF9546CC37"
+        "OwnerKey" = "8:_17CE34B8B62D47128908EA0B0848A869"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4AFABFA3609C467795591320B47578A8"
+        "OwnerKey" = "8:_F6CB3542E50C4B40BB7E0E2A2ABBD301"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -106,7 +112,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_04D7D3179E3E089411A9A6608B7335A5"
+        "OwnerKey" = "8:_4AFABFA3609C467795591320B47578A8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -124,13 +136,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_17CE34B8B62D47128908EA0B0848A869"
+        "OwnerKey" = "8:_F913B495C89F0234B0E54B50D399010D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F913B495C89F0234B0E54B50D399010D"
+        "OwnerKey" = "8:_CC446287EDCAFC90E4A4E3BF9546CC37"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -242,37 +254,6 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_04D7D3179E3E089411A9A6608B7335A5"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Microsoft.Win32.TaskScheduler, Version=2.8.20.0, Culture=neutral, PublicKeyToken=c416bc1b32d97233, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_04D7D3179E3E089411A9A6608B7335A5"
-                    {
-                    "Name" = "8:Microsoft.Win32.TaskScheduler.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Microsoft.Win32.TaskScheduler.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0DAB2EF0A7DA4A159F411F747C9CE0D4"
             {
             "SourcePath" = "8:..\\ClassNet.ico"
@@ -386,6 +367,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5F399C5CF538247D0E78A9C74D2906E3"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Microsoft.Win32.TaskScheduler, Version=2.8.20.0, Culture=neutral, PublicKeyToken=c416bc1b32d97233, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_5F399C5CF538247D0E78A9C74D2906E3"
+                    {
+                    "Name" = "8:Microsoft.Win32.TaskScheduler.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Microsoft.Win32.TaskScheduler.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_64ECA7F998C24A7AB5ECF610BB8952C6"
             {
             "SourcePath" = "8:..\\Client\\bin\\Release\\Client.exe.config"
@@ -497,6 +509,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F6CB3542E50C4B40BB7E0E2A2ABBD301"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:HookerProcess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_F6CB3542E50C4B40BB7E0E2A2ABBD301"
+                    {
+                    "Name" = "8:HookerProcess.exe"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:..\\HookerProcess\\bin\\Release\\HookerProcess.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F913B495C89F0234B0E54B50D399010D"
