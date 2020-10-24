@@ -40,9 +40,8 @@ namespace SchedularAdder
                     
                     
                     ts.RootFolder.RegisterTaskDefinition("ClassNet Client\\Run When Logon", td);
-                    Console.WriteLine("Schedular Adder : 작업 등록이 성공적으로 완료되었습니다... \n설정완료를 위하여 재부팅 합니다.");
-                    Thread.Sleep(1000);
-                    System.Diagnostics.Process.Start("Shutdown.exe", "-r -t 0");
+                    Console.WriteLine("Schedular Adder : 작업 등록이 성공적으로 완료되었습니다...");
+                    
                 }
                 catch(Exception e) { 
                 
