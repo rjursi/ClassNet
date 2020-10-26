@@ -132,6 +132,8 @@ namespace Client
                 }
             });
 
+            //mainAction += assistanceAction;
+
         }
 
         private void Client_Load(object sender, EventArgs e)
@@ -202,8 +204,9 @@ namespace Client
             afterConnect.ContinueWith(async (a) =>
             {
                 await Task.Run(() => MainTask());
-                await Task.Run(assistanceAction);
+                
             });
+
         }
 
         public void InsertAction(Action action)
@@ -260,7 +263,7 @@ namespace Client
 
                 this.Invoke(new MethodInvoker(() => { Dispose(); }));
 
-                return new SignalObj();
+                return null;
             }
         }
 
@@ -272,7 +275,18 @@ namespace Client
                 {
                     using (standardSignalObj = ReceiveObject())
                     {
-                        await Task.Run(mainAction);
+                        if (standardSignalObj != null)
+                        {
+                             //sex = Task.Run(mainAction);
+                            //Task.Run(assistanceAction);
+                            await Task.Run(mainAction);
+                        }
+                        else
+                        {
+                            sex.Dispose(); 
+                            
+                        }
+                        
                     }
                 }
                 catch (ObjectDisposedException)
