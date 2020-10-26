@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Diagnostics;
 
 using Newtonsoft.Json;
 using InternetControl;
-using System.Threading;
 
 namespace Client
 {
@@ -84,7 +84,7 @@ namespace Client
 
             if (ClassNetConfig.GetAppConfig("SERVER_IP").Equals(""))
             {
-                MessageBox.Show("서버 IP 설정이 필요합니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("서버 IP 설정이 필요합니다.", "서버 IP 미설정", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 using (SetIPAddressForm setIPAddressForm = new SetIPAddressForm())
                 {
@@ -117,45 +117,49 @@ namespace Client
                 transparentForm.FormStatus = TransparentForm.ADMINFORM;
                 transparentForm.Show();
                 transparentForm.Hide();
+
+                this.Hide();
+
+                this.ShowInTaskbar = false;
             }
             else
             {
                 transparentForm.FormStatus = TransparentForm.USERFORM;
                 transparentForm.Show();
                 transparentForm.Hide();
+
+                this.Hide();
+
+                // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
+                this.ShowInTaskbar = false;
+
+                // 받은 이미지를 풀스크린으로 띄우는 설정
+                this.FormBorderStyle = FormBorderStyle.None;
+                this.WindowState = FormWindowState.Maximized;
+
+                this.Location = new Point(0, 0);
+                this.Width = Screen.PrimaryScreen.Bounds.Width;
+                this.Height = Screen.PrimaryScreen.Bounds.Height;
+
+                screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
+                screenImage.Height = Screen.PrimaryScreen.Bounds.Height;
+
+                // 화면 폼을 가장 맨 위로
+                TopMost = true;
+
+                // JPEG 손실 압축 수준 설정
+                codec = GetEncoder(ImageFormat.Jpeg);
+                param = new EncoderParameters();
+                param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
+
+                firewallPortBlocker = new FirewallPortBlock();
+                cmdProcessController = new CmdProcessController();
+                taskMgrController = new TaskMgrController();
+
+                taskMgrController.KillTaskMgr();
+
+                Task.Run(() => SocketConnection());
             }
-
-            this.Hide();
-
-            // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
-            this.ShowInTaskbar = false;
-
-            // 받은 이미지를 풀스크린으로 띄우는 설정
-            /*this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
-
-            this.Location = new Point(0, 0);
-            this.Width = Screen.PrimaryScreen.Bounds.Width;
-            this.Height = Screen.PrimaryScreen.Bounds.Height;
-
-            screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-            screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
-
-            // 화면 폼을 가장 맨 위로
-            TopMost = true;
-
-            // JPEG 손실 압축 수준 설정
-            codec = GetEncoder(ImageFormat.Jpeg);
-            param = new EncoderParameters();
-            param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
-
-            firewallPortBlocker = new FirewallPortBlock();
-            cmdProcessController = new CmdProcessController();
-            taskMgrController = new TaskMgrController();
-
-            taskMgrController.KillTaskMgr();
-
-            Task.Run(() => SocketConnection());
         }
 
         private void SocketConnection()
@@ -388,7 +392,8 @@ namespace Client
 
         public void BtnLogout_Click()
         {
-            this.BeginInvoke(new MethodInvoker(this.Close));
+            Process[] processList = Process.GetProcessesByName("ClassNet Client");
+            if (processList.Length > 0) processList[0].Kill();
         }
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
@@ -397,6 +402,7 @@ namespace Client
             server.Dispose();
 
             this.Invoke(new MethodInvoker(() => { Dispose(); }));
+            this.Close();
         }
     }
 }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Viewer));
             this.clientsViewPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.viewerToolStrip = new System.Windows.Forms.ToolStrip();
             this.btnAllSave = new System.Windows.Forms.ToolStripButton();
@@ -85,12 +86,15 @@
             this.ClientSize = new System.Drawing.Size(1037, 653);
             this.Controls.Add(this.viewerToolStrip);
             this.Controls.Add(this.clientsViewPanel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(1055, 700);
+            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(1055, 700);
             this.Name = "Viewer";
-            this.Text = "화면 목록";
+            this.Text = "모니터링 화면 목록";
             this.viewerToolStrip.ResumeLayout(false);
             this.viewerToolStrip.PerformLayout();
             this.ResumeLayout(false);

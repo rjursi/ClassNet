@@ -453,10 +453,11 @@ namespace Server
         private void Server_FormClosed(object sender, FormClosedEventArgs e)
         {
             standardSignalObj.IsShutdown = true;
+            standardSignalObj.ServerScreenData = null;
             standardSignalObj.IsMonitoring = false;
             standardSignalObj.IsInternet = false;
             standardSignalObj.IsLock = false;
-            standardSignalObj.IsTaskMgrEnabled = true;
+            standardSignalObj.IsTaskMgrEnabled = false;
 
             if (listener != null) listener.Close();
             Dispose();

@@ -63,21 +63,25 @@
             // 
             // txtLoginID
             // 
-            this.txtLoginID.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.txtLoginID.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.txtLoginID.ImeMode = System.Windows.Forms.ImeMode.Alpha;
             this.txtLoginID.Location = new System.Drawing.Point(29, 50);
             this.txtLoginID.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtLoginID.Name = "txtLoginID";
-            this.txtLoginID.Size = new System.Drawing.Size(283, 25);
+            this.txtLoginID.Size = new System.Drawing.Size(283, 30);
             this.txtLoginID.TabIndex = 2;
+            this.txtLoginID.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtLoginID_KeyPress);
             // 
             // txtLoginPW
             // 
+            this.txtLoginPW.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.txtLoginPW.Location = new System.Drawing.Point(29, 140);
             this.txtLoginPW.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtLoginPW.Name = "txtLoginPW";
             this.txtLoginPW.PasswordChar = '*';
-            this.txtLoginPW.Size = new System.Drawing.Size(283, 25);
+            this.txtLoginPW.Size = new System.Drawing.Size(283, 30);
             this.txtLoginPW.TabIndex = 3;
+            this.txtLoginPW.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtLoginPW_KeyPress);
             // 
             // LoginButton
             // 
@@ -137,7 +141,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "LoginForm";
-            this.Text = "ClassNet - Login";
+            this.Text = "로그인";
             this.Load += new System.EventHandler(this.LoginForm_Load);
             this.panelInput.ResumeLayout(false);
             this.panelInput.PerformLayout();
