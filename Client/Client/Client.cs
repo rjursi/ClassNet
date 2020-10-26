@@ -13,6 +13,7 @@ using System.ComponentModel;
 
 using Newtonsoft.Json;
 using InternetControl;
+using System.Threading;
 
 namespace Client
 {
@@ -31,6 +32,7 @@ namespace Client
         private bool isLogin;
 
         private static Action mainAction;
+        private static Action subAction;
 
         private static SignalObj standardSignalObj;
 
@@ -110,6 +112,7 @@ namespace Client
                 if (stuInfo.Length > 0) isLogin = true;
             }
 
+
             transparentForm = new TransparentForm();
             if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
             {
@@ -123,6 +126,8 @@ namespace Client
                 transparentForm.Show();
                 transparentForm.Hide();
             }
+
+
 
             this.Hide();
 
@@ -152,7 +157,11 @@ namespace Client
 
             taskMgrController.KillTaskMgr();
 
-            SocketConnection();
+            Task.Run(()=>SocketConnection());
+            //SocketConnection();
+
+            
+
         }
 
         private void SocketConnection()
@@ -178,8 +187,8 @@ namespace Client
             }
 
             InsertAction(() => ImageProcessing());
-            InsertAction(() => ControllingProcessing());
-
+            //InsertAction(() => ControllingProcessing());
+            subAction = () => ControllingProcessing();
             MainTask();
         }
 
@@ -213,7 +222,7 @@ namespace Client
             SignalObj signal = JsonConvert.DeserializeObject<SignalObj>(jsonData);
             return signal;
         }
-
+        
         public SignalObj ReceiveObject()
         {
             try
@@ -236,6 +245,7 @@ namespace Client
             }
             catch (SocketException)
             {
+
                 DeleteAction(() => ImageProcessing());
                 DeleteAction(() => ControllingProcessing());
 
@@ -256,7 +266,11 @@ namespace Client
                 {
                     using (standardSignalObj = ReceiveObject())
                     {
-                        if (standardSignalObj != null) await Task.Run(mainAction);
+                        if (standardSignalObj != null)
+                        {
+                            await Task.Run(mainAction);
+                            await Task.Run(subAction);
+                        }
                         else
                         {
                             standardSignalObj = new SignalObj();
@@ -301,7 +315,11 @@ namespace Client
                 this.Invoke(new ScreenOnDelegate(OutputDelegate),
                     standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, true);
             }
-            else this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
+            else 
+            {
+                this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
+            } 
+                
         }
 
         public Byte[] CaptureImage()
