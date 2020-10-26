@@ -561,7 +561,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ClassNet Server"
         "ProductCode" = "8:{01E210E0-D959-4082-8FD8-1A1DA5684F10}"
-        "PackageCode" = "8:{B5B0D849-8B16-40A9-A05C-7504C762BDAB}"
+        "PackageCode" = "8:{FA7A2CCC-C2D9-436B-9883-884819131C89}"
         "UpgradeCode" = "8:{E829FFDE-76A1-4934-ABA3-B63003F8594B}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

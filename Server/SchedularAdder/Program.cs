@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace SchedularAdder
 {
@@ -41,7 +42,22 @@ namespace SchedularAdder
 
                     ts.RootFolder.RegisterTaskDefinition("ClassNet Server\\Run When Logon", td);
                     Console.WriteLine("Schedular Adder : 작업 등록이 성공적으로 완료되었습니다... ");
-                    
+
+                    Thread.Sleep(1000);
+
+
+                    DialogResult result = MessageBox.Show("설치를 정상적으로 완료할려면 재부팅이 필요합니다. 지금 재부팅 하시겠습니까?", "알림", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        Process.Start("Shutdown.exe", "-r -t 0");
+                    }
+                    else
+                    {
+                        MessageBox.Show("설치가 완료되었습니다. 재부팅을 권장드립니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+
+
                 }
                 catch (Exception e)
                 {
