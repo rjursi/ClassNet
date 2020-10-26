@@ -31,14 +31,14 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Server));
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.cbMonitor = new MetroFramework.Controls.MetroComboBox();
+            this.lblSelectMonitor = new MetroFramework.Controls.MetroLabel();
             this.btnCtrlTaskMgr = new System.Windows.Forms.Button();
             this.btnInternet = new System.Windows.Forms.Button();
             this.btnViewer = new System.Windows.Forms.Button();
             this.btnLock = new System.Windows.Forms.Button();
             this.btnPower = new System.Windows.Forms.Button();
             this.btnStreaming = new System.Windows.Forms.Button();
-            this.cbMonitor = new MetroFramework.Controls.MetroComboBox();
-            this.lblSelectMonitor = new MetroFramework.Controls.MetroLabel();
             this.SuspendLayout();
             // 
             // notifyIcon
@@ -46,6 +46,30 @@
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "ClassNet";
             this.notifyIcon.Visible = true;
+            // 
+            // cbMonitor
+            // 
+            this.cbMonitor.FormattingEnabled = true;
+            this.cbMonitor.ItemHeight = 24;
+            this.cbMonitor.Location = new System.Drawing.Point(23, 47);
+            this.cbMonitor.Name = "cbMonitor";
+            this.cbMonitor.Size = new System.Drawing.Size(319, 30);
+            this.cbMonitor.TabIndex = 6;
+            this.cbMonitor.UseSelectable = true;
+            this.cbMonitor.SelectedIndexChanged += new System.EventHandler(this.CbMonitor_SelectedIndexChanged);
+            // 
+            // lblSelectMonitor
+            // 
+            this.lblSelectMonitor.AutoSize = true;
+            this.lblSelectMonitor.FontSize = MetroFramework.MetroLabelSize.Small;
+            this.lblSelectMonitor.FontWeight = MetroFramework.MetroLabelWeight.Bold;
+            this.lblSelectMonitor.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.lblSelectMonitor.Location = new System.Drawing.Point(23, 17);
+            this.lblSelectMonitor.Name = "lblSelectMonitor";
+            this.lblSelectMonitor.Size = new System.Drawing.Size(94, 17);
+            this.lblSelectMonitor.TabIndex = 7;
+            this.lblSelectMonitor.Text = "방송 화면 선택";
+            this.lblSelectMonitor.UseCustomForeColor = true;
             // 
             // btnCtrlTaskMgr
             // 
@@ -138,39 +162,13 @@
             this.btnStreaming.UseVisualStyleBackColor = true;
             this.btnStreaming.Click += new System.EventHandler(this.BtnStreaming_Click);
             // 
-            // cbMonitor
-            // 
-            this.cbMonitor.FormattingEnabled = true;
-            this.cbMonitor.ItemHeight = 24;
-            this.cbMonitor.Location = new System.Drawing.Point(23, 47);
-            this.cbMonitor.Name = "cbMonitor";
-            this.cbMonitor.Size = new System.Drawing.Size(319, 30);
-            this.cbMonitor.TabIndex = 6;
-            this.cbMonitor.UseSelectable = true;
-            this.cbMonitor.SelectedIndexChanged += new System.EventHandler(this.CbMonitor_SelectedIndexChanged);
-            // 
-            // lblSelectMonitor
-            // 
-            this.lblSelectMonitor.AutoSize = true;
-            this.lblSelectMonitor.FontSize = MetroFramework.MetroLabelSize.Small;
-            this.lblSelectMonitor.FontWeight = MetroFramework.MetroLabelWeight.Bold;
-            this.lblSelectMonitor.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.lblSelectMonitor.Location = new System.Drawing.Point(23, 17);
-            this.lblSelectMonitor.Name = "lblSelectMonitor";
-            this.lblSelectMonitor.Size = new System.Drawing.Size(94, 17);
-            this.lblSelectMonitor.TabIndex = 7;
-            this.lblSelectMonitor.Text = "방송 화면 선택";
-            this.lblSelectMonitor.UseCustomForeColor = true;
-            // 
             // Server
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-
-            this.ClientSize = new System.Drawing.Size(367, 638);
+            this.ClientSize = new System.Drawing.Size(367, 653);
             this.Controls.Add(this.lblSelectMonitor);
-
             this.Controls.Add(this.cbMonitor);
             this.Controls.Add(this.btnCtrlTaskMgr);
             this.Controls.Add(this.btnInternet);
@@ -179,6 +177,7 @@
             this.Controls.Add(this.btnPower);
             this.Controls.Add(this.btnStreaming);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Server";
             this.Text = "ClassNet";

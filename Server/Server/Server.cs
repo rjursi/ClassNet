@@ -117,6 +117,8 @@ namespace Server
 
         private void Server_Load(object sender, EventArgs e)
         {
+            this.ShowInTaskbar = false;
+
             ThreadPool.SetMaxThreads(50, 50);
 
             standardSignalObj = new SignalObj();
@@ -260,12 +262,8 @@ namespace Server
                 try
                 {
                     g.CopyFromScreen(new Point(sc[selectedScreen].Bounds.X, sc[selectedScreen].Bounds.Y), new Point(0, 0), new Size(bmp.Width, bmp.Height));
-                }
-                catch (Win32Exception)
-                {
-                    // 가상 데스크톱으로 이동하면 화면을 복사하지 않음.
-                    g = Graphics.FromImage(bmp);
-                }
+                } // 가상 데스크톱으로 이동하면 화면을 복사하지 않음.
+                catch (Win32Exception) { }
 
                 using (MemoryStream pre_ms = new MemoryStream())
                 {
@@ -290,32 +288,29 @@ namespace Server
 
         public static void ImageOutput(string clientAddr, Byte[] recvData)
         {
-            using (MemoryStream pre_ms = new MemoryStream(recvData))
+            try
             {
-                using (MemoryStream post_ms = new MemoryStream())
+                using (MemoryStream pre_ms = new MemoryStream(recvData))
                 {
-                    using (DeflateStream ds = new DeflateStream(pre_ms, CompressionMode.Decompress))
+                    using (MemoryStream post_ms = new MemoryStream())
                     {
-                        try
+                        using (DeflateStream ds = new DeflateStream(pre_ms, CompressionMode.Decompress))
                         {
                             ds.CopyTo(post_ms);
-                        }
-                        catch
-                        {
-                            ds.Write(new byte[0], 0, 0);
-                        }
-                        finally
-                        {
                             ds.Close();
                         }
-                    }
-                    Viewer.Student stu = Viewer.clientsList[clientAddr];
-                    stu.img = Image.FromStream(post_ms);
-                    Viewer.clientsList[clientAddr] = stu;
+                        Viewer.Student stu = Viewer.clientsList[clientAddr];
+                        stu.img = Image.FromStream(post_ms);
+                        Viewer.clientsList[clientAddr] = stu;
 
-                    post_ms.Close();
+                        post_ms.Close();
+                    }
+                    pre_ms.Close();
                 }
-                pre_ms.Close();
+            }
+            catch (InvalidDataException)
+            {
+                return;
             }
         }
 
@@ -408,7 +403,7 @@ namespace Server
 
                 btnCtrlTaskMgr.Image = Resource._05imgCtrlTaskMgr_off;
 
-                MessageBox.Show("작업관리자 잠금을 해제하였습니다.", "작업관리자 잠금 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("작업관리자 잠금을 설정하였습니다.", "작업관리자 잠금", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
@@ -417,7 +412,7 @@ namespace Server
 
                 btnCtrlTaskMgr.Image = Resource._05imgCtrlTaskMgr_on;
 
-                MessageBox.Show("작업관리자 잠금을 설정하였습니다.", "작업관리자 잠금", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("작업관리자 잠금을 해제하였습니다.", "작업관리자 잠금 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 

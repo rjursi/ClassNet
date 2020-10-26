@@ -30,8 +30,8 @@
         {
             this.clientsViewPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.viewerToolStrip = new System.Windows.Forms.ToolStrip();
-            this.btnAllSave = new System.Windows.Forms.ToolStripButton();
             this.lblAllSave = new System.Windows.Forms.ToolStripLabel();
+            this.btnAllSave = new System.Windows.Forms.ToolStripButton();
             this.viewerToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,18 +56,6 @@
             this.viewerToolStrip.TabIndex = 1;
             this.viewerToolStrip.Text = "viewerToolStrip";
             // 
-            // btnAllSave
-            // 
-            this.btnAllSave.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btnAllSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnAllSave.Image = global::Server.Properties.Resources.capture1;
-            this.btnAllSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnAllSave.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
-            this.btnAllSave.Name = "btnAllSave";
-            this.btnAllSave.Size = new System.Drawing.Size(29, 28);
-            this.btnAllSave.Text = "전체 화면 캡처";
-            this.btnAllSave.Click += new System.EventHandler(this.BtnAllSave_Click);
-            // 
             // lblAllSave
             // 
             this.lblAllSave.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -75,6 +63,18 @@
             this.lblAllSave.Name = "lblAllSave";
             this.lblAllSave.Size = new System.Drawing.Size(103, 28);
             this.lblAllSave.Text = "전체 화면 캡처";
+            // 
+            // btnAllSave
+            // 
+            this.btnAllSave.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btnAllSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnAllSave.Image = global::Server.Resource.capture;
+            this.btnAllSave.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnAllSave.Margin = new System.Windows.Forms.Padding(0, 1, 10, 2);
+            this.btnAllSave.Name = "btnAllSave";
+            this.btnAllSave.Size = new System.Drawing.Size(29, 28);
+            this.btnAllSave.Text = "전체 화면 캡처";
+            this.btnAllSave.Click += new System.EventHandler(this.BtnAllSave_Click);
             // 
             // Viewer
             // 
