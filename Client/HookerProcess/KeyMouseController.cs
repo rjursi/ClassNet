@@ -36,18 +36,12 @@ namespace HookerProcess
             childProcessQuitThread = new Thread(ChildProcessQuit);
             childProcessQuitThread.Start(this.parentQuitMsg);
 
-
-       
             hooker.SetHook();
             ctrlAltDeleteScreenMgr.StartListeningForDesktopSwitch(hooker);
-            
-
-           
         }
 
         private void KeyMouseController_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
             hooker.UnHook();
         }
 
@@ -74,7 +68,5 @@ namespace HookerProcess
                 Application.Exit();
             }
         }
-
-       
     }
 }

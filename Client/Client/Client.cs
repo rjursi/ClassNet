@@ -13,6 +13,7 @@ using System.ComponentModel;
 
 using Newtonsoft.Json;
 using InternetControl;
+using System.Threading;
 
 namespace Client
 {
@@ -154,7 +155,7 @@ namespace Client
 
             taskMgrController.KillTaskMgr();
 
-            SocketConnection();
+            Task.Run(() => SocketConnection());
         }
 
         private void SocketConnection()
@@ -244,7 +245,7 @@ namespace Client
                 server.Close();
                 server.Dispose();
 
-                SocketConnection();
+                Task.Run(() => SocketConnection());
 
                 return null;
             }
@@ -258,7 +259,7 @@ namespace Client
                 {
                     using (standardSignalObj = ReceiveObject())
                     {
-                        if(standardSignalObj != null) await Task.Run(mainAction);
+                        if (standardSignalObj != null) await Task.Run(mainAction);
                         else
                         {
                             standardSignalObj = new SignalObj();
@@ -297,13 +298,13 @@ namespace Client
 
         public void ImageProcessing()
         {
-            if (standardSignalObj.ServerScreenData != null)
+            if (standardSignalObj.ServerScreenData != null && InvokeRequired)
             {
                 // 이미지를 받아서 여기서 버퍼를 설정하는 부분
                 this.Invoke(new ScreenOnDelegate(OutputDelegate),
                     standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, true);
             }
-            else this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
+            else if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
         }
 
         public Byte[] CaptureImage()
@@ -370,16 +371,6 @@ namespace Client
             }
         }
 
-        private void Client_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            server.Close();
-
-            if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
-            taskMgrController.CheckTaskMgrStatus(true);
-            
-            this.Invoke(new MethodInvoker(() => { Dispose(); }));
-        }
-
         private void BtnSetServerIP_Click(object sender, EventArgs ea)
         {
             using (SetIPAddressForm setIPAddressForm = new SetIPAddressForm())
@@ -398,6 +389,14 @@ namespace Client
         public void BtnLogout_Click()
         {
             this.BeginInvoke(new MethodInvoker(this.Close));
+        }
+
+        private void Client_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            server.Close();
+            server.Dispose();
+
+            this.Invoke(new MethodInvoker(() => { Dispose(); }));
         }
     }
 }

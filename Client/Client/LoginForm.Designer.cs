@@ -113,7 +113,7 @@
             this.btnSimpleLogin.TabIndex = 5;
             this.btnSimpleLogin.Text = "간편 로그인";
             this.btnSimpleLogin.UseVisualStyleBackColor = false;
-            this.btnSimpleLogin.Click += new System.EventHandler(this.btnSimpleLogin_Click);
+            this.btnSimpleLogin.Click += new System.EventHandler(this.BtnSimpleLogin_Click);
             // 
             // panelInput
             // 

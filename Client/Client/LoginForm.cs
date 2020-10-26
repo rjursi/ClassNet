@@ -1,5 +1,4 @@
-﻿using Client.Properties;
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -17,21 +16,20 @@ namespace Client
         {
             InitializeComponent();
         }
+
         private string AdminCheck()
         {
-            
-
             if (ClassNetConfig.GetAppConfig("ADMIN_ID").Equals(txtLoginID.Text))
             {
                 if (ClassNetConfig.GetAppConfig("ADMIN_PWD").Equals(txtLoginPW.Text))
                 {
-                    
                     return txtLoginID.Text;
                 }
             }
 
             return "";
         }
+
         private void LoginButton_Click(object sender, EventArgs e)
         {
 
@@ -39,7 +37,6 @@ namespace Client
             if (!stuInfo.Equals(""))
             {
                 this.Close();
-
                 return;
             }
 
@@ -109,7 +106,7 @@ namespace Client
             }
         }
 
-        private void btnSimpleLogin_Click(object sender, EventArgs e)
+        private void BtnSimpleLogin_Click(object sender, EventArgs e)
         {
             SimpleLoginForm frm = new SimpleLoginForm();
             frm.ShowDialog();

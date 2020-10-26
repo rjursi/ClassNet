@@ -40,24 +40,21 @@ namespace Server
         {
             if (clientsList.ContainsValue(stu))
             {
-
                 picFocusView.Image = stu.img;
-                
             }
             else
             {
                 if (isStop)
                 {
                     isStop = false;
-                    result = MessageBox.Show("해당 학습자가 연결을 종료하였습니다.", "에러!", MessageBoxButtons.OK, MessageBoxIcon.Error); //연결 끊긴 이후 후 처리 요망
+                    result = MessageBox.Show("해당 학습자와 연결이 끊겼습니다.", "전체 화면 오류",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error); // 연결 끊긴 이후 후 처리 요망
 
-                    if (result == System.Windows.Forms.DialogResult.OK)
+                    if (result == DialogResult.OK)
                     {
                         focusingTimer.Stop();
                         this.Close();
                     }
-
-                    
                 }
             }
         }
