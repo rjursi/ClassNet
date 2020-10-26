@@ -57,13 +57,12 @@ namespace Server
                     if (fileDialog.ShowDialog() == DialogResult.OK)
                     {
                         filePath = fileDialog.SelectedPath;
+
+                        Bitmap bmp = new Bitmap(box.Image);
+                        String str = box.Name.ToString().Trim('\0');
+                        bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                     }
                 }
-
-                Bitmap bmp = new Bitmap(box.Image);
-                String str = box.Name.ToString().Trim('\0');
-                Console.WriteLine($"{filePath}{str}.png");
-                bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
             }
         }
 
@@ -156,11 +155,11 @@ namespace Server
                         clientsViewPanel.Controls.Add(AddClientPanel(key));
                     }
                 }
-            }catch(Exception)
+            }
+            catch (Exception)
             {
                 return ;
             }
-            
         }
 
         private void InterateFocusView(Image sendImg)
@@ -173,7 +172,7 @@ namespace Server
             var filePath = string.Empty;
             if (pastClientsCount == 0)
             {
-                MessageBox.Show("접속한 학생이 없습니다!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("접속한 학생이 없습니다.", "화면 캡처 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -189,17 +188,11 @@ namespace Server
                         {
                             String str = clientsPicture[key].Name.ToString().Trim('\0');
                             Bitmap bmp = new Bitmap(clientsPicture[key].Image);
-                            Console.WriteLine($"{filePath}{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                             bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                         }
                     }
                 }                
             }
-        }
-
-        private void Viewer_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

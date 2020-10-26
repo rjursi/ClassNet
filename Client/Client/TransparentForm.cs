@@ -43,9 +43,7 @@ namespace Client
                 if (dialogResult == DialogResult.OK)
                 {
                     ClassNetConfig.SetAppConfig("SERVER_IP", setIPAddressForm.ServerIP);
-
                     MessageBox.Show("서버 IP가 수정되었습니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 }
             }
         }
@@ -53,7 +51,10 @@ namespace Client
         private void BtnLogout_Click(object sender, EventArgs ea)
         {
             this.Close();
-            new Client().BtnLogout();
+
+            var main = new Client();
+            main.Show();
+            main.BtnLogout_Click();
         }
 
         private void TransparentForm_Load(object sender, EventArgs e)
