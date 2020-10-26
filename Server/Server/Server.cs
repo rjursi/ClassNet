@@ -108,8 +108,6 @@ namespace Server
             ctx.MenuItems.Add(new MenuItem("입력 잠금", new EventHandler((s, ea) => BtnLock_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("작업관리자 잠금 해제", new EventHandler((s, ea) => BtnCtrlTaskMgr_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("학생 PC 전체 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
-            ctx.MenuItems.Add("-");
-            ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => BtnExit_Click(s, ea))));
 
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
@@ -261,7 +259,8 @@ namespace Server
 
                 try
                 {
-                    g.CopyFromScreen(new Point(sc[selectedScreen].Bounds.X, sc[selectedScreen].Bounds.Y), new Point(0, 0), new Size(bmp.Width, bmp.Height));
+                    g.CopyFromScreen(new Point(sc[selectedScreen].Bounds.X, sc[selectedScreen].Bounds.Y),
+                        new Point(0, 0), new Size(bmp.Width, bmp.Height));
                 } // 가상 데스크톱으로 이동하면 화면을 복사하지 않음.
                 catch (Win32Exception) { }
 
@@ -299,7 +298,7 @@ namespace Server
                             ds.CopyTo(post_ms);
                             ds.Close();
                         }
-                        Viewer.Student stu = Viewer.clientsList[clientAddr]; //KeyInValidOperation
+                        Viewer.Student stu = Viewer.clientsList[clientAddr]; // KeyInValidOperation
                         stu.img = Image.FromStream(post_ms);
                         Viewer.clientsList[clientAddr] = stu;
 
@@ -316,6 +315,8 @@ namespace Server
 
         private void BtnStreaming_Click(object sender, EventArgs e)
         {
+            if (standardSignalObj.IsMonitoring) clientsViewer.Close();
+
             // 스위치 역할을 하도록 수정
             if (standardSignalObj.ServerScreenData == null)
             {
@@ -427,18 +428,9 @@ namespace Server
             }
         }
 
-        private void Server_FormClosing(object sender, FormClosingEventArgs e)
+        private void CbMonitor_SelectedIndexChanged(object sender, EventArgs e)
         {
-            standardSignalObj.IsShutdown = true;
-            standardSignalObj.IsMonitoring = false;
-            standardSignalObj.IsInternet = false;
-            standardSignalObj.IsLock = false;
-            standardSignalObj.IsTaskMgrEnabled = true;
-
-            if (listener != null) listener.Close();
-            Dispose();
-
-            this.Close();
+            selectedScreen = cbMonitor.SelectedIndex;
         }
 
         private void Viewer_FormClosed(object sender, FormClosedEventArgs e)
@@ -446,18 +438,20 @@ namespace Server
             standardSignalObj.IsMonitoring = false;
         }
 
-        private void CbMonitor_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            selectedScreen = cbMonitor.SelectedIndex;
-        }
-
         private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            this.Show();
             this.TopMost = true;
             this.TopMost = false;
         }
 
-        private void BtnExit_Click(object sender, EventArgs ea)
+        private void Server_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            this.Hide();
+        }
+
+        private void Server_FormClosed(object sender, FormClosedEventArgs e)
         {
             standardSignalObj.IsShutdown = true;
             standardSignalObj.IsMonitoring = false;

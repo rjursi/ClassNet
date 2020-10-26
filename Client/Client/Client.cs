@@ -130,15 +130,13 @@ namespace Client
             this.ShowInTaskbar = false;
 
             // 받은 이미지를 풀스크린으로 띄우는 설정
-            //this.FormBorderStyle = FormBorderStyle.None;
-            //this.WindowState = FormWindowState.Maximized;
-
-            //this.Location = new Point(0, 0);
-            //this.Width = Screen.PrimaryScreen.Bounds.Width;
-            //this.Height = Screen.PrimaryScreen.Bounds.Height;
-
-            //screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-            //screenImage.Height = Screen.PrimaryScreen.Bounds.Height;
+            /*this.FormBorderStyle = FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
+            this.Location = new Point(0, 0);
+            this.Width = Screen.PrimaryScreen.Bounds.Width;
+            this.Height = Screen.PrimaryScreen.Bounds.Height;
+            screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
+            screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
             // 화면 폼을 가장 맨 위로
             TopMost = true;
@@ -176,18 +174,14 @@ namespace Client
                 catch (SocketException)
                 {
                     isConnected = false; // 연결이 안 되면 대기상태 유지
-                    Console.WriteLine("SSSSSSSSSocket Error!");
                 }
             }
 
             InsertAction(() => ImageProcessing());
-            //InsertAction(() => ControllingProcessing());
+            InsertAction(() => ControllingProcessing());
 
-            tt = () => ControllingProcessing();
             MainTask();
         }
-
-        Action tt;
 
         public void InsertAction(Action action)
         {
@@ -262,11 +256,7 @@ namespace Client
                 {
                     using (standardSignalObj = ReceiveObject())
                     {
-                        if (standardSignalObj != null)
-                        {
-                            await Task.Run(mainAction);
-                            await Task.Run(tt);
-                        }
+                        if (standardSignalObj != null) await Task.Run(mainAction);
                         else
                         {
                             standardSignalObj = new SignalObj();
@@ -302,8 +292,6 @@ namespace Client
 
             if (standardSignalObj.IsPower) System.Diagnostics.Process.Start("ShutDown.exe", "-s -f -t 00");
         }
-
-        
 
         public void ImageProcessing()
         {
@@ -405,9 +393,8 @@ namespace Client
             }
         }
 
-        public void BtnLogout()
+        public void BtnLogout_Click()
         {
-            this.Show();
             this.BeginInvoke(new MethodInvoker(this.Close));
         }
     }
