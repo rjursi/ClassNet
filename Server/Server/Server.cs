@@ -8,10 +8,11 @@ using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+
+using Newtonsoft.Json;
 
 namespace Server
 {
@@ -47,7 +48,6 @@ namespace Server
         public Server()
         {
             InitializeComponent();
-
         }
 
         // DPI 설정 부분 시작
@@ -109,7 +109,7 @@ namespace Server
             ctx.MenuItems.Add(new MenuItem("작업관리자 잠금 해제", new EventHandler((s, ea) => BtnCtrlTaskMgr_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("학생 PC 전체 종료", new EventHandler((s, ea) => BtnPower_Click(s, ea))));
             ctx.MenuItems.Add("-");
-            ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => { })));
+            ctx.MenuItems.Add(new MenuItem("클래스넷 종료", new EventHandler((s, ea) => BtnExit_Click(s, ea))));
 
             notifyIcon.ContextMenu = ctx;
             notifyIcon.Visible = true;
@@ -205,7 +205,7 @@ namespace Server
                     {
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
                         LoginRecord(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
-                        Viewer.currentClientsCount++;
+                        ++Viewer.currentClientsCount;
                     }
                     else
                     {
@@ -226,7 +226,7 @@ namespace Server
                 catch (SocketException)
                 {
                     Viewer.clientsList.Remove(co.address);
-                    Viewer.currentClientsCount--;
+                    --Viewer.currentClientsCount;
 
                     co.client.Close();
                     co = null;
@@ -255,7 +255,7 @@ namespace Server
 
             while (!standardSignalObj.IsShutdown)
             {
-                bmp = new Bitmap(sc[selectedScreen].Bounds.Width, sc[selectedScreen].Bounds.Height);
+                bmp = new Bitmap(sc[selectedScreen].WorkingArea.Width, sc[selectedScreen].WorkingArea.Height);
                 g = Graphics.FromImage(bmp);
 
                 try
@@ -298,7 +298,7 @@ namespace Server
                             ds.CopyTo(post_ms);
                             ds.Close();
                         }
-                        Viewer.Student stu = Viewer.clientsList[clientAddr];
+                        Viewer.Student stu = Viewer.clientsList[clientAddr]; //KeyInValidOperation
                         stu.img = Image.FromStream(post_ms);
                         Viewer.clientsList[clientAddr] = stu;
 
@@ -436,6 +436,8 @@ namespace Server
 
             if (listener != null) listener.Close();
             Dispose();
+
+            this.Close();
         }
 
         private void Viewer_FormClosed(object sender, FormClosedEventArgs e)
@@ -446,6 +448,26 @@ namespace Server
         private void CbMonitor_SelectedIndexChanged(object sender, EventArgs e)
         {
             selectedScreen = cbMonitor.SelectedIndex;
+        }
+
+        private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.TopMost = true;
+            this.TopMost = false;
+        }
+
+        private void BtnExit_Click(object sender, EventArgs ea)
+        {
+            standardSignalObj.IsShutdown = true;
+            standardSignalObj.IsMonitoring = false;
+            standardSignalObj.IsInternet = false;
+            standardSignalObj.IsLock = false;
+            standardSignalObj.IsTaskMgrEnabled = true;
+
+            if (listener != null) listener.Close();
+            Dispose();
+
+            this.Close();
         }
     }
 }

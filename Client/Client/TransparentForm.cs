@@ -53,7 +53,7 @@ namespace Client
         private void BtnLogout_Click(object sender, EventArgs ea)
         {
             this.Close();
-            new Client().BtnLogout_Click();
+            new Client().BtnLogout();
         }
 
         private void TransparentForm_Load(object sender, EventArgs e)

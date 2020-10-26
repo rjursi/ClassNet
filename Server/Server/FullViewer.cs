@@ -7,8 +7,12 @@ namespace Server
     public partial class FullViewer : Form
     {
         public static Student focusStudent;
-        Timer focusingTimer;
-        EventHandler focusHandler;
+        readonly Timer focusingTimer;
+        readonly EventHandler focusHandler;
+        private static Boolean isStop;
+
+        DialogResult result;
+
         public FullViewer()
         {
             InitializeComponent();
@@ -17,6 +21,7 @@ namespace Server
         public FullViewer(Student stu)
         {
             InitializeComponent();
+            isStop = true;
             focusStudent = stu;
             focusingTimer = new Timer();
             focusingTimer.Interval = 500;
@@ -33,8 +38,28 @@ namespace Server
 
         void InterateFocusing(Student stu)
         {
+            if (clientsList.ContainsValue(stu))
+            {
 
-            picFocusView.Image = stu.img;
+                picFocusView.Image = stu.img;
+                
+            }
+            else
+            {
+                if (isStop)
+                {
+                    isStop = false;
+                    result = MessageBox.Show("해당 학습자가 연결을 종료하였습니다.", "에러!", MessageBoxButtons.OK, MessageBoxIcon.Error); //연결 끊긴 이후 후 처리 요망
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        focusingTimer.Stop();
+                        this.Close();
+                    }
+
+                    
+                }
+            }
         }
     }
 }
