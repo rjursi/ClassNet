@@ -41,6 +41,8 @@ namespace Server
             renderingTimer.Start();
 
             focusingTimer = new Timer();
+
+            this.ShowInTaskbar = false;
         }
 
         public void GetPicture(PictureBox box, MouseEventArgs e)
@@ -61,7 +63,7 @@ namespace Server
                 Bitmap bmp = new Bitmap(box.Image);
                 String str = box.Name.ToString().Trim('\0');
                 Console.WriteLine($"{filePath}{str}.png");
-                bmp.Save($"{filePath}{str}.png", System.Drawing.Imaging.ImageFormat.Png);
+                bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
             }
         }
 
@@ -87,7 +89,7 @@ namespace Server
             {
                 Width = 160,
                 Height = 20,
-                Location = new Point(5, 8),
+                Location = new Point(5, 30),
                 Text = stu.info // 학번(이름)
             };
 
@@ -96,7 +98,7 @@ namespace Server
                 Name = stu.info, 
                 Width = 160,
                 Height = 120,
-                Location = new Point(5, 30),
+                Location = new Point(5, 50),
                 BackColor = Color.Black,
                 SizeMode = PictureBoxSizeMode.StretchImage,
                 Image = stu.img // 캡처 이미지
@@ -122,35 +124,43 @@ namespace Server
 
         private void IterateShowViews(object sender, EventArgs e)
         {
-
-            if (pastClientsCount == currentClientsCount)
+            try
             {
-                foreach (string key in clientsList.Keys)
-                {
-                    Student stu = clientsList[key] as Student;
-                    clientsPicture[key].Image = stu.img;
-                }
-            }
-            else if (pastClientsCount < currentClientsCount)
-            {
-                pastClientsCount++;
+                List<string> list = new List<string>(clientsList.Keys);
 
-                clientsViewPanel.Controls.Clear();
-                foreach (string key in clientsList.Keys)
+                if (pastClientsCount == currentClientsCount)
                 {
-                    clientsViewPanel.Controls.Add(AddClientPanel(key));
+                    foreach (string key in clientsList.Keys)
+                    {
+                        Student stu = clientsList[key] as Student;
+                        clientsPicture[key].Image = stu.img;
+                    }
                 }
-            }
-            else if (pastClientsCount > currentClientsCount)
-            {
-                pastClientsCount--;
+                else if (pastClientsCount < currentClientsCount)
+                {
+                    ++pastClientsCount;
 
-                clientsViewPanel.Controls.Clear();
-                foreach (string key in clientsList.Keys)
-                {
-                   clientsViewPanel.Controls.Add(AddClientPanel(key));
+                    clientsViewPanel.Controls.Clear();
+                    foreach (string key in list)
+                    {
+                        clientsViewPanel.Controls.Add(AddClientPanel(key));
+                    }
                 }
+                else if (pastClientsCount > currentClientsCount)
+                {
+                    --pastClientsCount;
+
+                    clientsViewPanel.Controls.Clear();
+                    foreach (string key in list)
+                    {
+                        clientsViewPanel.Controls.Add(AddClientPanel(key));
+                    }
+                }
+            }catch(Exception)
+            {
+                return ;
             }
+            
         }
 
         private void InterateFocusView(Image sendImg)
@@ -177,13 +187,19 @@ namespace Server
 
                         foreach (string key in clientsPicture.Keys)
                         {
-                            String str = clientsPicture[key].Name;
+                            String str = clientsPicture[key].Name.ToString().Trim('\0');
                             Bitmap bmp = new Bitmap(clientsPicture[key].Image);
-                            bmp.Save($"{filePath}{str}" + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                            Console.WriteLine($"{filePath}{str}.png", System.Drawing.Imaging.ImageFormat.Png);
+                            bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                         }
                     }
                 }                
             }
+        }
+
+        private void Viewer_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
