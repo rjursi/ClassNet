@@ -161,6 +161,7 @@
     <None Include="Resources\capture.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ClassNet_256.ico" />
     <Content Include="ClassNet_32.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

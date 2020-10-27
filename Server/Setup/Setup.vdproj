@@ -21,7 +21,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_705BEFC76C90495DB86B1F14748B315A"
+        "MsmKey" = "8:_5CDFBB6EB5344D869C077E0427BCC137"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_75683FABBD1846E19BC01D0DCE675683"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -76,6 +82,12 @@
         "Entry"
         {
         "MsmKey" = "8:_EF5EE56DC21D4749A7887EDF88798006"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F5B9E74EF560458F88097F95136ABEA7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -267,10 +279,30 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_705BEFC76C90495DB86B1F14748B315A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5CDFBB6EB5344D869C077E0427BCC137"
             {
             "SourcePath" = "8:..\\ClassNet_256.ico"
             "TargetName" = "8:ClassNet_256.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_5B86ECF786154BC69658E4BBD7C1E628"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_75683FABBD1846E19BC01D0DCE675683"
+            {
+            "SourcePath" = "8:..\\ClassNet_128.ico"
+            "TargetName" = "8:ClassNet_128.ico"
             "Tag" = "8:"
             "Folder" = "8:_5B86ECF786154BC69658E4BBD7C1E628"
             "Condition" = "8:"
@@ -504,6 +536,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F5B9E74EF560458F88097F95136ABEA7"
+            {
+            "SourcePath" = "8:..\\ClassNet_32.ico"
+            "TargetName" = "8:ClassNet_32.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_5B86ECF786154BC69658E4BBD7C1E628"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -561,7 +613,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ClassNet Server"
         "ProductCode" = "8:{01E210E0-D959-4082-8FD8-1A1DA5684F10}"
-        "PackageCode" = "8:{FA7A2CCC-C2D9-436B-9883-884819131C89}"
+        "PackageCode" = "8:{9AAF286D-A6F4-4209-8F6D-5CD4414D3C18}"
         "UpgradeCode" = "8:{E829FFDE-76A1-4934-ABA3-B63003F8594B}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -681,7 +733,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B86DE12FE1BA4DA4B0C95FAF317F983E"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_07E95C0BD99D4CDAB2E9522657A64C97"
             {
             "Name" = "8:클래스넷"
             "Arguments" = "8:"
@@ -692,10 +744,10 @@
             "Target" = "8:_EF5EE56DC21D4749A7887EDF88798006"
             "Folder" = "8:_A88A79B9C2A5487BB85B714A2A280BE6"
             "WorkingFolder" = "8:_5B86ECF786154BC69658E4BBD7C1E628"
-            "Icon" = "8:_705BEFC76C90495DB86B1F14748B315A"
+            "Icon" = "8:_75683FABBD1846E19BC01D0DCE675683"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B8C8CEDC3E5C420696B7BF3DA1C434BB"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C03E067A469E4D0CBAF9274A9DD38321"
             {
             "Name" = "8:클래스넷"
             "Arguments" = "8:"
@@ -706,7 +758,7 @@
             "Target" = "8:_EF5EE56DC21D4749A7887EDF88798006"
             "Folder" = "8:_19A426A6C15A43B6ADF611C2857BF72F"
             "WorkingFolder" = "8:_5B86ECF786154BC69658E4BBD7C1E628"
-            "Icon" = "8:_705BEFC76C90495DB86B1F14748B315A"
+            "Icon" = "8:_75683FABBD1846E19BC01D0DCE675683"
             "Feature" = "8:"
             }
         }

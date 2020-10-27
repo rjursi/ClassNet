@@ -15,18 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_04D7D3179E3E089411A9A6608B7335A5"
-        "OwnerKey" = "8:_F0A1AD9C26144576A488BBAEAFC6D1B1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_04D7D3179E3E089411A9A6608B7335A5"
-        "OwnerKey" = "8:_C9DD5983F5494C1DB92464E3E428674B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_0DA5E319DC1A459FAF3A8E1F4F2897A8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -34,13 +22,31 @@
         "Entry"
         {
         "MsmKey" = "8:_23526F85C8FE2C324C63909B5ED3053C"
-        "OwnerKey" = "8:_04D7D3179E3E089411A9A6608B7335A5"
+        "OwnerKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_2D8913265AE6446A94A565F0D89FE23D"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3E4B81A1C5954B848F20C7D6B8A7747E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
+        "OwnerKey" = "8:_C9DD5983F5494C1DB92464E3E428674B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
+        "OwnerKey" = "8:_F0A1AD9C26144576A488BBAEAFC6D1B1"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -64,7 +70,7 @@
         "Entry"
         {
         "MsmKey" = "8:_A6C68DEC3A1D1E0CF978E161F2FE7FC3"
-        "OwnerKey" = "8:_04D7D3179E3E089411A9A6608B7335A5"
+        "OwnerKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -106,19 +112,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C9DD5983F5494C1DB92464E3E428674B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_F0A1AD9C26144576A488BBAEAFC6D1B1"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_04D7D3179E3E089411A9A6608B7335A5"
+        "OwnerKey" = "8:_C9DD5983F5494C1DB92464E3E428674B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_5F399C5CF538247D0E78A9C74D2906E3"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -131,12 +137,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_A6C68DEC3A1D1E0CF978E161F2FE7FC3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0DA5E319DC1A459FAF3A8E1F4F2897A8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -155,6 +155,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_CC446287EDCAFC90E4A4E3BF9546CC37"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_0DA5E319DC1A459FAF3A8E1F4F2897A8"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -266,37 +272,6 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_04D7D3179E3E089411A9A6608B7335A5"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Microsoft.Win32.TaskScheduler, Version=2.8.20.0, Culture=neutral, PublicKeyToken=c416bc1b32d97233, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_04D7D3179E3E089411A9A6608B7335A5"
-                    {
-                    "Name" = "8:Microsoft.Win32.TaskScheduler.DLL"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Microsoft.Win32.TaskScheduler.DLL"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_0DA5E319DC1A459FAF3A8E1F4F2897A8"
             {
             "AssemblyRegister" = "3:1"
@@ -388,6 +363,57 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3E4B81A1C5954B848F20C7D6B8A7747E"
+            {
+            "SourcePath" = "8:..\\ClassNet_128.ico"
+            "TargetName" = "8:ClassNet_128.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5F399C5CF538247D0E78A9C74D2906E3"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Microsoft.Win32.TaskScheduler, Version=2.8.20.0, Culture=neutral, PublicKeyToken=c416bc1b32d97233, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_5F399C5CF538247D0E78A9C74D2906E3"
+                    {
+                    "Name" = "8:Microsoft.Win32.TaskScheduler.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Microsoft.Win32.TaskScheduler.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_3DC7ACA201454682A35D95779FC089BE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_61F1FBECFD3A47708899BC9187CBE7CD"
@@ -673,7 +699,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ClassNet Client"
         "ProductCode" = "8:{A7D975B9-9C96-4DAB-A0E1-67C1FDF30B5D}"
-        "PackageCode" = "8:{A01B46CF-48F8-4697-A151-00C8EA5E3CFA}"
+        "PackageCode" = "8:{E5110DBB-D66B-4E02-8854-121FCA7A4F8A}"
         "UpgradeCode" = "8:{7E194BAE-52B6-4C85-8137-7E30EAADB0BA}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -795,7 +821,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_21E90850D9994ED897D1E5DCC36B9532"
             {
-            "Name" = "8:클래스넷 Client"
+            "Name" = "8:클래스넷 클라이언트"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -804,12 +830,12 @@
             "Target" = "8:_2D8913265AE6446A94A565F0D89FE23D"
             "Folder" = "8:_E5B8FB4AC68D415C80D38C886320B7CF"
             "WorkingFolder" = "8:_3DC7ACA201454682A35D95779FC089BE"
-            "Icon" = "8:_61F1FBECFD3A47708899BC9187CBE7CD"
+            "Icon" = "8:_3E4B81A1C5954B848F20C7D6B8A7747E"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_8F48FB4E2D5B475FBE65F856EC2ABC77"
             {
-            "Name" = "8:클래스넷 Client"
+            "Name" = "8:클래스넷 클라이언트"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -818,7 +844,7 @@
             "Target" = "8:_2D8913265AE6446A94A565F0D89FE23D"
             "Folder" = "8:_CB48364337C34030BD17BC0DA3D8E165"
             "WorkingFolder" = "8:_3DC7ACA201454682A35D95779FC089BE"
-            "Icon" = "8:_61F1FBECFD3A47708899BC9187CBE7CD"
+            "Icon" = "8:_3E4B81A1C5954B848F20C7D6B8A7747E"
             "Feature" = "8:"
             }
         }
