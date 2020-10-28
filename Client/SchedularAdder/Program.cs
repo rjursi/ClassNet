@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Threading;
+using System.Diagnostics;
 
 namespace SchedularAdder
 {
@@ -13,6 +14,7 @@ namespace SchedularAdder
         {
             using (TaskService ts = new TaskService())
             {
+               
                 string currentExePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 try
                 {
@@ -29,11 +31,23 @@ namespace SchedularAdder
                     LogonTrigger lt = new LogonTrigger(); // 로그인할때 실 행되도록 trigger 설정
                     td.Triggers.Add(lt);
 
-                    td.Actions.Add(new ExecAction(currentExePath + "\\Client.exe")); // 프로그램, 인자등록.
+                    td.Actions.Add(new ExecAction(currentExePath + "\\ClassNet Service.exe")); // 프로그램, 인자등록.
                     
                     ts.RootFolder.RegisterTaskDefinition("ClassNet Client\\Run When Logon", td);
                     Console.WriteLine("Schedular Adder : 작업 등록이 성공적으로 완료되었습니다...");
-                    Thread.Sleep(1500);
+                    Thread.Sleep(1000);
+
+                    DialogResult result = MessageBox.Show("설치를 정상적으로 완료할려면 재부팅이 필요합니다. 지금 재부팅 하시겠습니까?", "알림", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                    if(result == DialogResult.Yes)
+                    {
+                        Process.Start("Shutdown.exe", "-r -t 0");
+                    }
+                    else
+                    {
+                        MessageBox.Show("설치가 완료되었습니다. 재부팅을 권장드립니다.","알림",MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    
                 }
                 catch(Exception e) { 
                     MessageBox.Show($"{e.Message} : {e.StackTrace}");

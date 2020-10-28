@@ -58,5 +58,11 @@ namespace Server
                 }
             }
         }
+
+        private void FullViewer_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            focusingTimer.Stop();
+            focusingTimer.Dispose();
+        }
     }
 }

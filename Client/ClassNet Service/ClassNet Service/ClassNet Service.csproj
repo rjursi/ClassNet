@@ -57,7 +57,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="administrator.manifest" />
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ClassNet_32.ico" />

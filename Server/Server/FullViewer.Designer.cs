@@ -54,6 +54,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MinimizeBox = false;
             this.Name = "FullViewer";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FullViewer_FormClosing);
             this.Load += new System.EventHandler(this.FullViewer_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picFocusView)).EndInit();
             this.ResumeLayout(false);

@@ -380,7 +380,7 @@ namespace Server
                 standardSignalObj.IsLock = false;
                 notifyIcon.ContextMenu.MenuItems[3].Checked = false;
 
-                btnLock.Image = Resource._04imgLock_off;
+                btnLock.Image = Resource._04imgLock_on;
 
                 MessageBox.Show("입력 잠금을 해제하였습니다.", "입력 잠금 해제", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -389,7 +389,7 @@ namespace Server
                 standardSignalObj.IsLock = true;
                 notifyIcon.ContextMenu.MenuItems[3].Checked = true;
 
-                btnLock.Image = Resource._04imgLock_on;
+                btnLock.Image = Resource._04imgLock_off;
 
                 MessageBox.Show("입력 잠금을 설정하였습니다.", "입력 잠금", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }

@@ -51,10 +51,11 @@
             // cbMonitor
             // 
             this.cbMonitor.FormattingEnabled = true;
-            this.cbMonitor.ItemHeight = 24;
-            this.cbMonitor.Location = new System.Drawing.Point(23, 47);
+            this.cbMonitor.ItemHeight = 23;
+            this.cbMonitor.Location = new System.Drawing.Point(20, 38);
+            this.cbMonitor.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.cbMonitor.Name = "cbMonitor";
-            this.cbMonitor.Size = new System.Drawing.Size(319, 30);
+            this.cbMonitor.Size = new System.Drawing.Size(280, 29);
             this.cbMonitor.TabIndex = 6;
             this.cbMonitor.UseSelectable = true;
             this.cbMonitor.SelectedIndexChanged += new System.EventHandler(this.CbMonitor_SelectedIndexChanged);
@@ -65,9 +66,9 @@
             this.lblSelectMonitor.FontSize = MetroFramework.MetroLabelSize.Small;
             this.lblSelectMonitor.FontWeight = MetroFramework.MetroLabelWeight.Bold;
             this.lblSelectMonitor.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.lblSelectMonitor.Location = new System.Drawing.Point(23, 17);
+            this.lblSelectMonitor.Location = new System.Drawing.Point(20, 14);
             this.lblSelectMonitor.Name = "lblSelectMonitor";
-            this.lblSelectMonitor.Size = new System.Drawing.Size(94, 17);
+            this.lblSelectMonitor.Size = new System.Drawing.Size(85, 15);
             this.lblSelectMonitor.TabIndex = 7;
             this.lblSelectMonitor.Text = "방송 화면 선택";
             this.lblSelectMonitor.UseCustomForeColor = true;
@@ -79,10 +80,10 @@
             this.btnCtrlTaskMgr.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.btnCtrlTaskMgr.Image = ((System.Drawing.Image)(resources.GetObject("btnCtrlTaskMgr.Image")));
             this.btnCtrlTaskMgr.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCtrlTaskMgr.Location = new System.Drawing.Point(0, 460);
+            this.btnCtrlTaskMgr.Location = new System.Drawing.Point(0, 368);
             this.btnCtrlTaskMgr.Margin = new System.Windows.Forms.Padding(0);
             this.btnCtrlTaskMgr.Name = "btnCtrlTaskMgr";
-            this.btnCtrlTaskMgr.Size = new System.Drawing.Size(370, 90);
+            this.btnCtrlTaskMgr.Size = new System.Drawing.Size(324, 72);
             this.btnCtrlTaskMgr.TabIndex = 1;
             this.btnCtrlTaskMgr.UseVisualStyleBackColor = true;
             this.btnCtrlTaskMgr.Click += new System.EventHandler(this.BtnCtrlTaskMgr_Click);
@@ -94,10 +95,9 @@
             this.btnInternet.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.btnInternet.Image = ((System.Drawing.Image)(resources.GetObject("btnInternet.Image")));
             this.btnInternet.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnInternet.Location = new System.Drawing.Point(0, 280);
-            this.btnInternet.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnInternet.Location = new System.Drawing.Point(0, 224);
             this.btnInternet.Name = "btnInternet";
-            this.btnInternet.Size = new System.Drawing.Size(370, 90);
+            this.btnInternet.Size = new System.Drawing.Size(324, 72);
             this.btnInternet.TabIndex = 3;
             this.btnInternet.UseVisualStyleBackColor = true;
             this.btnInternet.Click += new System.EventHandler(this.BtnInternet_Click);
@@ -109,10 +109,10 @@
             this.btnViewer.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.btnViewer.Image = ((System.Drawing.Image)(resources.GetObject("btnViewer.Image")));
             this.btnViewer.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnViewer.Location = new System.Drawing.Point(0, 190);
+            this.btnViewer.Location = new System.Drawing.Point(0, 152);
             this.btnViewer.Margin = new System.Windows.Forms.Padding(0);
             this.btnViewer.Name = "btnViewer";
-            this.btnViewer.Size = new System.Drawing.Size(370, 90);
+            this.btnViewer.Size = new System.Drawing.Size(324, 72);
             this.btnViewer.TabIndex = 3;
             this.btnViewer.UseVisualStyleBackColor = true;
             this.btnViewer.Click += new System.EventHandler(this.BtnMonitoring_Click);
@@ -124,10 +124,10 @@
             this.btnLock.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.btnLock.Image = ((System.Drawing.Image)(resources.GetObject("btnLock.Image")));
             this.btnLock.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnLock.Location = new System.Drawing.Point(0, 370);
+            this.btnLock.Location = new System.Drawing.Point(0, 296);
             this.btnLock.Margin = new System.Windows.Forms.Padding(0);
             this.btnLock.Name = "btnLock";
-            this.btnLock.Size = new System.Drawing.Size(370, 90);
+            this.btnLock.Size = new System.Drawing.Size(324, 72);
             this.btnLock.TabIndex = 2;
             this.btnLock.UseVisualStyleBackColor = true;
             this.btnLock.Click += new System.EventHandler(this.BtnLock_Click);
@@ -139,10 +139,10 @@
             this.btnPower.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.btnPower.Image = ((System.Drawing.Image)(resources.GetObject("btnPower.Image")));
             this.btnPower.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnPower.Location = new System.Drawing.Point(0, 550);
+            this.btnPower.Location = new System.Drawing.Point(0, 440);
             this.btnPower.Margin = new System.Windows.Forms.Padding(0);
             this.btnPower.Name = "btnPower";
-            this.btnPower.Size = new System.Drawing.Size(370, 90);
+            this.btnPower.Size = new System.Drawing.Size(324, 72);
             this.btnPower.TabIndex = 1;
             this.btnPower.UseVisualStyleBackColor = true;
             this.btnPower.Click += new System.EventHandler(this.BtnPower_Click);
@@ -155,20 +155,20 @@
             this.btnStreaming.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnStreaming.Image = ((System.Drawing.Image)(resources.GetObject("btnStreaming.Image")));
             this.btnStreaming.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnStreaming.Location = new System.Drawing.Point(0, 100);
+            this.btnStreaming.Location = new System.Drawing.Point(0, 80);
             this.btnStreaming.Margin = new System.Windows.Forms.Padding(0);
             this.btnStreaming.Name = "btnStreaming";
-            this.btnStreaming.Size = new System.Drawing.Size(370, 90);
+            this.btnStreaming.Size = new System.Drawing.Size(324, 72);
             this.btnStreaming.TabIndex = 0;
             this.btnStreaming.UseVisualStyleBackColor = true;
             this.btnStreaming.Click += new System.EventHandler(this.BtnStreaming_Click);
             // 
             // Server
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(367, 653);
+            this.ClientSize = new System.Drawing.Size(321, 522);
             this.Controls.Add(this.lblSelectMonitor);
             this.Controls.Add(this.cbMonitor);
             this.Controls.Add(this.btnCtrlTaskMgr);
@@ -183,7 +183,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Server";
-            this.Text = "ClassNet";
+            this.Text = "클래스넷";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Server_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Server_FormClosed);
             this.Load += new System.EventHandler(this.Server_Load);
