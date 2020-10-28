@@ -36,7 +36,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>ClassNet.ico</ApplicationIcon>
+    <ApplicationIcon>ClassNet_32.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
@@ -151,7 +151,7 @@
     <None Include="Resources\capture.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ClassNet.ico" />
+    <Content Include="ClassNet_32.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

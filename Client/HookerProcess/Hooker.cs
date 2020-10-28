@@ -89,7 +89,6 @@ namespace HookerProcess
             return CallNextHookEx(keyboardHook, nCode, (int)wParam, lParam);
         }
 
-    
         public void SetHook()
         {
             IntPtr hInstance = LoadLibrary("user32");

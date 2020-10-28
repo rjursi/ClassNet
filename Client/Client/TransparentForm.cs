@@ -18,6 +18,7 @@ namespace Client
         private void SetUserFormTrayIcon()
         {
             ContextMenu ctx = new ContextMenu();
+            ctx.MenuItems.Add(new MenuItem("만든이", new EventHandler((s, ea) => BtnMade_Click(s, ea))));
             ctx.MenuItems.Add(new MenuItem("로그아웃", new EventHandler((s, ea) => BtnLogout_Click(s, ea))));
 
             this.notifyIcon.ContextMenu = ctx;
@@ -51,10 +52,19 @@ namespace Client
         private void BtnLogout_Click(object sender, EventArgs ea)
         {
             this.Close();
+            new Client().BtnLogout_Click();
+        }
 
-            var main = new Client();
-            main.Show();
-            main.BtnLogout_Click();
+        private void BtnMade_Click(object sender, EventArgs ea)
+        {
+            MessageBox.Show("[유한대학교 IT소프트웨어공학과]\n" +
+                "\n201507067 김태우\n" +
+                "\n201607019 김윤권\n" +
+                "\n201607058 이시헌\n" +
+                "\n201807031 지한영\n" +
+                "\n201507062 최준수\n" +
+                "\n201807010 홍성준",
+                "만든이", MessageBoxButtons.OK);
         }
 
         private void TransparentForm_Load(object sender, EventArgs e)

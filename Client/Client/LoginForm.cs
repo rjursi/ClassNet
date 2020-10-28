@@ -1,5 +1,4 @@
-﻿using Client.Properties;
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -17,46 +16,103 @@ namespace Client
         {
             InitializeComponent();
         }
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+            FormBorderStyle = FormBorderStyle.None;
+            WindowState = FormWindowState.Maximized;
+            TopMost = true;
+
+            this.BackColor = Color.White;
+
+            PictureBox pic = new PictureBox
+            {
+                Image = Resource.yuhan,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Width = 800,
+                Height = 800
+            };
+
+            int logoX = (this.Width / 2) - (pic.Width / 2);
+            int logoY = (this.Height / 2) - (pic.Height / 2);
+            pic.Location = new Point(logoX, logoY);
+
+            this.Controls.Add(pic);
+
+            int w = this.Width - (panelInput.Width + 130);
+            int h = this.Height - (panelInput.Height + 100);
+            panelInput.Location = new Point(w, h);
+
+            txtLoginID.Focus();
+        }
+
+        private void LoginButton_Click(object sender, EventArgs e)
+        {
+            CheckLogin();
+        }
+
+        private void TxtLoginID_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                e.Handled = true;
+                txtLoginPW.Focus();
+            }
+        }
+
+        private void TxtLoginPW_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                e.Handled = true;
+                CheckLogin();
+            }
+        }
+
+        private void BtnSimpleLogin_Click(object sender, EventArgs e)
+        {
+            SimpleLoginForm frm = new SimpleLoginForm();
+            frm.ShowDialog();
+            stuInfo = frm.stuInfo;
+            this.Close();
+        }
+
         private string AdminCheck()
         {
-            
-
             if (ClassNetConfig.GetAppConfig("ADMIN_ID").Equals(txtLoginID.Text))
             {
                 if (ClassNetConfig.GetAppConfig("ADMIN_PWD").Equals(txtLoginPW.Text))
                 {
-                    
                     return txtLoginID.Text;
                 }
             }
-
             return "";
         }
-        private void LoginButton_Click(object sender, EventArgs e)
+
+        private void CheckLogin()
         {
+            Cursor.Current = Cursors.WaitCursor;
 
             stuInfo = AdminCheck();
             if (!stuInfo.Equals(""))
             {
                 this.Close();
-
                 return;
             }
 
             cookie = new CookieContainer();
             HttpWebResponse res = SetLogin(txtLoginID.Text, txtLoginPW.Text);
-            //string result = SetLogin(txtLoginID.Text, txtLoginPW.Text);
 
-            if (GetInfo(res).Contains("fail") /*result.Contains("fail")*/)
+            if (GetInfo(res).Contains("fail"))
             {
-                MessageBox.Show("아이디와 패스워드를 확인하세요.");
+                MessageBox.Show("아이디와 패스워드를 확인하세요.", "로그인 실패", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtLoginID.Focus();
             }
             else
             {
                 stuInfo = GetInfo(res);
                 this.Close();
             }
-
             cookie = null;
         }
 
@@ -107,41 +163,6 @@ namespace Client
             {
                 return "fail";
             }
-        }
-
-        private void btnSimpleLogin_Click(object sender, EventArgs e)
-        {
-            SimpleLoginForm frm = new SimpleLoginForm();
-            frm.ShowDialog();
-            stuInfo = frm.stuInfo;
-            this.Close();
-        }
-
-        private void LoginForm_Load(object sender, EventArgs e)
-        {
-            FormBorderStyle = FormBorderStyle.None;
-            WindowState = FormWindowState.Maximized;
-            TopMost = true;
-
-            this.BackColor = Color.White;
-
-            PictureBox pic = new PictureBox
-            {
-                Image = Resource.yuhan,
-                SizeMode = PictureBoxSizeMode.Zoom,
-                Width = 950,
-                Height = 950
-            };
-
-            int logoX = (this.Width / 2) - (pic.Width / 2);
-            int logoY = (this.Height / 2) - (pic.Height / 2);
-            pic.Location = new Point(logoX, logoY);
-
-            this.Controls.Add(pic);
-
-            int w = this.Width - (panelInput.Width + 130);
-            int h = this.Height - (panelInput.Height + 100);
-            panelInput.Location = new Point(w, h);
         }
     }
 }

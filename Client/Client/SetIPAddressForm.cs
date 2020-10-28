@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Client
@@ -26,8 +19,15 @@ namespace Client
         {
             ServerIP = this.ipAddressControl.Text;
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            if (ServerIP.Equals("..."))
+            {
+                MessageBox.Show("서버 IP를 입력해주세요.", "입력 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
         }
 
         private void SetIPAddressForm_Load(object sender, EventArgs e)

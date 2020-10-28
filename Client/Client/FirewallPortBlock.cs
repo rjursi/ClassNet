@@ -9,14 +9,12 @@ namespace InternetControl
         const string UDP_HTTP_BLOCK_RULENAME = "ClassNet Internet Control_UDP_HTTP";
         private bool disposedValue;
 
-
         public bool NowCtrlStatus { get; set; }
 
         public FirewallPortBlock()
         {
             // 초기는 실행되지 않은 상태로 설정
             NowCtrlStatus = false;
-
         }
 
         public void CtrlStatusEventCheck(bool newCtrlStatus) 
@@ -40,7 +38,6 @@ namespace InternetControl
             }
         }
 
-
         public void TcpHttpHttpsBlock()
         {
             INetFwRule firewallRule = (INetFwRule)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FWRule"));
@@ -58,7 +55,6 @@ namespace InternetControl
 
             INetFwPolicy2 firewallPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
             firewallPolicy.Rules.Add(firewallRule);
-
         }
 
         public void UdpHttpHttpsBlock()
@@ -76,8 +72,6 @@ namespace InternetControl
 
             INetFwPolicy2 firewallPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
             firewallPolicy.Rules.Add(firewallRule);
-
-          
         }
 
         public void RuleRemove()
@@ -86,7 +80,6 @@ namespace InternetControl
 
             policyRemover.Rules.Remove(TCP_HTTP_HTTPS_BLOCK_RULENAME);
             policyRemover.Rules.Remove(UDP_HTTP_BLOCK_RULENAME);
-                
         }
 
         protected virtual void Dispose(bool disposing)

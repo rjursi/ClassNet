@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Diagnostics;
 
 using Newtonsoft.Json;
 using InternetControl;
-using System.Threading;
 
 namespace Client
 {
@@ -85,7 +85,7 @@ namespace Client
 
             if (ClassNetConfig.GetAppConfig("SERVER_IP").Equals(""))
             {
-                MessageBox.Show("서버 IP 설정이 필요합니다.", "알림", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("서버 IP 설정이 필요합니다.", "서버 IP 미설정", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 using (SetIPAddressForm setIPAddressForm = new SetIPAddressForm())
                 {
@@ -112,56 +112,55 @@ namespace Client
                 if (stuInfo.Length > 0) isLogin = true;
             }
 
-
             transparentForm = new TransparentForm();
             if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
             {
                 transparentForm.FormStatus = TransparentForm.ADMINFORM;
                 transparentForm.Show();
                 transparentForm.Hide();
+
+                this.Hide();
+
+                this.ShowInTaskbar = false;
             }
             else
             {
                 transparentForm.FormStatus = TransparentForm.USERFORM;
                 transparentForm.Show();
                 transparentForm.Hide();
+
+                this.Hide();
+
+                // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
+                this.ShowInTaskbar = false;
+
+                // 받은 이미지를 풀스크린으로 띄우는 설정
+                this.FormBorderStyle = FormBorderStyle.None;
+                this.WindowState = FormWindowState.Maximized;
+
+                this.Location = new Point(0, 0);
+                this.Width = Screen.PrimaryScreen.Bounds.Width;
+                this.Height = Screen.PrimaryScreen.Bounds.Height;
+
+                screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
+                screenImage.Height = Screen.PrimaryScreen.Bounds.Height;
+
+                // 화면 폼을 가장 맨 위로
+                TopMost = true;
+
+                // JPEG 손실 압축 수준 설정
+                codec = GetEncoder(ImageFormat.Jpeg);
+                param = new EncoderParameters();
+                param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
+
+                firewallPortBlocker = new FirewallPortBlock();
+                cmdProcessController = new CmdProcessController();
+                taskMgrController = new TaskMgrController();
+
+                taskMgrController.KillTaskMgr();
+
+                Task.Run(() => SocketConnection());
             }
-
-
-
-            this.Hide();
-
-            // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
-            this.ShowInTaskbar = false;
-
-            // 받은 이미지를 풀스크린으로 띄우는 설정
-            /*this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
-            this.Location = new Point(0, 0);
-            this.Width = Screen.PrimaryScreen.Bounds.Width;
-            this.Height = Screen.PrimaryScreen.Bounds.Height;
-            screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-            screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
-
-            // 화면 폼을 가장 맨 위로
-            TopMost = true;
-
-            // JPEG 손실 압축 수준 설정
-            codec = GetEncoder(ImageFormat.Jpeg);
-            param = new EncoderParameters();
-            param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
-
-            firewallPortBlocker = new FirewallPortBlock();
-            cmdProcessController = new CmdProcessController();
-            taskMgrController = new TaskMgrController();
-
-            taskMgrController.KillTaskMgr();
-
-            Task.Run(()=>SocketConnection());
-            //SocketConnection();
-
-            
-
         }
 
         private void SocketConnection()
@@ -187,8 +186,8 @@ namespace Client
             }
 
             InsertAction(() => ImageProcessing());
-            //InsertAction(() => ControllingProcessing());
-            subAction = () => ControllingProcessing();
+            InsertAction(() => ControllingProcessing());
+            //subAction = () => ControllingProcessing();
             MainTask();
         }
 
@@ -222,7 +221,7 @@ namespace Client
             SignalObj signal = JsonConvert.DeserializeObject<SignalObj>(jsonData);
             return signal;
         }
-        
+
         public SignalObj ReceiveObject()
         {
             try
@@ -245,14 +244,13 @@ namespace Client
             }
             catch (SocketException)
             {
-
                 DeleteAction(() => ImageProcessing());
                 DeleteAction(() => ControllingProcessing());
 
                 server.Close();
                 server.Dispose();
 
-                SocketConnection();
+                Task.Run(() => SocketConnection());
 
                 return null;
             }
@@ -266,11 +264,11 @@ namespace Client
                 {
                     using (standardSignalObj = ReceiveObject())
                     {
-                        if (standardSignalObj != null)
+                        if (standardSignalObj != null) 
                         {
                             await Task.Run(mainAction);
-                            await Task.Run(subAction);
-                        }
+                            //await Task.Run(subAction);
+                        } 
                         else
                         {
                             standardSignalObj = new SignalObj();
@@ -309,17 +307,13 @@ namespace Client
 
         public void ImageProcessing()
         {
-            if (standardSignalObj.ServerScreenData != null)
+            if (standardSignalObj.ServerScreenData != null && InvokeRequired)
             {
                 // 이미지를 받아서 여기서 버퍼를 설정하는 부분
                 this.Invoke(new ScreenOnDelegate(OutputDelegate),
                     standardSignalObj.ServerScreenData.Length, standardSignalObj.ServerScreenData, true);
             }
-            else 
-            {
-                this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
-            } 
-                
+            else if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
         }
 
         public Byte[] CaptureImage()
@@ -386,16 +380,6 @@ namespace Client
             }
         }
 
-        private void Client_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            server.Close();
-
-            if (cmdProcessController.NowCtrlStatus) cmdProcessController.QuitProcess();
-            taskMgrController.CheckTaskMgrStatus(true);
-
-            this.Invoke(new MethodInvoker(() => { Dispose(); }));
-        }
-
         private void BtnSetServerIP_Click(object sender, EventArgs ea)
         {
             using (SetIPAddressForm setIPAddressForm = new SetIPAddressForm())
@@ -413,7 +397,17 @@ namespace Client
 
         public void BtnLogout_Click()
         {
-            this.BeginInvoke(new MethodInvoker(this.Close));
+            Process[] processList = Process.GetProcessesByName("ClassNet Client");
+            if (processList.Length > 0) processList[0].Kill();
+        }
+
+        private void Client_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            server.Close();
+            server.Dispose();
+
+            this.Invoke(new MethodInvoker(() => { Dispose(); }));
+            this.Close();
         }
     }
 }
