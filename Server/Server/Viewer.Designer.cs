@@ -95,6 +95,7 @@
             this.MinimumSize = new System.Drawing.Size(1055, 700);
             this.Name = "Viewer";
             this.Text = "모니터링 화면 목록";
+            this.Load += new System.EventHandler(this.Viewer_Load);
             this.viewerToolStrip.ResumeLayout(false);
             this.viewerToolStrip.PerformLayout();
             this.ResumeLayout(false);

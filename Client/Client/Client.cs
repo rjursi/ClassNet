@@ -14,6 +14,7 @@ using System.Diagnostics;
 
 using Newtonsoft.Json;
 using InternetControl;
+using System.Threading;
 
 namespace Client
 {
@@ -134,7 +135,7 @@ namespace Client
                 this.ShowInTaskbar = false;
 
                 // 받은 이미지를 풀스크린으로 띄우는 설정
-                this.FormBorderStyle = FormBorderStyle.None;
+                /*this.FormBorderStyle = FormBorderStyle.None;
                 this.WindowState = FormWindowState.Maximized;
 
                 this.Location = new Point(0, 0);
@@ -142,7 +143,7 @@ namespace Client
                 this.Height = Screen.PrimaryScreen.Bounds.Height;
 
                 screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-                screenImage.Height = Screen.PrimaryScreen.Bounds.Height;
+                screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
 
                 // 화면 폼을 가장 맨 위로
                 TopMost = true;
@@ -216,8 +217,19 @@ namespace Client
 
         public SignalObj ByteToObject(Byte[] buffer)
         {
-            string jsonData = Encoding.Default.GetString(buffer);
-            SignalObj signal = JsonConvert.DeserializeObject<SignalObj>(jsonData);
+            string jsonData;
+            SignalObj signal;
+
+            try
+            {
+                jsonData = Encoding.Default.GetString(buffer);
+                signal = JsonConvert.DeserializeObject<SignalObj>(jsonData);
+            }
+            catch (JsonSerializationException)
+            {
+                signal = new SignalObj();
+            }
+            
             return signal;
         }
 
@@ -233,6 +245,7 @@ namespace Client
                 else if (isCapture)
                 {
                     sendData = CaptureImage();
+                    Thread.Sleep(500);
                 }
                 else sendData = Encoding.UTF8.GetBytes("recv");
 
@@ -271,12 +284,17 @@ namespace Client
                         }
                     }
                 }
-                catch (ObjectDisposedException)
+                catch (JsonReaderException e)
                 {
-                    break;
-                }
-                catch (JsonReaderException)
-                {
+                    DeleteAction(() => ImageProcessing());
+                    DeleteAction(() => ControllingProcessing());
+
+                    server.Close();
+                    server.Dispose();
+
+                    await Task.Run(() => SocketConnection());
+
+                    standardSignalObj = new SignalObj();
                     break;
                 }
                 finally

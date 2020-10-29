@@ -297,19 +297,19 @@ namespace Server
                             ds.CopyTo(post_ms);
                             ds.Close();
                         }
-                        Viewer.Student stu = Viewer.clientsList[clientAddr]; // KeyInValidOperation
-                        stu.img = Image.FromStream(post_ms);
-                        Viewer.clientsList[clientAddr] = stu;
 
+                        if (Viewer.clientsList.ContainsKey(clientAddr))
+                        {
+                            Viewer.Student stu = Viewer.clientsList[clientAddr];
+                            stu.img = Image.FromStream(post_ms);
+                            Viewer.clientsList[clientAddr] = stu;
+                        }
                         post_ms.Close();
                     }
                     pre_ms.Close();
                 }
             }
-            catch (InvalidDataException)
-            {
-                return;
-            }
+            catch (InvalidDataException) { }
         }
 
         private void BtnStreaming_Click(object sender, EventArgs e)
