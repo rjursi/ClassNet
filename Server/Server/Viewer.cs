@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -7,22 +8,14 @@ namespace Server
 {
     public partial class Viewer : Form
     {
-        public class Student
-        {
-            public string info;
-            public Image img;
-        }
+        public int pastClientsCount;
+        public int currentClientsCount; // 현재 접속 클라이언트 수
 
-        public static int pastClientsCount;
-        public static int currentClientsCount; // 현재 접속 클라이언트 수
+        public Dictionary<string, Student> clientsList;
 
-        public static FullViewer fullViewer;
+        private static FullViewer fullViewer;
 
-        public static Dictionary<string, Student> clientsList;
-
-        public String dir;
-
-        public static Timer renderingTimer;
+        private static Timer timer;
 
         private static EventHandler showAll;
         private static EventHandler showFull;
@@ -43,10 +36,9 @@ namespace Server
             showAll = new EventHandler(IterateShowViews);
             showFull = new EventHandler(IterateFocusView);
 
-            renderingTimer = new Timer();
-            renderingTimer.Tick += showAll;
-            renderingTimer.Interval = 500;
-            renderingTimer.Start();
+            timer = new Timer();
+            timer.Tick += showAll;
+            timer.Interval = 500;
         }
 
         private void Viewer_Load(object sender, EventArgs e)
@@ -57,6 +49,8 @@ namespace Server
 
             fullViewer = new FullViewer();
             fullViewer.FormClosed += new FormClosedEventHandler(FullViewer_FormClosed);
+
+            timer.Start();
         }
 
         public void GetPicture(PictureBox box, MouseEventArgs e)
@@ -83,8 +77,8 @@ namespace Server
         {
             selectedKey = key;
 
-            renderingTimer.Tick -= showAll;
-            renderingTimer.Tick += showFull;
+            timer.Tick -= showAll;
+            timer.Tick += showFull;
             this.Opacity = 0;
 
             fullViewer.ShowDialog();
@@ -138,21 +132,26 @@ namespace Server
             {
                 List<string> list = new List<string>(clientsList.Keys);
 
+                list.Sort();
+
                 if (pastClientsCount == currentClientsCount)
                 {
-                    foreach (string key in clientsList.Keys)
+                    foreach (string key in list)
                     {
-                        stu = clientsList[key] as Student;
-
-                        ctrl = this.Controls.Find(stu.info, true);
-                        if (ctrl.Length > 0)
+                        if (clientsList.ContainsKey(key))
                         {
-                            PictureBox pb = ctrl[0] as PictureBox;
-                            pb.Image = stu.img;
-                        }
-                        ctrl = null;
+                            stu = clientsList[key] as Student;
 
-                        stu = null;
+                            ctrl = this.Controls.Find(stu.info, true);
+                            if (ctrl.Length > 0)
+                            {
+                                PictureBox pb = ctrl[0] as PictureBox;
+                                pb.Image = stu.img;
+                            }
+                            ctrl = null;
+
+                            stu = null;
+                        }
                     }
                 }
                 else if (pastClientsCount < currentClientsCount)
@@ -162,7 +161,7 @@ namespace Server
                     clientsViewPanel.Controls.Clear();
                     foreach (string key in list)
                     {
-                        clientsViewPanel.Controls.Add(AddClientPanel(key));
+                        if (clientsList.ContainsKey(key)) clientsViewPanel.Controls.Add(AddClientPanel(key));
                     }
                 }
                 else if (pastClientsCount > currentClientsCount)
@@ -172,7 +171,7 @@ namespace Server
                     clientsViewPanel.Controls.Clear();
                     foreach (string key in list)
                     {
-                        clientsViewPanel.Controls.Add(AddClientPanel(key));
+                        if (clientsList.ContainsKey(key)) clientsViewPanel.Controls.Add(AddClientPanel(key));
                     }
                 }
             }
@@ -184,9 +183,23 @@ namespace Server
 
         private void IterateFocusView(object sender, EventArgs e)
         {
-            stu = clientsList[selectedKey] as Student;
-            fullViewer.AccessControl(stu.img, stu.info);
-            stu = null;
+            if (clientsList.ContainsKey(selectedKey))
+            {
+                stu = clientsList[selectedKey] as Student;
+                fullViewer.AccessControl(stu.img, stu.info);
+                stu = null;
+            }
+            else
+            {
+                timer.Stop();
+
+                MessageBox.Show("해당 학습자와 연결이 끊겼습니다.", "전체 화면 오류",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                fullViewer.Close();
+
+                timer.Start();
+            }
         }
 
         private void BtnAllSave_Click(object sender, EventArgs e)
@@ -194,7 +207,8 @@ namespace Server
             var filePath = string.Empty;
             if (pastClientsCount == 0)
             {
-                MessageBox.Show("접속한 학생이 없습니다.", "화면 캡처 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("접속한 학생이 없습니다.", "화면 캡처 오류",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -206,23 +220,27 @@ namespace Server
                     {
                         filePath = fileDialog.SelectedPath;
 
-                        foreach (string key in clientsList.Keys)
+                        List<string> list = new List<string>(clientsList.Keys);
+                        foreach (string key in list)
                         {
-                            stu = clientsList[key] as Student;
-
-                            ctrl = this.Controls.Find(stu.info, true);
-                            if (ctrl.Length > 0)
+                            if (clientsList.ContainsKey(key))
                             {
-                                PictureBox pb = ctrl[0] as PictureBox;
-                                pb.Image = stu.img;
+                                stu = clientsList[key] as Student;
 
-                                String str = pb.Name.ToString().Trim('\0');
-                                Bitmap bmp = new Bitmap(pb.Image);
-                                bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
+                                ctrl = this.Controls.Find(stu.info, true);
+                                if (ctrl.Length > 0)
+                                {
+                                    PictureBox pb = ctrl[0] as PictureBox;
+                                    pb.Image = stu.img;
+
+                                    String str = pb.Name.ToString().Trim('\0');
+                                    Bitmap bmp = new Bitmap(pb.Image);
+                                    bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
+                                }
+                                ctrl = null;
+
+                                stu = null;
                             }
-                            ctrl = null;
-
-                            stu = null;
                         }
                     }
                 }                
@@ -231,8 +249,8 @@ namespace Server
 
         private void FullViewer_FormClosed(object sender, FormClosedEventArgs e)
         {
-            renderingTimer.Tick -= showFull;
-            renderingTimer.Tick += showAll;
+            timer.Tick -= showFull;
+            timer.Tick += showAll;
             this.Opacity = 1;
 
             selectedKey = null;

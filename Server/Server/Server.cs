@@ -18,7 +18,8 @@ namespace Server
 {
     public partial class Server : Form
     {
-        private static SignalObj standardSignalObj; // 서버 표준 신호 객체
+        private Socket listener;
+        private IPEndPoint ep;
 
         private const int CLASSNETPORT = 53178;
 
@@ -29,15 +30,16 @@ namespace Server
             public string address;
         }
 
-        private Socket listener;
-        private IPEndPoint ep;
+        private static Student stu;
 
+        private static SignalObj standardSignalObj;
+        
         private static Byte[] imageData;
 
         private static ImageCodecInfo codec;
         private static EncoderParameters param;
 
-        private Viewer clientsViewer;
+        private static Viewer clientsViewer;
 
         private static Screen[] sc;
         private static int selectedScreen;
@@ -74,14 +76,16 @@ namespace Server
 
         private static void LoginRecord(string clientAddr, string clientInfo)
         {
-            if (!Viewer.clientsList.ContainsKey(clientAddr))
+            if (!clientsViewer.clientsList.ContainsKey(clientAddr))
             {
-                Viewer.Student stu = new Viewer.Student()
+                stu = new Student()
                 {
                     info = clientInfo,
                     img = null
                 };
-                Viewer.clientsList.Add(clientAddr, stu);
+                clientsViewer.clientsList.Add(clientAddr, stu);
+
+                stu = null;
             }
         }
 
@@ -119,6 +123,7 @@ namespace Server
 
             ThreadPool.SetMaxThreads(50, 50);
 
+            // 표준 신호 객체 생성
             standardSignalObj = new SignalObj();
 
             // 클라이언트 연결 대기
@@ -132,6 +137,7 @@ namespace Server
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
+            // Viewer 객체 생성
             clientsViewer = new Viewer();
             clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
 
@@ -203,7 +209,7 @@ namespace Server
                     {
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
                         LoginRecord(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
-                        ++Viewer.currentClientsCount;
+                        ++clientsViewer.currentClientsCount;
                     }
                     else
                     {
@@ -223,8 +229,8 @@ namespace Server
                 }
                 catch (SocketException)
                 {
-                    Viewer.clientsList.Remove(co.address);
-                    --Viewer.currentClientsCount;
+                    clientsViewer.clientsList.Remove(co.address);
+                    --clientsViewer.currentClientsCount;
 
                     co.client.Close();
                     co = null;
@@ -298,11 +304,13 @@ namespace Server
                             ds.Close();
                         }
 
-                        if (Viewer.clientsList.ContainsKey(clientAddr))
+                        if (clientsViewer.clientsList.ContainsKey(clientAddr))
                         {
-                            Viewer.Student stu = Viewer.clientsList[clientAddr];
+                            stu = clientsViewer.clientsList[clientAddr];
                             stu.img = Image.FromStream(post_ms);
-                            Viewer.clientsList[clientAddr] = stu;
+                            clientsViewer.clientsList[clientAddr] = stu;
+
+                            stu = null;
                         }
                         post_ms.Close();
                     }

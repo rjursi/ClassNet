@@ -284,7 +284,7 @@ namespace Client
                         }
                     }
                 }
-                catch (JsonReaderException e)
+                catch (JsonReaderException)
                 {
                     DeleteAction(() => ImageProcessing());
                     DeleteAction(() => ControllingProcessing());
