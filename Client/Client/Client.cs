@@ -11,10 +11,10 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
 
 using Newtonsoft.Json;
 using InternetControl;
-using System.Threading;
 
 namespace Client
 {
@@ -36,9 +36,9 @@ namespace Client
 
         private static SignalObj standardSignalObj;
 
-        private TaskMgrController taskMgrController;
         private CmdProcessController cmdProcessController;
         private FirewallPortBlock firewallPortBlocker;
+        private TaskMgrController taskMgrController;
 
         private delegate void ScreenOnDelegate(int imgSize, Byte[] recvData, bool isShow);
 
@@ -153,8 +153,8 @@ namespace Client
                 param = new EncoderParameters();
                 param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
-                firewallPortBlocker = new FirewallPortBlock();
                 cmdProcessController = new CmdProcessController();
+                firewallPortBlocker = new FirewallPortBlock();
                 taskMgrController = new TaskMgrController();
 
                 taskMgrController.KillTaskMgr();
@@ -254,13 +254,21 @@ namespace Client
 
                 return ByteToObject(recvData);
             }
-            catch (SocketException)
+            catch (SocketException se)
             {
+                Console.WriteLine(se);
+                
                 DeleteAction(() => ImageProcessing());
                 DeleteAction(() => ControllingProcessing());
 
                 server.Close();
                 server.Dispose();
+
+                cmdProcessController.CtrlStatusEventCheck(false);
+                firewallPortBlocker.CtrlStatusEventCheck(false);
+                taskMgrController.CheckTaskMgrStatus(true);
+
+                if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
 
                 Task.Run(() => SocketConnection());
 
@@ -292,6 +300,12 @@ namespace Client
                     server.Close();
                     server.Dispose();
 
+                    cmdProcessController.CtrlStatusEventCheck(false);
+                    firewallPortBlocker.CtrlStatusEventCheck(false);
+                    taskMgrController.CheckTaskMgrStatus(true);
+
+                    if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
+
                     await Task.Run(() => SocketConnection());
 
                     standardSignalObj = new SignalObj();
@@ -315,7 +329,7 @@ namespace Client
 
             taskMgrController.CheckTaskMgrStatus(standardSignalObj.IsTaskMgrEnabled);
 
-            if (standardSignalObj.IsPower) System.Diagnostics.Process.Start("ShutDown.exe", "-s -f -t 00");
+            if (standardSignalObj.IsPower) Process.Start("ShutDown.exe", "-s -f -t 00");
         }
 
         public void ImageProcessing()
@@ -410,6 +424,10 @@ namespace Client
 
         public void BtnLogout_Click()
         {
+            new CmdProcessController().CtrlStatusEventCheck(false);
+            new FirewallPortBlock().CtrlStatusEventCheck(false);
+            new TaskMgrController().CheckTaskMgrStatus(true);
+
             Process[] processList = Process.GetProcessesByName("ClassNet Client");
             if (processList.Length > 0) processList[0].Kill();
         }
@@ -419,7 +437,11 @@ namespace Client
             server.Close();
             server.Dispose();
 
-            this.Invoke(new MethodInvoker(() => { Dispose(); }));
+            new CmdProcessController().CtrlStatusEventCheck(false);
+            new FirewallPortBlock().CtrlStatusEventCheck(false);
+            new TaskMgrController().CheckTaskMgrStatus(true);
+
+            if (InvokeRequired) this.Invoke(new MethodInvoker(() => { Dispose(); }));
             this.Close();
         }
     }

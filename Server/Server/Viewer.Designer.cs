@@ -104,10 +104,9 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.FlowLayoutPanel clientsViewPanel;
         private System.Windows.Forms.ToolStrip viewerToolStrip;
         private System.Windows.Forms.ToolStripLabel lblAllSave;
         private System.Windows.Forms.ToolStripButton btnAllSave;
+        public System.Windows.Forms.FlowLayoutPanel clientsViewPanel;
     }
 }

@@ -30,8 +30,6 @@ namespace Server
             public string address;
         }
 
-        private static Student stu;
-
         private static SignalObj standardSignalObj;
         
         private static Byte[] imageData;
@@ -78,14 +76,15 @@ namespace Server
         {
             if (!clientsViewer.clientsList.ContainsKey(clientAddr))
             {
-                stu = new Student()
+                Student stu = new Student()
                 {
                     info = clientInfo,
                     img = null
                 };
                 clientsViewer.clientsList.Add(clientAddr, stu);
 
-                stu = null;
+                if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.IPD, clientAddr);
+                else clientsViewer.clientsViewPanel.Controls.Add(clientsViewer.AddClientPanel(clientAddr));
             }
         }
 
@@ -209,12 +208,9 @@ namespace Server
                     {
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
                         LoginRecord(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
-                        ++clientsViewer.currentClientsCount;
+                        
                     }
-                    else
-                    {
-                        if(co.buffer.Length > 4) ImageOutput(co.address, co.buffer);
-                    }
+                    else  if(co.buffer.Length > 4) ImageOutput(co.address, co.buffer);
 
                     Byte[] signal = SignalObjToByte(standardSignalObj);
                     co.client.BeginSend(signal, 0, signal.Length, SocketFlags.None, AsyncSendCallback, co.client);
@@ -229,9 +225,16 @@ namespace Server
                 }
                 catch (SocketException)
                 {
-                    clientsViewer.clientsList.Remove(co.address);
-                    --clientsViewer.currentClientsCount;
+                    Control[] ctrl = clientsViewer.clientsViewPanel.Controls.Find(
+                        "pan_"+clientsViewer.clientsList[co.address].info, false);
 
+                    if (ctrl.Length > 0)
+                    {
+                        if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.DPD, ctrl[0] as Panel);
+                        else clientsViewer.clientsViewPanel.Controls.Remove(ctrl[0] as Panel);
+                    }
+
+                    clientsViewer.clientsList.Remove(co.address);
                     co.client.Close();
                     co = null;
                 }
@@ -306,11 +309,7 @@ namespace Server
 
                         if (clientsViewer.clientsList.ContainsKey(clientAddr))
                         {
-                            stu = clientsViewer.clientsList[clientAddr];
-                            stu.img = Image.FromStream(post_ms);
-                            clientsViewer.clientsList[clientAddr] = stu;
-
-                            stu = null;
+                            clientsViewer.clientsList[clientAddr].img = Image.FromStream(post_ms);
                         }
                         post_ms.Close();
                     }
@@ -322,7 +321,11 @@ namespace Server
 
         private void BtnStreaming_Click(object sender, EventArgs e)
         {
-            if (standardSignalObj.IsMonitoring) clientsViewer.Close();
+            if (standardSignalObj.IsMonitoring)
+            {
+                clientsViewer.Close();
+                Thread.Sleep(100);
+            }
 
             // 스위치 역할을 하도록 수정
             if (standardSignalObj.ServerScreenData == null)
@@ -352,10 +355,15 @@ namespace Server
                 standardSignalObj.ServerScreenData = null;
                 btnStreaming.Image = Resource._01imgStreaming_on;
                 notifyIcon.ContextMenu.MenuItems[0].Checked = false;
+
+                Thread.Sleep(100);
             }
 
-            standardSignalObj.IsMonitoring = true;
-            clientsViewer.ShowDialog();
+            if(!standardSignalObj.IsMonitoring)
+            {
+                standardSignalObj.IsMonitoring = true;
+                clientsViewer.ShowDialog();
+            }
         }
 
         private void BtnInternet_Click(object sender, EventArgs e)
