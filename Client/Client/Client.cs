@@ -254,10 +254,8 @@ namespace Client
 
                 return ByteToObject(recvData);
             }
-            catch (SocketException se)
+            catch (SocketException)
             {
-                Console.WriteLine(se);
-                
                 DeleteAction(() => ImageProcessing());
                 DeleteAction(() => ControllingProcessing());
 

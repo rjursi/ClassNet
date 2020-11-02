@@ -65,7 +65,7 @@ namespace Server
                         string filePath = fileDialog.SelectedPath;
 
                         Bitmap bmp = new Bitmap(box.Image);
-                        String str = box.Name.ToString().Trim('\0');
+                        String str = box.Name.Split('_')[2];
                         bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                     }
                 }
@@ -87,7 +87,7 @@ namespace Server
         {
             Panel panClient = new Panel
             {
-                Name = "pan_" + clientsList[key].info
+                Name = $"pan_{key}"
             };
 
             Label lblClient = new Label
@@ -100,7 +100,7 @@ namespace Server
 
             PictureBox pbClient = new PictureBox
             {
-                Name = clientsList[key].info, 
+                Name = $"pb_{key}_{clientsList[key].info}",
                 Width = 160,
                 Height = 120,
                 Location = new Point(5, 50),
@@ -134,7 +134,7 @@ namespace Server
                 {
                     if (clientsList.ContainsKey(key))
                     {
-                        Control[] ctrl = this.Controls.Find(clientsList[key].info, true);
+                        Control[] ctrl = this.Controls.Find($"pb_{key}_{clientsList[key].info}", true);
                         if (ctrl.Length > 0)
                         {
                             PictureBox pb = ctrl[0] as PictureBox;
@@ -192,13 +192,13 @@ namespace Server
                         {
                             if (clientsList.ContainsKey(key))
                             {
-                                Control[] ctrl = this.Controls.Find(clientsList[key].info, true);
+                                Control[] ctrl = this.Controls.Find($"pb_{key}_{clientsList[key].info}", true);
                                 if (ctrl.Length > 0)
                                 {
                                     PictureBox pb = ctrl[0] as PictureBox;
                                     pb.Image = clientsList[key].img;
 
-                                    String str = pb.Name.ToString().Trim('\0');
+                                    String str = pb.Name.Split('_')[2];
                                     Bitmap bmp = new Bitmap(pb.Image);
                                     bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                                 }

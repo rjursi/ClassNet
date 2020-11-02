@@ -11,6 +11,7 @@ using System.Threading;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
@@ -78,7 +79,7 @@ namespace Server
             {
                 Student stu = new Student()
                 {
-                    info = clientInfo,
+                    info = clientInfo.Trim('\0'),
                     img = null
                 };
                 clientsViewer.clientsList.Add(clientAddr, stu);
@@ -118,9 +119,12 @@ namespace Server
 
         private void Server_Load(object sender, EventArgs e)
         {
+            // 작업 표시줄에서 제거
             this.ShowInTaskbar = false;
 
-            ThreadPool.SetMaxThreads(50, 50);
+            // Viewer 객체 생성
+            clientsViewer = new Viewer();
+            clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
 
             // 표준 신호 객체 생성
             standardSignalObj = new SignalObj();
@@ -136,10 +140,7 @@ namespace Server
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
-            // Viewer 객체 생성
-            clientsViewer = new Viewer();
-            clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
-
+            // 선택 가능한 스크린 설정
             sc = Screen.AllScreens;
             foreach(var mon in sc)
             {
@@ -148,10 +149,12 @@ namespace Server
             cbMonitor.SelectedIndex = 0;
             selectedScreen = cbMonitor.SelectedIndex;
 
+            // 스크린 캡처에 필요한 변수 초기화
             bmp = null;
             g = null;
 
-            ThreadPool.QueueUserWorkItem(ImageCreate);
+            // 스크린 캡처를 통한 이미지 생성 태스크 실행
+            Task.Run(() => ImageCreate());
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -208,9 +211,9 @@ namespace Server
                     {
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
                         LoginRecord(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
-                        
+
                     }
-                    else  if(co.buffer.Length > 4) ImageOutput(co.address, co.buffer);
+                    else if (co.buffer.Length > 4) ImageOutput(co.address, co.buffer);
 
                     Byte[] signal = SignalObjToByte(standardSignalObj);
                     co.client.BeginSend(signal, 0, signal.Length, SocketFlags.None, AsyncSendCallback, co.client);
@@ -225,9 +228,7 @@ namespace Server
                 }
                 catch (SocketException)
                 {
-                    Control[] ctrl = clientsViewer.clientsViewPanel.Controls.Find(
-                        "pan_"+clientsViewer.clientsList[co.address].info, false);
-
+                    Control[] ctrl = clientsViewer.clientsViewPanel.Controls.Find("pan_" + co.address, false);
                     if (ctrl.Length > 0)
                     {
                         if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.DPD, ctrl[0] as Panel);
@@ -237,6 +238,10 @@ namespace Server
                     clientsViewer.clientsList.Remove(co.address);
                     co.client.Close();
                     co = null;
+                }
+                catch (ObjectDisposedException)
+                {
+                    return;
                 }
             }
         }
@@ -256,7 +261,7 @@ namespace Server
             return buffer;
         }
 
-        public static void ImageCreate(object obj)
+        public static void ImageCreate()
         {
             Byte[] preData;
 
