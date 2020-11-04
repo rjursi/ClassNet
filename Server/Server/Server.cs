@@ -328,6 +328,7 @@ namespace Server
         {
             if (standardSignalObj.IsMonitoring)
             {
+                notifyIcon.ContextMenu.MenuItems[1].Checked = false;
                 clientsViewer.Close();
                 Thread.Sleep(100);
             }
@@ -367,8 +368,10 @@ namespace Server
             if(!standardSignalObj.IsMonitoring)
             {
                 standardSignalObj.IsMonitoring = true;
+                notifyIcon.ContextMenu.MenuItems[1].Checked = true;
                 clientsViewer.ShowDialog();
             }
+            else clientsViewer.Close();
         }
 
         private void BtnInternet_Click(object sender, EventArgs e)
@@ -456,6 +459,7 @@ namespace Server
         private void Viewer_FormClosed(object sender, FormClosedEventArgs e)
         {
             standardSignalObj.IsMonitoring = false;
+            notifyIcon.ContextMenu.MenuItems[1].Checked = false;
         }
 
         private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)

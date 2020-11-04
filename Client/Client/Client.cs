@@ -135,7 +135,7 @@ namespace Client
                 this.ShowInTaskbar = false;
 
                 // 받은 이미지를 풀스크린으로 띄우는 설정
-                /*this.FormBorderStyle = FormBorderStyle.None;
+                this.FormBorderStyle = FormBorderStyle.None;
                 this.WindowState = FormWindowState.Maximized;
 
                 this.Location = new Point(0, 0);
@@ -143,7 +143,7 @@ namespace Client
                 this.Height = Screen.PrimaryScreen.Bounds.Height;
 
                 screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-                screenImage.Height = Screen.PrimaryScreen.Bounds.Height;*/
+                screenImage.Height = Screen.PrimaryScreen.Bounds.Height;
 
                 // 화면 폼을 가장 맨 위로
                 TopMost = true;
@@ -256,20 +256,6 @@ namespace Client
             }
             catch (SocketException)
             {
-                DeleteAction(() => ImageProcessing());
-                DeleteAction(() => ControllingProcessing());
-
-                server.Close();
-                server.Dispose();
-
-                cmdProcessController.CtrlStatusEventCheck(false);
-                firewallPortBlocker.CtrlStatusEventCheck(false);
-                taskMgrController.CheckTaskMgrStatus(true);
-
-                if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
-
-                Task.Run(() => SocketConnection());
-
                 return null;
             }
         }
@@ -285,6 +271,20 @@ namespace Client
                         if (standardSignalObj != null) await Task.Run(mainAction);
                         else
                         {
+                            DeleteAction(() => ImageProcessing());
+                            DeleteAction(() => ControllingProcessing());
+
+                            server.Close();
+                            server.Dispose();
+
+                            cmdProcessController.CtrlStatusEventCheck(false);
+                            firewallPortBlocker.CtrlStatusEventCheck(false);
+                            taskMgrController.CheckTaskMgrStatus(false);
+
+                            if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
+
+                            await Task.Run(() => SocketConnection());
+
                             standardSignalObj = new SignalObj();
                             break;
                         }
@@ -300,7 +300,7 @@ namespace Client
 
                     cmdProcessController.CtrlStatusEventCheck(false);
                     firewallPortBlocker.CtrlStatusEventCheck(false);
-                    taskMgrController.CheckTaskMgrStatus(true);
+                    taskMgrController.CheckTaskMgrStatus(false);
 
                     if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
 
@@ -432,15 +432,7 @@ namespace Client
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
-            server.Close();
-            server.Dispose();
-
-            new CmdProcessController().CtrlStatusEventCheck(false);
-            new FirewallPortBlock().CtrlStatusEventCheck(false);
-            new TaskMgrController().CheckTaskMgrStatus(true);
-
-            if (InvokeRequired) this.Invoke(new MethodInvoker(() => { Dispose(); }));
-            this.Close();
+            e.Cancel = true;
         }
     }
 }

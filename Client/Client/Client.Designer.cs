@@ -38,21 +38,22 @@
             this.screenImage.Location = new System.Drawing.Point(0, 0);
             this.screenImage.Margin = new System.Windows.Forms.Padding(0);
             this.screenImage.Name = "screenImage";
-            this.screenImage.Size = new System.Drawing.Size(560, 288);
+            this.screenImage.Size = new System.Drawing.Size(640, 360);
             this.screenImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.screenImage.TabIndex = 0;
             this.screenImage.TabStop = false;
             // 
             // Client
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(560, 288);
+            this.ClientSize = new System.Drawing.Size(640, 360);
             this.Controls.Add(this.screenImage);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Client";
             this.Text = "ClassNet Client";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Client_FormClosing);
             this.Load += new System.EventHandler(this.Client_Load);
             ((System.ComponentModel.ISupportInitialize)(this.screenImage)).EndInit();
             this.ResumeLayout(false);
