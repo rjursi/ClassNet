@@ -11,6 +11,7 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
 
 using Newtonsoft.Json;
 using InternetControl;
@@ -35,9 +36,9 @@ namespace Client
 
         private static SignalObj standardSignalObj;
 
-        private TaskMgrController taskMgrController;
         private CmdProcessController cmdProcessController;
         private FirewallPortBlock firewallPortBlocker;
+        private TaskMgrController taskMgrController;
 
         private delegate void ScreenOnDelegate(int imgSize, Byte[] recvData, bool isShow);
 
@@ -152,8 +153,8 @@ namespace Client
                 param = new EncoderParameters();
                 param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
-                firewallPortBlocker = new FirewallPortBlock();
                 cmdProcessController = new CmdProcessController();
+                firewallPortBlocker = new FirewallPortBlock();
                 taskMgrController = new TaskMgrController();
 
                 taskMgrController.KillTaskMgr();
@@ -216,8 +217,19 @@ namespace Client
 
         public SignalObj ByteToObject(Byte[] buffer)
         {
-            string jsonData = Encoding.Default.GetString(buffer);
-            SignalObj signal = JsonConvert.DeserializeObject<SignalObj>(jsonData);
+            string jsonData;
+            SignalObj signal;
+
+            try
+            {
+                jsonData = Encoding.Default.GetString(buffer);
+                signal = JsonConvert.DeserializeObject<SignalObj>(jsonData);
+            }
+            catch (JsonSerializationException)
+            {
+                signal = new SignalObj();
+            }
+            
             return signal;
         }
 
@@ -233,6 +245,7 @@ namespace Client
                 else if (isCapture)
                 {
                     sendData = CaptureImage();
+                    Thread.Sleep(500);
                 }
                 else sendData = Encoding.UTF8.GetBytes("recv");
 
@@ -243,14 +256,6 @@ namespace Client
             }
             catch (SocketException)
             {
-                DeleteAction(() => ImageProcessing());
-                DeleteAction(() => ControllingProcessing());
-
-                server.Close();
-                server.Dispose();
-
-                Task.Run(() => SocketConnection());
-
                 return null;
             }
         }
@@ -270,17 +275,42 @@ namespace Client
                         } 
                         else
                         {
+                            DeleteAction(() => ImageProcessing());
+                            DeleteAction(() => ControllingProcessing());
+
+                            server.Close();
+                            server.Dispose();
+
+                            cmdProcessController.CtrlStatusEventCheck(false);
+                            firewallPortBlocker.CtrlStatusEventCheck(false);
+                            taskMgrController.CheckTaskMgrStatus(false);
+
+                            if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
+
+                            await Task.Run(() => SocketConnection());
+
                             standardSignalObj = new SignalObj();
                             break;
                         }
                     }
                 }
-                catch (ObjectDisposedException)
-                {
-                    break;
-                }
                 catch (JsonReaderException)
                 {
+                    DeleteAction(() => ImageProcessing());
+                    DeleteAction(() => ControllingProcessing());
+
+                    server.Close();
+                    server.Dispose();
+
+                    cmdProcessController.CtrlStatusEventCheck(false);
+                    firewallPortBlocker.CtrlStatusEventCheck(false);
+                    taskMgrController.CheckTaskMgrStatus(false);
+
+                    if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
+
+                    await Task.Run(() => SocketConnection());
+
+                    standardSignalObj = new SignalObj();
                     break;
                 }
                 finally
@@ -301,7 +331,7 @@ namespace Client
 
             taskMgrController.CheckTaskMgrStatus(standardSignalObj.IsTaskMgrEnabled);
 
-            if (standardSignalObj.IsPower) System.Diagnostics.Process.Start("ShutDown.exe", "-s -f -t 00");
+            if (standardSignalObj.IsPower) Process.Start("ShutDown.exe", "-s -f -t 00");
         }
 
         public void ImageProcessing()
@@ -396,17 +426,17 @@ namespace Client
 
         public void BtnLogout_Click()
         {
+            new CmdProcessController().CtrlStatusEventCheck(false);
+            new FirewallPortBlock().CtrlStatusEventCheck(false);
+            new TaskMgrController().CheckTaskMgrStatus(true);
+
             Process[] processList = Process.GetProcessesByName("ClassNet Client");
             if (processList.Length > 0) processList[0].Kill();
         }
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
-            server.Close();
-            server.Dispose();
-
-            this.Invoke(new MethodInvoker(() => { Dispose(); }));
-            this.Close();
+            e.Cancel = true;
         }
     }
 }

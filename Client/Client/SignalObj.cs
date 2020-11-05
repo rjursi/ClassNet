@@ -9,14 +9,12 @@ namespace Client
 
         public SignalObj()
         {
-
             IsShutdown = false;
             IsLock = false;
             IsInternet = false;
             IsPower = false;
             IsMonitoring = false;
             IsTaskMgrEnabled = false;
-
         }
 
         ~SignalObj()

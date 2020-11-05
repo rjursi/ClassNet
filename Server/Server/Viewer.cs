@@ -1,160 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace Server
 {
     public partial class Viewer : Form
     {
-        //public static int pastClientsCount;
-        //public static int currentClientsCount; // 현재 접속 클라이언트 수
-        public int pastClientsCount { get; set; }
-        public int currentClientsCount { get; set; } // 현재 접속 클라이언트 수
+        public Dictionary<string, Student> clientsList;
 
-        public static FullViewer fullViewer;
+        private static FullViewer fullViewer;
 
-        //public static Dictionary<string, Student> clientsList;
-        public Dictionary<string, Student> clientsList
-        {
-            get;
-            set;
-        }
+        private static Timer timer;
 
+        private static EventHandler showAll;
+        private static EventHandler showFull;
 
-        public Dictionary<string, PictureBox> clientsPicture
-        {
-            get;set;
-        }
+        private static String selectedKey;
 
-        public String dir;
-        public class Student
-        {
-            public string info;
-            public Image img;
-        }
+        public delegate void InsertPanelDelegate(String key);
+        public InsertPanelDelegate IPD;
 
-        public static System.Windows.Forms.Timer renderingTimer;
-        public static System.Windows.Forms.Timer focusingTimer;
-
-       
-
-        Action[] actions;
+        public delegate void DeletePanelDelegate(Panel pan);
+        public DeletePanelDelegate DPD;
 
         public Viewer()
         {
             InitializeComponent();
 
-            pastClientsCount = 0;
-            currentClientsCount = 0;
-
             clientsList = new Dictionary<string, Student>(); // 클라이언트 리스트
-            clientsPicture = new Dictionary<string, PictureBox>(); // 클라이언트 이미지
 
-            renderingTimer = new System.Windows.Forms.Timer();
-            //renderingTimer.Tick += new EventHandler(IterateShowViews);
-            renderingTimer.Interval = 500;
-            renderingTimer.Start();
+            IPD = new InsertPanelDelegate(InsertStudentPanel);
+            DPD = new DeletePanelDelegate(DeleteStudentPanel);
 
-            focusingTimer = new System.Windows.Forms.Timer();
+            showAll = new EventHandler(IterateShowViews);
+            showFull = new EventHandler(IterateFocusView);
 
-            this.ShowInTaskbar = false;
-
-            //List<Action> aavv = new List<Action>();
-            //actions = aavv.ToArray();
-            ////aavv
-            //Parallel.Invoke(actions);
-
-            //aavv. = new Action(() => {
-            //    Task.Run(() => { 
-
-            //    }).ContinueWith((_) => {
-
-            //    });
-
-            //});
-            
-
-            List<string> list = new List<string>(clientsList.Keys);
-            panels = new List<Panel>();
-            
-            
-
-            Task.Run(() =>
-            {
-                while (true)
-                {
-
-                    Console.WriteLine("currentClientsCount" + currentClientsCount+ "/// clientsList.Count : " + clientsList.Count + "\n");
-                    
-                    if (panels.Count != 0)
-                    {
-                        Console.WriteLine("panels.Count" + panels.Count);
-                    }
-
-                    //for(int i = 0; i < clientsList.Count; i++)
-                    //{
-                    //    foreach (string key in clientsList.Keys)
-                    //    {
-                    //        Student stu = clientsList[key] as Student;
-                    //        clientsPicture[key].Image = stu.img;
-                    //    }
-                    //}
-
-
-                    Thread.Sleep(500);
-                }
-
-            });
-            
-
+            timer = new Timer();
+            timer.Tick += showAll;
+            timer.Interval = 300;
         }
 
-        List<Panel> panels;
-        public void InsertPanel(String clientAddr)
+        private void Viewer_Load(object sender, EventArgs e)
         {
-            Student stu = clientsList[clientAddr] as Student;
+            selectedKey = null;
 
-            Panel panClient = new Panel();
+            fullViewer = new FullViewer();
+            fullViewer.FormClosed += new FormClosedEventHandler(FullViewer_FormClosed);
 
-            Label lblClient = new Label
-            {
-                Width = 160,
-                Height = 20,
-                Location = new Point(5, 30),
-                Text = stu.info // 학번(이름)
-            };
-
-            PictureBox pbClient = new PictureBox
-            {
-                Name = stu.info,
-                Width = 160,
-                Height = 120,
-                Location = new Point(5, 50),
-                BackColor = Color.Black,
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                Image = stu.img // 캡처 이미지
-            };
-
-            panClient.Controls.Add(lblClient);
-            panClient.Controls.Add(pbClient);
-
-            panClient.Size = new Size(170, 170);
-            panClient.Location = new Point(0, 0);
-            panClient.Name = clientAddr;
-
-            panels.Add(panClient);
+            timer.Start();
         }
-
-       
-        
 
         public void GetPicture(PictureBox box, MouseEventArgs e)
         {
-            var filePath = string.Empty;
             if (e.Button == MouseButtons.Right)
             {
                 using (FolderBrowserDialog fileDialog = new FolderBrowserDialog())
@@ -163,63 +62,58 @@ namespace Server
 
                     if (fileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        filePath = fileDialog.SelectedPath;
+                        string filePath = fileDialog.SelectedPath;
 
                         Bitmap bmp = new Bitmap(box.Image);
-                        String str = box.Name.ToString().Trim('\0');
+                        String str = box.Name.Split('_')[2];
                         bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
                     }
                 }
             }
         }
 
-        public void FullPicture(Student sendStu)
-        { 
-            focusingTimer.Tick += new EventHandler((sender, e) => InterateFocusView(sendStu.img));
-            focusingTimer.Interval = 500;
-            focusingTimer.Start();
+        public void FullPicture(String key)
+        {
+            selectedKey = key;
 
-            fullViewer = new FullViewer(sendStu);
+            timer.Tick -= showAll;
+            timer.Tick += showFull;
+            this.Opacity = 0;
+
             fullViewer.ShowDialog();
-
-            renderingTimer.Interval = 700;
         }
 
         public Panel AddClientPanel(string key)
         {
-            Student stu = clientsList[key] as Student;
-
-            Panel panClient = new Panel();
-            
+            Panel panClient = new Panel
+            {
+                Name = $"pan_{key}"
+            };
 
             Label lblClient = new Label
             {
                 Width = 160,
                 Height = 20,
                 Location = new Point(5, 30),
-                Text = stu.info // 학번(이름)
+                Text = clientsList[key].info // 학번(이름)
             };
 
             PictureBox pbClient = new PictureBox
             {
-                Name = stu.info, 
+                Name = $"pb_{key}_{clientsList[key].info}",
                 Width = 160,
                 Height = 120,
                 Location = new Point(5, 50),
                 BackColor = Color.Black,
                 SizeMode = PictureBoxSizeMode.StretchImage,
-                Image = stu.img // 캡처 이미지
+                Image = clientsList[key].img // 캡처 이미지
             };
 
             void customMouseEvent(object sender, MouseEventArgs e) => GetPicture(pbClient, e);
-            //void customEvent(object sender, EventArgs e) => FullPicture(stu);
-            
+            void customEvent(object sender, EventArgs e) => FullPicture(key);
+
             pbClient.MouseDown += customMouseEvent;
-            //pbClient.DoubleClick += customEvent;
-
-
-            if (clientsPicture.ContainsKey(key)) clientsPicture[key] = pbClient;
-            else clientsPicture.Add(key, pbClient);
+            pbClient.DoubleClick += customEvent;
 
             panClient.Controls.Add(lblClient);
             panClient.Controls.Add(pbClient);
@@ -236,52 +130,53 @@ namespace Server
             {
                 List<string> list = new List<string>(clientsList.Keys);
 
-                if (pastClientsCount == currentClientsCount)
+                foreach (string key in list)
                 {
-                    foreach (string key in clientsList.Keys)
+                    if (clientsList.ContainsKey(key))
                     {
-                        Student stu = clientsList[key] as Student;
-                        clientsPicture[key].Image = stu.img;
+                        Control[] ctrl = this.Controls.Find($"pb_{key}_{clientsList[key].info}", true);
+                        if (ctrl.Length > 0)
+                        {
+                            PictureBox pb = ctrl[0] as PictureBox;
+                            pb.Image = clientsList[key].img;
+                        }
                     }
                 }
-                else if (pastClientsCount < currentClientsCount)
-                {
-                    ++pastClientsCount;
-
-                    //clientsViewPanel.Controls.Clear();
-                    //foreach (string key in list)
-                    //{
-                    //    clientsViewPanel.Controls.Add(AddClientPanel(key));
-                    //}
-                }
-                else if (pastClientsCount > currentClientsCount)
-                {
-                    --pastClientsCount;
-
-                    //clientsViewPanel.Controls.Clear();
-                    //foreach (string key in list)
-                    //{
-                    //    clientsViewPanel.Controls.Add(AddClientPanel(key));
-                    //}
-                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return ;
+                Console.WriteLine(ex);
             }
         }
 
-        private void InterateFocusView(Image sendImg)
+        private void IterateFocusView(object sender, EventArgs e)
         {
-            FullViewer.focusStudent.img = sendImg;
+            if (clientsList.ContainsKey(selectedKey))
+            {
+                fullViewer.AccessControl(clientsList[selectedKey].img, clientsList[selectedKey].info);
+            }
+            else
+            {
+                timer.Stop();
+
+                MessageBox.Show("해당 학습자와 연결이 끊겼습니다.", "전체 화면 오류",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                fullViewer.Close();
+
+                timer.Start();
+            }
         }
 
         private void BtnAllSave_Click(object sender, EventArgs e)
         {
             var filePath = string.Empty;
-            if (pastClientsCount == 0)
+
+            List<string> list = new List<string>(clientsList.Keys);
+            if (list.Count == 0)
             {
-                MessageBox.Show("접속한 학생이 없습니다.", "화면 캡처 오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("접속한 학생이 없습니다.", "화면 캡처 오류",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -293,15 +188,44 @@ namespace Server
                     {
                         filePath = fileDialog.SelectedPath;
 
-                        foreach (string key in clientsPicture.Keys)
+                        foreach (string key in list)
                         {
-                            String str = clientsPicture[key].Name.ToString().Trim('\0');
-                            Bitmap bmp = new Bitmap(clientsPicture[key].Image);
-                            bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
+                            if (clientsList.ContainsKey(key))
+                            {
+                                Control[] ctrl = this.Controls.Find($"pb_{key}_{clientsList[key].info}", true);
+                                if (ctrl.Length > 0)
+                                {
+                                    PictureBox pb = ctrl[0] as PictureBox;
+                                    pb.Image = clientsList[key].img;
+
+                                    String str = pb.Name.Split('_')[2];
+                                    Bitmap bmp = new Bitmap(pb.Image);
+                                    bmp.Save($"{filePath}\\{str}.png", System.Drawing.Imaging.ImageFormat.Png);
+                                }
+                            }
                         }
                     }
-                }                
+                }
             }
+        }
+
+        public void InsertStudentPanel(String key)
+        {
+            this.clientsViewPanel.Controls.Add(AddClientPanel(key));
+        }
+
+        public void DeleteStudentPanel(Panel pan)
+        {
+            this.clientsViewPanel.Controls.Remove(pan);
+        }
+
+        private void FullViewer_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            timer.Tick -= showFull;
+            timer.Tick += showAll;
+            this.Opacity = 1;
+
+            selectedKey = null;
         }
     }
 }

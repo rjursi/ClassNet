@@ -11,6 +11,7 @@ using System.Threading;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
@@ -18,7 +19,8 @@ namespace Server
 {
     public partial class Server : Form
     {
-        private static SignalObj standardSignalObj; // 서버 표준 신호 객체
+        private Socket listener;
+        private IPEndPoint ep;
 
         private const int CLASSNETPORT = 53178;
 
@@ -29,8 +31,7 @@ namespace Server
             public string address;
         }
 
-        private Socket listener;
-        private IPEndPoint ep;
+        private static SignalObj standardSignalObj;
 
         private static Byte[] imageData;
 
@@ -74,27 +75,17 @@ namespace Server
 
         private static void LoginRecord(string clientAddr, string clientInfo)
         {
-            //if (!Viewer.clientsList.ContainsKey(clientAddr))
-            //{
-            //    Viewer.Student stu = new Viewer.Student()
-            //    {
-            //        info = clientInfo,
-            //        img = null
-            //    };
-            //   // Viewer.clientsList.Add(clientAddr, stu);
-            //    clientsViewer.clientsList.Add(clientAddr, stu);
-            //}
             if (!clientsViewer.clientsList.ContainsKey(clientAddr))
             {
-                Viewer.Student stu = new Viewer.Student()
+                Student stu = new Student()
                 {
-                    info = clientInfo,
+                    info = clientInfo.Trim('\0'),
                     img = null
                 };
-                // Viewer.clientsList.Add(clientAddr, stu);
                 clientsViewer.clientsList.Add(clientAddr, stu);
-                clientsViewer.InsertPanel(clientAddr);
-                //clientsViewer.Invoke(new MethodInvoker(delegate () {  }));
+
+                if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.IPD, clientAddr);
+                else clientsViewer.clientsViewPanel.Controls.Add(clientsViewer.AddClientPanel(clientAddr));
             }
         }
 
@@ -128,10 +119,14 @@ namespace Server
 
         private void Server_Load(object sender, EventArgs e)
         {
+            // 작업 표시줄에서 제거
             this.ShowInTaskbar = false;
 
-            ThreadPool.SetMaxThreads(50, 50);
+            // Viewer 객체 생성
+            clientsViewer = new Viewer();
+            clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
 
+            // 표준 신호 객체 생성
             standardSignalObj = new SignalObj();
 
             // 클라이언트 연결 대기
@@ -145,22 +140,21 @@ namespace Server
             param = new EncoderParameters();
             param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
-            clientsViewer = new Viewer();
-            clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
-
+            // 선택 가능한 스크린 설정
             sc = Screen.AllScreens;
-            foreach(var mon in sc)
+            foreach (var mon in sc)
             {
                 cbMonitor.Items.Add(Regex.Replace(mon.DeviceName, @"[^0-9a-zA-Z가-힣]", "").Trim());
             }
             cbMonitor.SelectedIndex = 0;
             selectedScreen = cbMonitor.SelectedIndex;
 
+            // 스크린 캡처에 필요한 변수 초기화
             bmp = null;
             g = null;
 
-            ThreadPool.QueueUserWorkItem(ImageCreate);
-
+            // 스크린 캡처를 통한 이미지 생성 태스크 실행
+            Task.Run(() => ImageCreate());
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -217,12 +211,9 @@ namespace Server
                     {
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
                         LoginRecord(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
-                        ++clientsViewer.currentClientsCount;
+
                     }
-                    else
-                    {
-                        if(co.buffer.Length > 4) ImageOutput(co.address, co.buffer);
-                    }
+                    else if (co.buffer.Length > 4) ImageOutput(co.address, co.buffer);
 
                     Byte[] signal = SignalObjToByte(standardSignalObj);
                     co.client.BeginSend(signal, 0, signal.Length, SocketFlags.None, AsyncSendCallback, co.client);
@@ -237,14 +228,20 @@ namespace Server
                 }
                 catch (SocketException)
                 {
-                    //Viewer.clientsList.Remove(co.address);
-                    //--Viewer.currentClientsCount;
+                    Control[] ctrl = clientsViewer.clientsViewPanel.Controls.Find("pan_" + co.address, false);
+                    if (ctrl.Length > 0)
+                    {
+                        if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.DPD, ctrl[0] as Panel);
+                        else clientsViewer.clientsViewPanel.Controls.Remove(ctrl[0] as Panel);
+                    }
 
                     clientsViewer.clientsList.Remove(co.address);
-                    --clientsViewer.currentClientsCount;
-
                     co.client.Close();
                     co = null;
+                }
+                catch (ObjectDisposedException)
+                {
+                    return;
                 }
             }
         }
@@ -264,7 +261,7 @@ namespace Server
             return buffer;
         }
 
-        public static void ImageCreate(object obj)
+        public static void ImageCreate()
         {
             Byte[] preData;
 
@@ -314,27 +311,27 @@ namespace Server
                             ds.CopyTo(post_ms);
                             ds.Close();
                         }
-                        //Viewer.Student stu = Viewer.clientsList[clientAddr]; // KeyInValidOperation
-                        //stu.img = Image.FromStream(post_ms);
-                        //Viewer.clientsList[clientAddr] = stu;
-                        Viewer.Student stu = clientsViewer.clientsList[clientAddr]; // KeyInValidOperation
-                        stu.img = Image.FromStream(post_ms);
-                        clientsViewer.clientsList[clientAddr] = stu;
 
+                        if (clientsViewer.clientsList.ContainsKey(clientAddr))
+                        {
+                            clientsViewer.clientsList[clientAddr].img = Image.FromStream(post_ms);
+                        }
                         post_ms.Close();
                     }
                     pre_ms.Close();
                 }
             }
-            catch (InvalidDataException)
-            {
-                return;
-            }
+            catch (InvalidDataException) { }
         }
 
         private void BtnStreaming_Click(object sender, EventArgs e)
         {
-            if (standardSignalObj.IsMonitoring) clientsViewer.Close();
+            if (standardSignalObj.IsMonitoring)
+            {
+                notifyIcon.ContextMenu.MenuItems[1].Checked = false;
+                clientsViewer.Close();
+                Thread.Sleep(100);
+            }
 
             // 스위치 역할을 하도록 수정
             if (standardSignalObj.ServerScreenData == null)
@@ -364,10 +361,17 @@ namespace Server
                 standardSignalObj.ServerScreenData = null;
                 btnStreaming.Image = Resource._01imgStreaming_on;
                 notifyIcon.ContextMenu.MenuItems[0].Checked = false;
+
+                Thread.Sleep(100);
             }
 
-            standardSignalObj.IsMonitoring = true;
-            clientsViewer.ShowDialog();
+            if (!standardSignalObj.IsMonitoring)
+            {
+                standardSignalObj.IsMonitoring = true;
+                notifyIcon.ContextMenu.MenuItems[1].Checked = true;
+                clientsViewer.ShowDialog();
+            }
+            else clientsViewer.Close();
         }
 
         private void BtnInternet_Click(object sender, EventArgs e)
@@ -455,6 +459,7 @@ namespace Server
         private void Viewer_FormClosed(object sender, FormClosedEventArgs e)
         {
             standardSignalObj.IsMonitoring = false;
+            notifyIcon.ContextMenu.MenuItems[1].Checked = false;
         }
 
         private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)

@@ -95,6 +95,7 @@
             this.MinimumSize = new System.Drawing.Size(1055, 700);
             this.Name = "Viewer";
             this.Text = "모니터링 화면 목록";
+            this.Load += new System.EventHandler(this.Viewer_Load);
             this.viewerToolStrip.ResumeLayout(false);
             this.viewerToolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -103,10 +104,9 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.FlowLayoutPanel clientsViewPanel;
         private System.Windows.Forms.ToolStrip viewerToolStrip;
         private System.Windows.Forms.ToolStripLabel lblAllSave;
         private System.Windows.Forms.ToolStripButton btnAllSave;
+        public System.Windows.Forms.FlowLayoutPanel clientsViewPanel;
     }
 }
