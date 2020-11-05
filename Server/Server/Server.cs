@@ -37,7 +37,7 @@ namespace Server
         private static ImageCodecInfo codec;
         private static EncoderParameters param;
 
-        private Viewer clientsViewer;
+        private static Viewer clientsViewer;
 
         private static Screen[] sc;
         private static int selectedScreen;
@@ -74,14 +74,27 @@ namespace Server
 
         private static void LoginRecord(string clientAddr, string clientInfo)
         {
-            if (!Viewer.clientsList.ContainsKey(clientAddr))
+            //if (!Viewer.clientsList.ContainsKey(clientAddr))
+            //{
+            //    Viewer.Student stu = new Viewer.Student()
+            //    {
+            //        info = clientInfo,
+            //        img = null
+            //    };
+            //   // Viewer.clientsList.Add(clientAddr, stu);
+            //    clientsViewer.clientsList.Add(clientAddr, stu);
+            //}
+            if (!clientsViewer.clientsList.ContainsKey(clientAddr))
             {
                 Viewer.Student stu = new Viewer.Student()
                 {
                     info = clientInfo,
                     img = null
                 };
-                Viewer.clientsList.Add(clientAddr, stu);
+                // Viewer.clientsList.Add(clientAddr, stu);
+                clientsViewer.clientsList.Add(clientAddr, stu);
+                clientsViewer.InsertPanel(clientAddr);
+                //clientsViewer.Invoke(new MethodInvoker(delegate () {  }));
             }
         }
 
@@ -204,7 +217,7 @@ namespace Server
                     {
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
                         LoginRecord(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
-                        ++Viewer.currentClientsCount;
+                        ++clientsViewer.currentClientsCount;
                     }
                     else
                     {
@@ -224,8 +237,11 @@ namespace Server
                 }
                 catch (SocketException)
                 {
-                    Viewer.clientsList.Remove(co.address);
-                    --Viewer.currentClientsCount;
+                    //Viewer.clientsList.Remove(co.address);
+                    //--Viewer.currentClientsCount;
+
+                    clientsViewer.clientsList.Remove(co.address);
+                    --clientsViewer.currentClientsCount;
 
                     co.client.Close();
                     co = null;
@@ -298,9 +314,12 @@ namespace Server
                             ds.CopyTo(post_ms);
                             ds.Close();
                         }
-                        Viewer.Student stu = Viewer.clientsList[clientAddr]; // KeyInValidOperation
+                        //Viewer.Student stu = Viewer.clientsList[clientAddr]; // KeyInValidOperation
+                        //stu.img = Image.FromStream(post_ms);
+                        //Viewer.clientsList[clientAddr] = stu;
+                        Viewer.Student stu = clientsViewer.clientsList[clientAddr]; // KeyInValidOperation
                         stu.img = Image.FromStream(post_ms);
-                        Viewer.clientsList[clientAddr] = stu;
+                        clientsViewer.clientsList[clientAddr] = stu;
 
                         post_ms.Close();
                     }

@@ -38,25 +38,25 @@ namespace Server
 
         void InterateFocusing(Student stu)
         {
-            if (clientsList.ContainsValue(stu))
-            {
-                picFocusView.Image = stu.img;
-            }
-            else
-            {
-                if (isStop)
-                {
-                    isStop = false;
-                    result = MessageBox.Show("해당 학습자와 연결이 끊겼습니다.", "전체 화면 오류",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error); // 연결 끊긴 이후 후 처리 요망
+            //if (clientsList.ContainsValue(stu))
+            //{
+            //    picFocusView.Image = stu.img;
+            //}
+            //else
+            //{
+            //    if (isStop)
+            //    {
+            //        isStop = false;
+            //        result = MessageBox.Show("해당 학습자와 연결이 끊겼습니다.", "전체 화면 오류",
+            //            MessageBoxButtons.OK, MessageBoxIcon.Error); // 연결 끊긴 이후 후 처리 요망
 
-                    if (result == DialogResult.OK)
-                    {
-                        focusingTimer.Stop();
-                        this.Close();
-                    }
-                }
-            }
+            //        if (result == DialogResult.OK)
+            //        {
+            //            focusingTimer.Stop();
+            //            this.Close();
+            //        }
+            //    }
+            //}
         }
 
         private void FullViewer_FormClosing(object sender, FormClosingEventArgs e)

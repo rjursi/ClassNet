@@ -32,7 +32,6 @@ namespace Client
         private bool isLogin;
 
         private static Action mainAction;
-        private static Action subAction;
 
         private static SignalObj standardSignalObj;
 
@@ -135,15 +134,15 @@ namespace Client
                 this.ShowInTaskbar = false;
 
                 // 받은 이미지를 풀스크린으로 띄우는 설정
-                this.FormBorderStyle = FormBorderStyle.None;
-                this.WindowState = FormWindowState.Maximized;
+                //this.FormBorderStyle = FormBorderStyle.None;
+                //this.WindowState = FormWindowState.Maximized;
 
-                this.Location = new Point(0, 0);
-                this.Width = Screen.PrimaryScreen.Bounds.Width;
-                this.Height = Screen.PrimaryScreen.Bounds.Height;
+                //this.Location = new Point(0, 0);
+                //this.Width = Screen.PrimaryScreen.Bounds.Width;
+                //this.Height = Screen.PrimaryScreen.Bounds.Height;
 
-                screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
-                screenImage.Height = Screen.PrimaryScreen.Bounds.Height;
+                //screenImage.Width = Screen.PrimaryScreen.Bounds.Width;
+                //screenImage.Height = Screen.PrimaryScreen.Bounds.Height;
 
                 // 화면 폼을 가장 맨 위로
                 TopMost = true;
