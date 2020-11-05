@@ -27,12 +27,11 @@ namespace Client
         private IPEndPoint ep;
         private bool isConnected;
 
-        private TransparentForm transparentForm;
+        private TransparentForm transparentForm; // 트레이 아이콘을 위한 투명 폼
+
         private LoginForm loginForm;
         private string stuInfo; // 로그인 데이터를 담을 변수
         private bool isLogin;
-
-        private static Action mainAction;
 
         private static SignalObj standardSignalObj;
 
@@ -80,29 +79,22 @@ namespace Client
 
         private void Client_Load(object sender, EventArgs e)
         {
-            isLogin = false;
-            recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
+            // DPI 설정 메소드 호출
+            SetDpiAwareness();
 
             if (ClassNetConfig.GetAppConfig("SERVER_IP").Equals(""))
             {
                 MessageBox.Show("서버 IP 설정이 필요합니다.", "서버 IP 미설정", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 using (SetIPAddressForm setIPAddressForm = new SetIPAddressForm())
                 {
                     var dialogResult = setIPAddressForm.ShowDialog();
-
                     if (dialogResult == DialogResult.OK)
-                    {
                         ClassNetConfig.SetAppConfig("SERVER_IP", setIPAddressForm.ServerIP);
-                    }
                 }
             }
-
             this.SERVER_IP = ClassNetConfig.GetAppConfig("SERVER_IP");
 
-            // DPI 설정 메소드 호출
-            SetDpiAwareness();
-
+            isLogin = false;
             while (!isLogin)
             {
                 loginForm = new LoginForm();
@@ -129,6 +121,7 @@ namespace Client
                 transparentForm.Show();
                 transparentForm.Hide();
 
+                // 폼 숨기기
                 this.Hide();
 
                 // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
@@ -153,18 +146,23 @@ namespace Client
                 param = new EncoderParameters();
                 param.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 30L);
 
-                cmdProcessController = new CmdProcessController();
+                // 인터넷 차단, 입력 잠금, 작업관리자 잠금
                 firewallPortBlocker = new FirewallPortBlock();
+                cmdProcessController = new CmdProcessController();
                 taskMgrController = new TaskMgrController();
 
+                // 작업 관리자 잠금 실행
                 taskMgrController.KillTaskMgr();
 
+                // 소켓 연결 대기
                 Task.Run(() => SocketConnection());
             }
         }
 
         private void SocketConnection()
         {
+            recvData = new Byte[327675]; // 327,675 Byte = 65,535 Byte * 5
+
             isConnected = false;
             isFirst = true;
             isCapture = false;
@@ -185,20 +183,7 @@ namespace Client
                 }
             }
 
-            InsertAction(() => ImageProcessing());
-            InsertAction(() => ControllingProcessing());
-
-            MainTask();
-        }
-
-        public void InsertAction(Action action)
-        {
-            mainAction += action;
-        }
-
-        public void DeleteAction(Action action)
-        {
-            mainAction -= action;
+            Task.Run(() => MainTask());
         }
 
         // 이미지 파일 형식(포맷) 인코더
@@ -254,9 +239,14 @@ namespace Client
 
                 return ByteToObject(recvData);
             }
-            catch (SocketException)
+            catch (Exception)
             {
                 return null;
+            }
+            finally
+            {
+                Array.Clear(sendData, 0, sendData.Length);
+                Array.Clear(recvData, 0, recvData.Length);
             }
         }
 
@@ -264,67 +254,51 @@ namespace Client
         {
             while (true)
             {
-                try
+                using (standardSignalObj = ReceiveObject())
                 {
-                    using (standardSignalObj = ReceiveObject())
+                    if (standardSignalObj != null)
                     {
-                        if (standardSignalObj != null) await Task.Run(mainAction);
-                        else
+                        await Task.Run(() =>
                         {
-                            DeleteAction(() => ImageProcessing());
-                            DeleteAction(() => ControllingProcessing());
-
-                            server.Close();
-                            server.Dispose();
-
-                            cmdProcessController.CtrlStatusEventCheck(false);
-                            firewallPortBlocker.CtrlStatusEventCheck(false);
-                            taskMgrController.CheckTaskMgrStatus(false);
-
-                            if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
-
-                            await Task.Run(() => SocketConnection());
-
-                            standardSignalObj = new SignalObj();
-                            break;
-                        }
+                            ImageProcessing();
+                            ControllingProcessing();
+                        });
                     }
-                }
-                catch (JsonReaderException)
-                {
-                    DeleteAction(() => ImageProcessing());
-                    DeleteAction(() => ControllingProcessing());
+                    else
+                    {
+                        // 서버 닫고...
+                        server.Close();
+                        server.Dispose();
+                        server = null;
 
-                    server.Close();
-                    server.Dispose();
+                        // 서버 정보 지우고...
+                        ep = null;
 
-                    cmdProcessController.CtrlStatusEventCheck(false);
-                    firewallPortBlocker.CtrlStatusEventCheck(false);
-                    taskMgrController.CheckTaskMgrStatus(false);
+                        // 입력 잠금 풀어주고, 인터넷 차단 풀어주고, 작업관리자 막고...
+                        cmdProcessController.CtrlStatusEventCheck(false);
+                        firewallPortBlocker.CtrlStatusEventCheck(false);
+                        taskMgrController.CheckTaskMgrStatus(false);
 
-                    if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
+                        // 서버 화면 띄우는 폼 닫고...
+                        if (InvokeRequired) this.Invoke(new ScreenOnDelegate(OutputDelegate), 0, null, false);
 
-                    await Task.Run(() => SocketConnection());
+                        // 소켓에 쓰이는 Byte 배열 비워주고....
+                        recvData = null;
+                        sendData = null;
 
-                    standardSignalObj = new SignalObj();
-                    break;
-                }
-                finally
-                {
-                    Array.Clear(recvData, 0, recvData.Length);
+                        // 소켓 대기 시키고...
+                        _ = Task.Run(() => SocketConnection());
+
+                        break;
+                    }
                 }
             }
         }
 
         public void ControllingProcessing()
         {
-            if (standardSignalObj.IsMonitoring) isCapture = true;
-            else isCapture = false;
-
             cmdProcessController.CtrlStatusEventCheck(standardSignalObj.IsLock);
-
             firewallPortBlocker.CtrlStatusEventCheck(standardSignalObj.IsInternet);
-
             taskMgrController.CheckTaskMgrStatus(standardSignalObj.IsTaskMgrEnabled);
 
             if (standardSignalObj.IsPower) Process.Start("ShutDown.exe", "-s -f -t 00");
@@ -332,6 +306,9 @@ namespace Client
 
         public void ImageProcessing()
         {
+            if (standardSignalObj.IsMonitoring) isCapture = true;
+            else isCapture = false;
+
             if (standardSignalObj.ServerScreenData != null && InvokeRequired)
             {
                 // 이미지를 받아서 여기서 버퍼를 설정하는 부분

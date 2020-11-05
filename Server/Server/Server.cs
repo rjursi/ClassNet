@@ -73,7 +73,7 @@ namespace Server
         }
         // DPI 설정 부분 끝
 
-        private static void LoginRecord(string clientAddr, string clientInfo)
+        private static bool LoginRecord(string clientAddr, string clientInfo)
         {
             if (!clientsViewer.clientsList.ContainsKey(clientAddr))
             {
@@ -82,11 +82,21 @@ namespace Server
                     info = clientInfo.Trim('\0'),
                     img = null
                 };
-                clientsViewer.clientsList.Add(clientAddr, stu);
+                try
+                {
+                    clientsViewer.clientsList.Add(clientAddr, stu as Student);
 
-                if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.IPD, clientAddr);
-                else clientsViewer.clientsViewPanel.Controls.Add(clientsViewer.AddClientPanel(clientAddr));
+                    if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.IPD, clientAddr);
+                    else clientsViewer.clientsViewPanel.Controls.Add(clientsViewer.AddClientPanel(clientAddr));
+
+                    return true;
+                }
+                catch(NullReferenceException)
+                {
+                    return false;
+                }                
             }
+            else return false;
         }
 
         private void SocketOn()
@@ -119,18 +129,15 @@ namespace Server
 
         private void Server_Load(object sender, EventArgs e)
         {
-            // 작업 표시줄에서 제거
-            this.ShowInTaskbar = false;
-
             // Viewer 객체 생성
             clientsViewer = new Viewer();
             clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
 
+            // 작업 표시줄에서 제거
+            this.ShowInTaskbar = false;
+
             // 표준 신호 객체 생성
             standardSignalObj = new SignalObj();
-
-            // 클라이언트 연결 대기
-            SocketOn();
 
             // NotifyIcon에 메뉴 추가
             NotifyIconSetting();
@@ -152,6 +159,9 @@ namespace Server
             // 스크린 캡처에 필요한 변수 초기화
             bmp = null;
             g = null;
+
+            // 클라이언트 연결 대기
+            SocketOn();
 
             // 스크린 캡처를 통한 이미지 생성 태스크 실행
             Task.Run(() => ImageCreate());
@@ -210,8 +220,9 @@ namespace Server
                     else if (Encoding.UTF8.GetString(co.buffer).Contains("info"))
                     {
                         string receiveLoginData = Encoding.UTF8.GetString(co.buffer);
-                        LoginRecord(co.address, receiveLoginData.Split('&')[1]); // 해시테이블에 학생 정보 저장.
 
+                        // 해시테이블에 학생 정보 저장 또는 연결 해제
+                        if (!LoginRecord(co.address, receiveLoginData.Split('&')[1])) co.client.Close();
                     }
                     else if (co.buffer.Length > 4) ImageOutput(co.address, co.buffer);
 
@@ -446,7 +457,7 @@ namespace Server
                 MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
             {
                 standardSignalObj.IsPower = true;
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
                 standardSignalObj.IsPower = false;
             }
         }
@@ -478,11 +489,13 @@ namespace Server
         private void Server_FormClosed(object sender, FormClosedEventArgs e)
         {
             standardSignalObj.IsShutdown = true;
-            standardSignalObj.ServerScreenData = null;
+
             standardSignalObj.IsMonitoring = false;
             standardSignalObj.IsInternet = false;
             standardSignalObj.IsLock = false;
             standardSignalObj.IsTaskMgrEnabled = false;
+
+            standardSignalObj.ServerScreenData = null;
 
             if (listener != null) listener.Close();
             Dispose();
