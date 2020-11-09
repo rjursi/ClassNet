@@ -46,6 +46,8 @@ namespace Server
         private static Bitmap bmp;
         private static Graphics g;
 
+        private static bool isFinish;
+
         public Server()
         {
             InitializeComponent();
@@ -84,8 +86,9 @@ namespace Server
                 };
                 try
                 {
-                    clientsViewer.clientsList.Add(clientAddr, stu as Student);
+                    if(isFinish) isFinish = false;
 
+                    clientsViewer.clientsList.Add(clientAddr, stu as Student);
                     if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.IPD, clientAddr);
                     else clientsViewer.clientsViewPanel.Controls.Add(clientsViewer.AddClientPanel(clientAddr));
 
@@ -129,6 +132,8 @@ namespace Server
 
         private void Server_Load(object sender, EventArgs e)
         {
+            isFinish = false;
+
             // Viewer 객체 생성
             clientsViewer = new Viewer();
             clientsViewer.FormClosed += new FormClosedEventHandler(Viewer_FormClosed);
@@ -239,13 +244,19 @@ namespace Server
                 }
                 catch (SocketException)
                 {
-                    Control[] ctrl = clientsViewer.clientsViewPanel.Controls.Find("pan_" + co.address, false);
-                    if (ctrl.Length > 0)
+                    if(isFinish)
                     {
-                        if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.DPD, ctrl[0] as Panel);
-                        else clientsViewer.clientsViewPanel.Controls.Remove(ctrl[0] as Panel);
+                        clientsViewer.clientsViewPanel.Controls.Clear();
                     }
-
+                    else
+                    {
+                        Control[] ctrl = clientsViewer.clientsViewPanel.Controls.Find("pan_" + co.address, false);
+                        if (ctrl.Length > 0)
+                        {
+                            if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.DPD, ctrl[0] as Panel);
+                            else clientsViewer.clientsViewPanel.Controls.Remove(ctrl[0] as Panel);
+                        }
+                    }
                     clientsViewer.clientsList.Remove(co.address);
                     co.client.Close();
                     co = null;
@@ -453,6 +464,8 @@ namespace Server
 
         private void BtnPower_Click(object sender, EventArgs e)
         {
+            isFinish = true;
+
             if (MessageBox.Show("연결된 학생 PC 전체를 종료하시겠습니까?", "학생 PC 전체 종료",
                 MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
             {
