@@ -78,8 +78,18 @@ namespace InternetControl
         {
             INetFwPolicy2 policyRemover = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
 
-            policyRemover.Rules.Remove(TCP_HTTP_HTTPS_BLOCK_RULENAME);
-            policyRemover.Rules.Remove(UDP_HTTP_BLOCK_RULENAME);
+            foreach(INetFwRule rule in policyRemover.Rules)
+            {
+                if (rule.Name.Equals(TCP_HTTP_HTTPS_BLOCK_RULENAME)){
+                    policyRemover.Rules.Remove(TCP_HTTP_HTTPS_BLOCK_RULENAME);
+                }
+                if (rule.Name.Equals(UDP_HTTP_BLOCK_RULENAME))
+                {
+                    policyRemover.Rules.Remove(UDP_HTTP_BLOCK_RULENAME);
+                }
+            }
+            
+            
         }
 
         protected virtual void Dispose(bool disposing)
