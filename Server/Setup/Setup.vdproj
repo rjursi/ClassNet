@@ -733,34 +733,6 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_07E95C0BD99D4CDAB2E9522657A64C97"
-            {
-            "Name" = "8:클래스넷"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_EF5EE56DC21D4749A7887EDF88798006"
-            "Folder" = "8:_A88A79B9C2A5487BB85B714A2A280BE6"
-            "WorkingFolder" = "8:_5B86ECF786154BC69658E4BBD7C1E628"
-            "Icon" = "8:_75683FABBD1846E19BC01D0DCE675683"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C03E067A469E4D0CBAF9274A9DD38321"
-            {
-            "Name" = "8:클래스넷"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_EF5EE56DC21D4749A7887EDF88798006"
-            "Folder" = "8:_19A426A6C15A43B6ADF611C2857BF72F"
-            "WorkingFolder" = "8:_5B86ECF786154BC69658E4BBD7C1E628"
-            "Icon" = "8:_75683FABBD1846E19BC01D0DCE675683"
-            "Feature" = "8:"
-            }
         }
         "UserInterface"
         {

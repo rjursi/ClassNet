@@ -819,34 +819,6 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_21E90850D9994ED897D1E5DCC36B9532"
-            {
-            "Name" = "8:클래스넷 클라이언트"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_2D8913265AE6446A94A565F0D89FE23D"
-            "Folder" = "8:_E5B8FB4AC68D415C80D38C886320B7CF"
-            "WorkingFolder" = "8:_3DC7ACA201454682A35D95779FC089BE"
-            "Icon" = "8:_3E4B81A1C5954B848F20C7D6B8A7747E"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_8F48FB4E2D5B475FBE65F856EC2ABC77"
-            {
-            "Name" = "8:클래스넷 클라이언트"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_2D8913265AE6446A94A565F0D89FE23D"
-            "Folder" = "8:_CB48364337C34030BD17BC0DA3D8E165"
-            "WorkingFolder" = "8:_3DC7ACA201454682A35D95779FC089BE"
-            "Icon" = "8:_3E4B81A1C5954B848F20C7D6B8A7747E"
-            "Feature" = "8:"
-            }
         }
         "UserInterface"
         {
