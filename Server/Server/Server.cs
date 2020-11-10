@@ -86,8 +86,6 @@ namespace Server
                 };
                 try
                 {
-                    if(isFinish) isFinish = false;
-
                     clientsViewer.clientsList.Add(clientAddr, stu as Student);
                     if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.IPD, clientAddr);
                     else clientsViewer.clientsViewPanel.Controls.Add(clientsViewer.AddClientPanel(clientAddr));
@@ -244,11 +242,7 @@ namespace Server
                 }
                 catch (SocketException)
                 {
-                    if(isFinish)
-                    {
-                        clientsViewer.clientsViewPanel.Controls.Clear();
-                    }
-                    else
+                    if(!isFinish)
                     {
                         Control[] ctrl = clientsViewer.clientsViewPanel.Controls.Find("pan_" + co.address, false);
                         if (ctrl.Length > 0)
@@ -256,10 +250,11 @@ namespace Server
                             if (clientsViewer.IsHandleCreated) clientsViewer.Invoke(clientsViewer.DPD, ctrl[0] as Panel);
                             else clientsViewer.clientsViewPanel.Controls.Remove(ctrl[0] as Panel);
                         }
+
+                        clientsViewer.clientsList.Remove(co.address);
+                        co.client.Close();
+                        co = null;
                     }
-                    clientsViewer.clientsList.Remove(co.address);
-                    co.client.Close();
-                    co = null;
                 }
                 catch (ObjectDisposedException)
                 {
@@ -471,7 +466,10 @@ namespace Server
             {
                 standardSignalObj.IsPower = true;
                 Thread.Sleep(1000);
+
                 standardSignalObj.IsPower = false;
+                notifyIcon.Visible = false;
+                Application.Restart();
             }
         }
 
