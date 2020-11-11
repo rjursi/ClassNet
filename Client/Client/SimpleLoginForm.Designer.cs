@@ -43,10 +43,9 @@
             this.LoginButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.LoginButton.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.LoginButton.ForeColor = System.Drawing.Color.Teal;
-            this.LoginButton.Location = new System.Drawing.Point(45, 221);
-            this.LoginButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.LoginButton.Location = new System.Drawing.Point(39, 177);
             this.LoginButton.Name = "LoginButton";
-            this.LoginButton.Size = new System.Drawing.Size(160, 46);
+            this.LoginButton.Size = new System.Drawing.Size(140, 37);
             this.LoginButton.TabIndex = 9;
             this.LoginButton.Text = "로그인";
             this.LoginButton.UseVisualStyleBackColor = true;
@@ -55,11 +54,10 @@
             // txtStuCode
             // 
             this.txtStuCode.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.txtStuCode.Location = new System.Drawing.Point(45, 147);
-            this.txtStuCode.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtStuCode.Location = new System.Drawing.Point(39, 118);
             this.txtStuCode.MaxLength = 10;
             this.txtStuCode.Name = "txtStuCode";
-            this.txtStuCode.Size = new System.Drawing.Size(160, 30);
+            this.txtStuCode.Size = new System.Drawing.Size(140, 26);
             this.txtStuCode.TabIndex = 8;
             this.txtStuCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtStuCode_KeyPress);
             // 
@@ -67,11 +65,10 @@
             // 
             this.txtName.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.txtName.ImeMode = System.Windows.Forms.ImeMode.Hangul;
-            this.txtName.Location = new System.Drawing.Point(45, 67);
-            this.txtName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.txtName.MaxLength = 10;
+            this.txtName.Location = new System.Drawing.Point(39, 54);
+            this.txtName.MaxLength = 5;
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(160, 30);
+            this.txtName.Size = new System.Drawing.Size(140, 26);
             this.txtName.TabIndex = 7;
             this.txtName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtName_KeyPress);
             // 
@@ -80,9 +77,9 @@
             this.lblStuCode.AutoSize = true;
             this.lblStuCode.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.lblStuCode.ForeColor = System.Drawing.Color.Teal;
-            this.lblStuCode.Location = new System.Drawing.Point(41, 118);
+            this.lblStuCode.Location = new System.Drawing.Point(36, 94);
             this.lblStuCode.Name = "lblStuCode";
-            this.lblStuCode.Size = new System.Drawing.Size(44, 23);
+            this.lblStuCode.Size = new System.Drawing.Size(37, 19);
             this.lblStuCode.TabIndex = 6;
             this.lblStuCode.Text = "학번";
             // 
@@ -91,18 +88,18 @@
             this.lblName.AutoSize = true;
             this.lblName.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.lblName.ForeColor = System.Drawing.Color.Teal;
-            this.lblName.Location = new System.Drawing.Point(41, 38);
+            this.lblName.Location = new System.Drawing.Point(36, 30);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(44, 23);
+            this.lblName.Size = new System.Drawing.Size(37, 19);
             this.lblName.TabIndex = 5;
             this.lblName.Text = "이름";
             // 
             // SimpleLoginForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(251, 307);
+            this.ClientSize = new System.Drawing.Size(220, 246);
             this.Controls.Add(this.LoginButton);
             this.Controls.Add(this.txtStuCode);
             this.Controls.Add(this.txtName);
@@ -110,6 +107,7 @@
             this.Controls.Add(this.lblName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SimpleLoginForm";
