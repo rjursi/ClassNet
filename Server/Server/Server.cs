@@ -465,9 +465,13 @@ namespace Server
                 MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
             {
                 standardSignalObj.IsPower = true;
-                Thread.Sleep(1000);
+                standardSignalObj.ServerScreenData = null;
+                standardSignalObj.IsMonitoring = false;
+                standardSignalObj.IsInternet = false;
+                standardSignalObj.IsLock = false;
+                standardSignalObj.IsTaskMgrEnabled = false;
+                Thread.Sleep(1500);
 
-                standardSignalObj.IsPower = false;
                 notifyIcon.Visible = false;
                 Application.Restart();
             }
