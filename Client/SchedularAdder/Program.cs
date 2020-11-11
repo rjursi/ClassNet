@@ -31,7 +31,7 @@ namespace SchedularAdder
                     LogonTrigger lt = new LogonTrigger(); // 로그인할때 실 행되도록 trigger 설정
                     td.Triggers.Add(lt);
 
-                    td.Actions.Add(new ExecAction(currentExePath + "\\ClassNet Service.exe")); // 프로그램, 인자등록.
+                    td.Actions.Add(new ExecAction(currentExePath + "\\ClassNet Client.exe")); // 프로그램, 인자등록.
                     
                     ts.RootFolder.RegisterTaskDefinition("ClassNet Client\\Run When Logon", td);
                     Console.WriteLine("Schedular Adder : 작업 등록이 성공적으로 완료되었습니다...");
