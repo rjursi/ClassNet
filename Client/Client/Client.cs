@@ -27,8 +27,6 @@ namespace Client
         private IPEndPoint ep;
         private bool isConnected;
 
-        private TransparentForm transparentForm; // 트레이 아이콘을 위한 투명 폼
-
         private LoginForm loginForm;
         private string stuInfo; // 로그인 데이터를 담을 변수
         private bool isLogin;
@@ -104,25 +102,30 @@ namespace Client
                 if (stuInfo.Length > 0) isLogin = true;
             }
 
-            transparentForm = new TransparentForm();
             if (stuInfo.Equals(ClassNetConfig.GetAppConfig("ADMIN_ID")))
             {
-                transparentForm.FormStatus = TransparentForm.ADMINFORM;
-                transparentForm.Show();
-                transparentForm.Hide();
+                ContextMenu ctx = new ContextMenu();
+                ctx.MenuItems.Add(new MenuItem("설정", new EventHandler((s, ea) => BtnSetServerIP_Click(s, ea))));
+                ctx.MenuItems.Add(new MenuItem("로그아웃", new EventHandler((s, ea) => BtnLogout_Click(s, ea))));
 
-                this.Hide();
+                this.notifyIcon.ContextMenu = ctx;
+                this.notifyIcon.Visible = true;
+
+                this.Opacity = 0;
 
                 this.ShowInTaskbar = false;
             }
             else
             {
-                transparentForm.FormStatus = TransparentForm.USERFORM;
-                transparentForm.Show();
-                transparentForm.Hide();
+                ContextMenu ctx = new ContextMenu();
+                ctx.MenuItems.Add(new MenuItem("만든이", new EventHandler((s, ea) => BtnMade_Click(s, ea))));
+                ctx.MenuItems.Add(new MenuItem("로그아웃", new EventHandler((s, ea) => BtnLogout_Click(s, ea))));
+
+                this.notifyIcon.ContextMenu = ctx;
+                this.notifyIcon.Visible = true;
 
                 // 폼 숨기기
-                this.Hide();
+                this.Opacity = 0;
 
                 // 작업표시줄 상에서 프로그램이 표시되지 않도록 설정
                 this.ShowInTaskbar = false;
@@ -354,10 +357,10 @@ namespace Client
 
         public void OutputDelegate(int imgSize, Byte[] recvData, bool isShow)
         {
-            if (!isShow) this.Hide();
+            if (!isShow) this.Opacity = 0;
             else
             {
-                this.Show();
+                this.Opacity = 1;
 
                 using (MemoryStream pre_ms = new MemoryStream(recvData))
                 {
@@ -397,14 +400,23 @@ namespace Client
             }
         }
 
-        public void BtnLogout_Click()
+        private void BtnMade_Click(object sender, EventArgs ea)
         {
-            new CmdProcessController().CtrlStatusEventCheck(false);
-            new FirewallPortBlock().CtrlStatusEventCheck(false);
-            new TaskMgrController().CheckTaskMgrStatus(true);
+            MessageBox.Show("[유한대학교 IT소프트웨어공학과]\n" +
+                "\n201507067 김태우\n" +
+                "\n201607019 김윤권\n" +
+                "\n201607058 이시헌\n" +
+                "\n201807031 지한영\n" +
+                "\n201507062 최준수\n" +
+                "\n201807010 홍성준",
+                "만든이", MessageBoxButtons.OK);
+        }
 
-            Process[] processList = Process.GetProcessesByName("ClassNet Client");
-            if (processList.Length > 0) processList[0].Kill();
+        public void BtnLogout_Click(object sender, EventArgs ea)
+        {
+            notifyIcon.Visible = false;
+            this.Dispose();
+            Application.Restart();
         }
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)

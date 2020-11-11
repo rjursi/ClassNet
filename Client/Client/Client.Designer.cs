@@ -28,8 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Client));
             this.screenImage = new System.Windows.Forms.PictureBox();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.screenImage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,15 +45,25 @@
             this.screenImage.TabIndex = 0;
             this.screenImage.TabStop = false;
             // 
+            // notifyIcon
+            // 
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+            this.notifyIcon.Text = "ClassNet Client";
+            this.notifyIcon.Visible = true;
+            // 
             // Client
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(640, 360);
             this.Controls.Add(this.screenImage);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Client";
+            this.Opacity = 0D;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "ClassNet Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Client_FormClosing);
             this.Load += new System.EventHandler(this.Client_Load);
@@ -63,6 +75,7 @@
         #endregion
 
         private System.Windows.Forms.PictureBox screenImage;
+        private System.Windows.Forms.NotifyIcon notifyIcon;
     }
 }
 

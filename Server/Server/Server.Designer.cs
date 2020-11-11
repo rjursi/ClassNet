@@ -185,7 +185,6 @@
             this.Name = "Server";
             this.Text = "클래스넷";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Server_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Server_FormClosed);
             this.Load += new System.EventHandler(this.Server_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

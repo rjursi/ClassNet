@@ -120,12 +120,6 @@
       <DependentUpon>SimpleLoginForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TaskMgrController.cs" />
-    <Compile Include="TransparentForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TransparentForm.Designer.cs">
-      <DependentUpon>TransparentForm.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Client.resx">
       <DependentUpon>Client.cs</DependentUpon>
     </EmbeddedResource>
@@ -150,9 +144,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleLoginForm.resx">
       <DependentUpon>SimpleLoginForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TransparentForm.resx">
-      <DependentUpon>TransparentForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />

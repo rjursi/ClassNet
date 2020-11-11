@@ -473,6 +473,7 @@ namespace Server
                 Thread.Sleep(1500);
 
                 notifyIcon.Visible = false;
+                this.Dispose();
                 Application.Restart();
             }
         }
@@ -499,23 +500,6 @@ namespace Server
         {
             e.Cancel = true;
             this.Hide();
-        }
-
-        private void Server_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            standardSignalObj.IsShutdown = true;
-
-            standardSignalObj.IsMonitoring = false;
-            standardSignalObj.IsInternet = false;
-            standardSignalObj.IsLock = false;
-            standardSignalObj.IsTaskMgrEnabled = false;
-
-            standardSignalObj.ServerScreenData = null;
-
-            if (listener != null) listener.Close();
-            Dispose();
-
-            this.Close();
         }
     }
 }
