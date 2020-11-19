@@ -49,6 +49,19 @@ namespace Client
         private static bool isCapture;
 
         // DPI 설정 부분 시작
+
+        private static int WM_QUERYENDSESSION = 0x11; // 윈도우가 종료, 로그오프, 재부팅시 발생되는 메시지 상수
+        private static bool systemShutdown = false;
+
+
+        protected override void WndProc(ref Message m) // 윈도우 메시지 처리 프로시저
+        {
+            if(m.Msg == WM_QUERYENDSESSION)
+            {
+                systemShutdown = true;
+            }
+            base.WndProc(ref m);
+        }
         private enum ProcessDPIAwareness
         {
             ProcessDPIUnaware = 0,
@@ -421,7 +434,12 @@ namespace Client
 
         private void Client_FormClosing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = true;
+            if (!systemShutdown) // false 이면
+            {
+                e.Cancel = true; // 해당 폼이 꺼지는 것을 막아라
+
+            }
+            
         }
     }
 }

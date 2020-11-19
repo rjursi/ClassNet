@@ -47,6 +47,19 @@ namespace Server
         private static Graphics g;
 
         private static bool isFinish;
+        private static bool systemShutdown = false;
+        private static int WM_QUERYENDSESSION = 0x11; // 윈도우가 종료, 로그오프, 재시작시 발생하는 메시지 상수
+
+        protected override void WndProc(ref Message m)
+        {
+            if(m.Msg == WM_QUERYENDSESSION)
+            {
+                systemShutdown = true;
+            }
+            base.WndProc(ref m);
+        }
+
+
 
         public Server()
         {
@@ -498,8 +511,11 @@ namespace Server
 
         private void Server_FormClosing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = true;
-            this.Hide();
+            if (!systemShutdown)
+            {
+                e.Cancel = true;
+                this.Hide();
+            }
         }
     }
 }
