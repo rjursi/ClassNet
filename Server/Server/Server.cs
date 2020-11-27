@@ -255,7 +255,7 @@ namespace Server
                 }
                 catch (SocketException)
                 {
-                    if(!isFinish)
+                    if (!isFinish)
                     {
                         Control[] ctrl = clientsViewer.clientsViewPanel.Controls.Find("pan_" + co.address, false);
                         if (ctrl.Length > 0)
@@ -264,9 +264,10 @@ namespace Server
                             else clientsViewer.clientsViewPanel.Controls.Remove(ctrl[0] as Panel);
                         }
 
-                        clientsViewer.clientsList.Remove(co.address);
-                        co.client.Close();
-                        co = null;
+                        if (clientsViewer.clientsList.ContainsKey(co.address)) clientsViewer.clientsList.Remove(co.address);
+
+                        //co.client.Close();
+                        //co = null;
                     }
                 }
                 catch (ObjectDisposedException)
@@ -279,8 +280,15 @@ namespace Server
         private static void AsyncSendCallback(IAsyncResult ar)
         {
             Socket client = ar.AsyncState as Socket;
-            if (client.Connected) client.EndSend(ar);
-            else client.Close();
+            try
+            {
+                if (client.Connected) client.EndSend(ar);
+                else client.Close();
+            }
+            catch(SocketException)
+            {
+                return;
+            }            
         }
 
         private static Byte[] SignalObjToByte(SignalObj signalObj)
