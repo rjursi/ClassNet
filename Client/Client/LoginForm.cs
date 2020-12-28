@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Windows.Forms;
 
@@ -11,6 +12,9 @@ namespace Client
     {
         private static CookieContainer cookie;
         public string stuInfo = "";
+
+        public Label lblLoading;
+        public int cntLoading = 1;
 
         public LoginForm()
         {
@@ -44,6 +48,18 @@ namespace Client
             panelInput.Location = new Point(w, h);
 
             txtLoginID.Focus();
+
+            lblLoading = new Label
+            {
+                Text = "현재 네트워크 상태를 확인 중입니다.",
+                Width = 315,
+                Font = new Font(lblLoginId.Font.FontFamily, 10, FontStyle.Bold)
+            };
+            lblLoading.Location = new Point((this.Width / 2) - (lblLoading.Width / 2), 70);
+
+            this.Controls.Add(lblLoading);
+
+            this.Cursor = Cursors.WaitCursor;
         }
 
         private void LoginButton_Click(object sender, EventArgs e)
@@ -162,6 +178,37 @@ namespace Client
             else
             {
                 return "fail";
+            }
+        }
+
+        private void NetCheck_Tick(object sender, EventArgs e)
+        {
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                this.Cursor = Cursors.Default;
+                txtLoginID.Enabled = true;
+                lblLoginId.ForeColor = Color.Teal;
+                txtLoginPW.Enabled = true;
+                lblLoginPW.ForeColor = Color.Teal;
+                LoginButton.Enabled = true;
+                LoginButton.FlatAppearance.BorderColor = Color.Teal;
+                btnSimpleLogin.Enabled = true;
+                btnSimpleLogin.FlatAppearance.BorderColor = Color.Teal;
+                lblLoading.Visible = false;
+                NetCheck.Enabled = false;
+            }
+            else
+            {
+                if (cntLoading == 5)
+                {
+                    lblLoading.Text = "현재 네트워크 상태를 확인 중입니다.";
+                    cntLoading = 1;
+                }
+                else
+                {
+                    lblLoading.Text += ".";
+                    cntLoading++;
+                }
             }
         }
     }

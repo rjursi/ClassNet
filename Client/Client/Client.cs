@@ -53,7 +53,6 @@ namespace Client
         private static int WM_QUERYENDSESSION = 0x11; // 윈도우가 종료, 로그오프, 재부팅시 발생되는 메시지 상수
         private static bool systemShutdown = false;
 
-
         protected override void WndProc(ref Message m) // 윈도우 메시지 처리 프로시저
         {
             if(m.Msg == WM_QUERYENDSESSION)

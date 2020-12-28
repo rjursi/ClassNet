@@ -59,8 +59,6 @@ namespace Server
             base.WndProc(ref m);
         }
 
-
-
         public Server()
         {
             InitializeComponent();

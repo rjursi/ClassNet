@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginForm));
             this.lblLoginId = new System.Windows.Forms.Label();
             this.lblLoginPW = new System.Windows.Forms.Label();
@@ -36,6 +37,7 @@
             this.LoginButton = new System.Windows.Forms.Button();
             this.btnSimpleLogin = new System.Windows.Forms.Button();
             this.panelInput = new System.Windows.Forms.Panel();
+            this.NetCheck = new System.Windows.Forms.Timer(this.components);
             this.panelInput.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,7 +45,7 @@
             // 
             this.lblLoginId.AutoSize = true;
             this.lblLoginId.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblLoginId.ForeColor = System.Drawing.Color.Teal;
+            this.lblLoginId.ForeColor = System.Drawing.Color.DimGray;
             this.lblLoginId.Location = new System.Drawing.Point(24, 21);
             this.lblLoginId.Name = "lblLoginId";
             this.lblLoginId.Size = new System.Drawing.Size(69, 25);
@@ -54,7 +56,7 @@
             // 
             this.lblLoginPW.AutoSize = true;
             this.lblLoginPW.Font = new System.Drawing.Font("맑은 고딕", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.lblLoginPW.ForeColor = System.Drawing.Color.Teal;
+            this.lblLoginPW.ForeColor = System.Drawing.Color.DimGray;
             this.lblLoginPW.Location = new System.Drawing.Point(24, 111);
             this.lblLoginPW.Name = "lblLoginPW";
             this.lblLoginPW.Size = new System.Drawing.Size(88, 25);
@@ -63,6 +65,7 @@
             // 
             // txtLoginID
             // 
+            this.txtLoginID.Enabled = false;
             this.txtLoginID.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.txtLoginID.ImeMode = System.Windows.Forms.ImeMode.Alpha;
             this.txtLoginID.Location = new System.Drawing.Point(29, 50);
@@ -74,6 +77,7 @@
             // 
             // txtLoginPW
             // 
+            this.txtLoginPW.Enabled = false;
             this.txtLoginPW.Font = new System.Drawing.Font("맑은 고딕", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.txtLoginPW.Location = new System.Drawing.Point(29, 140);
             this.txtLoginPW.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -86,7 +90,8 @@
             // LoginButton
             // 
             this.LoginButton.BackColor = System.Drawing.Color.White;
-            this.LoginButton.FlatAppearance.BorderColor = System.Drawing.Color.Teal;
+            this.LoginButton.Enabled = false;
+            this.LoginButton.FlatAppearance.BorderColor = System.Drawing.Color.DimGray;
             this.LoginButton.FlatAppearance.BorderSize = 3;
             this.LoginButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.LoginButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -98,13 +103,14 @@
             this.LoginButton.Size = new System.Drawing.Size(283, 49);
             this.LoginButton.TabIndex = 4;
             this.LoginButton.Text = "로그인";
-            this.LoginButton.UseVisualStyleBackColor = false;
+            this.LoginButton.UseVisualStyleBackColor = true;
             this.LoginButton.Click += new System.EventHandler(this.LoginButton_Click);
             // 
             // btnSimpleLogin
             // 
             this.btnSimpleLogin.BackColor = System.Drawing.Color.White;
-            this.btnSimpleLogin.FlatAppearance.BorderColor = System.Drawing.Color.Teal;
+            this.btnSimpleLogin.Enabled = false;
+            this.btnSimpleLogin.FlatAppearance.BorderColor = System.Drawing.Color.DimGray;
             this.btnSimpleLogin.FlatAppearance.BorderSize = 3;
             this.btnSimpleLogin.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.btnSimpleLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -132,6 +138,12 @@
             this.panelInput.Size = new System.Drawing.Size(340, 365);
             this.panelInput.TabIndex = 6;
             // 
+            // NetCheck
+            // 
+            this.NetCheck.Enabled = true;
+            this.NetCheck.Interval = 1000;
+            this.NetCheck.Tick += new System.EventHandler(this.NetCheck_Tick);
+            // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -158,5 +170,6 @@
         private System.Windows.Forms.Button LoginButton;
         private System.Windows.Forms.Button btnSimpleLogin;
         private System.Windows.Forms.Panel panelInput;
+        private System.Windows.Forms.Timer NetCheck;
     }
 }
